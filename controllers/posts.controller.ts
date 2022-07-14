@@ -4,6 +4,10 @@ import { ObjectId } from "bson";
 import { FastifyReply, FastifyRequest } from "fastify";
 import mongoose, { HydratedDocument, InferSchemaType } from "mongoose";
 import cld = require("cld");
+import { File } from "fastify-multer/lib/interfaces";
+import DataURIParser = require("datauri/parser");
+import { v2 as cloudinary } from "cloudinary";
+import { sanitiseFileName } from "./multer.controller";
 import postAggregationPipeline from "../db/pipelines/post";
 import postParentAggregationPipeline from "../db/pipelines/post-parent";
 import postQuotesAggregationPipeline from "../db/pipelines/post-quotes";
@@ -101,6 +105,15 @@ const updateMentionsAndHashtags = async (content: string, post: Partial<PostMode
 	post.mentions = postMentions.size > 0 ? [...postMentions] : undefined;
 	post.hashtags = postHashtags.size > 0 ? [...postHashtags] : undefined;
 };
+const uploadFile = async (file: File, fileType: string) => {
+	const parser = new DataURIParser();
+	const data = parser.format("", file.buffer);
+	const response = await cloudinary.uploader.upload(data.content, {
+		folder: `${fileType}s/`,
+		public_id: `${sanitiseFileName(file.originalname.replace(/\.\w+$/, ""), 16)}_${Date.now().valueOf()}`
+	});
+	return response;
+};
 const deletePostWithCascade = async (post: HydratedDocument<PostModel>) => {
 	const session = await mongoose.startSession();
 	await session.withTransaction(async () => {
@@ -175,8 +188,8 @@ export const createPost = async (request: FastifyRequest, reply: FastifyReply) =
 				...(poll && { poll }),
 				...(media && {
 					mediaFile: {
-						fileType: (request as any).fileType,
-						src: media.path as any,
+						fileType: request.fileType as any,
+						src: (await uploadFile(media, request.fileType)).url as any,
 						previewSrc: undefined,
 						description: mediaDescription
 					}
@@ -349,8 +362,8 @@ export const quotePost = async (request: FastifyRequest, reply: FastifyReply) =>
 					...(poll && { poll }),
 					...(media && {
 						mediaFile: {
-							fileType: (request as any).fileType,
-							src: media.path as any,
+							fileType: request.fileType as any,
+							src: (await uploadFile(media, request.fileType)).url as any,
 							previewSrc: undefined,
 							description: mediaDescription
 						}
@@ -459,8 +472,8 @@ export const replyToPost = async (request: FastifyRequest, reply: FastifyReply) 
 						...(poll && { poll }),
 						...(media && {
 							mediaFile: {
-								fileType: (request as any).fileType,
-								src: media.path as any,
+								fileType: request.fileType as any,
+								src: (await uploadFile(media, request.fileType)).url as any,
 								previewSrc: undefined,
 								description: mediaDescription
 							}
