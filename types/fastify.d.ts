@@ -11,6 +11,8 @@ declare module "fastify" {
 	interface FastifyRequest {
 		userInfo?: string | JwtPayload | UserInfo;
 		file?: File;
+		fileType?: string;
+		fileSubtype?: string;
 	}
 	interface FastifySchema {
 		consumes?: readonly string[];
