@@ -39,14 +39,6 @@ const server = fastify();
 server.register(require("@fastify/cors"));
 server.register(multer.contentParser).after(() => {
 	if (!isProdEnv) {
-		// server.register(require("@fastify/swagger"), {
-		// 	routePrefix: "/swagger",
-		// 	exposeRoute: true,
-		// 	mode: "static",
-		// 	specification: {
-		// 		path: "./swagger.json"
-		// 	}
-		// });
 		server.register(require("@fastify/swagger"), {
 			routePrefix: "/swagger",
 			exposeRoute: true,
