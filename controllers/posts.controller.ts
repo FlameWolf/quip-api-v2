@@ -172,7 +172,7 @@ const deletePostWithCascade = async (post: HydratedDocument<PostModel>) => {
 };
 export const createPost = async (request: FastifyRequest, reply: FastifyReply) => {
 	const { content = "", poll, "media-description": mediaDescription, location } = request.body as PostCreateBody;
-	const media = request.file;
+	const { file: media, fileType } = request;
 	const userId = (request.userInfo as UserInfo).userId;
 	try {
 		validateContent(content, poll, media);
@@ -188,8 +188,8 @@ export const createPost = async (request: FastifyRequest, reply: FastifyReply) =
 				...(poll && { poll }),
 				...(media && {
 					mediaFile: {
-						fileType: request.fileType as any,
-						src: (await uploadFile(media, request.fileType)).url as any,
+						fileType: fileType as any,
+						src: (await uploadFile(media, fileType)).url as any,
 						previewSrc: undefined,
 						description: mediaDescription
 					}
@@ -338,7 +338,7 @@ export const getPostParent = async (request: FastifyRequest, reply: FastifyReply
 export const quotePost = async (request: FastifyRequest, reply: FastifyReply) => {
 	const { postId } = request.params as PostInteractParams;
 	const { content = "", poll, "media-description": mediaDescription, location } = request.body as PostCreateBody;
-	const media = request.file;
+	const { file: media, fileType } = request;
 	const userId = (request.userInfo as UserInfo).userId;
 	try {
 		validateContent(content, poll, media, postId);
@@ -362,8 +362,8 @@ export const quotePost = async (request: FastifyRequest, reply: FastifyReply) =>
 					...(poll && { poll }),
 					...(media && {
 						mediaFile: {
-							fileType: request.fileType as any,
-							src: (await uploadFile(media, request.fileType)).url as any,
+							fileType: fileType as any,
+							src: (await uploadFile(media, fileType)).url as any,
 							previewSrc: undefined,
 							description: mediaDescription
 						}
@@ -446,7 +446,7 @@ export const unrepeatPost = async (request: FastifyRequest, reply: FastifyReply)
 export const replyToPost = async (request: FastifyRequest, reply: FastifyReply) => {
 	const { postId } = request.params as PostInteractParams;
 	const { content = "", poll, "media-description": mediaDescription, location } = request.body as PostCreateBody;
-	const media = request.file;
+	const { file: media, fileType } = request;
 	const userId = (request.userInfo as UserInfo).userId;
 	try {
 		validateContent(content, poll, media);
@@ -472,8 +472,8 @@ export const replyToPost = async (request: FastifyRequest, reply: FastifyReply) 
 						...(poll && { poll }),
 						...(media && {
 							mediaFile: {
-								fileType: request.fileType as any,
-								src: (await uploadFile(media, request.fileType)).url as any,
+								fileType: fileType as any,
+								src: (await uploadFile(media, fileType)).url as any,
 								previewSrc: undefined,
 								description: mediaDescription
 							}
