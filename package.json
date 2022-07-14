@@ -17,6 +17,7 @@
 		"bcrypt": "^5.0.1",
 		"cld": "^2.8.1",
 		"cloudinary": "^1.30.0",
+		"datauri": "^4.1.0",
 		"fastify": "^4.2.1",
 		"fastify-multer": "^2.0.3",
 		"jsonwebtoken": "^8.5.1",
