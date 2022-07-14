@@ -7,8 +7,8 @@ export const validatePostBody = (request: FastifyRequest, reply: FastifyReply, d
 	const { poll, location } = requestBody;
 	request.body = {
 		...requestBody,
-		...(poll && { poll: JSON.parse(poll) }),
-		...(location && { location: JSON.parse(location) })
+		poll: poll ? JSON.parse(poll) : undefined,
+		location: location ? JSON.parse(location) : undefined
 	};
 	done();
 };
