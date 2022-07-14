@@ -1,0 +1,19 @@
+{
+	"compilerOptions": {
+		"target": "ES2022",
+		"module": "NodeNext",
+		"resolveJsonModule": true,
+		"outDir": "./dist",
+		"newLine": "lf",
+		"esModuleInterop": false,
+		"forceConsistentCasingInFileNames": true,
+		"strict": true,
+		"strictNullChecks": false,
+		"skipLibCheck": true,
+		"typeRoots": ["./types", "./node_modules/@types"]
+	},
+	"include": ["**/*", "./swagger.json"],
+	"ts-node": {
+		"transpileOnly": true
+	}
+}

@@ -1,0 +1,2193 @@
+{
+	"openapi": "3.0.0",
+	"components": {
+		"securitySchemes": {
+			"Bearer": {
+				"type": "apiKey",
+				"name": "Authorization",
+				"in": "header",
+				"description": "Enter your bearer token in the format **Bearer &#x3C;token&#x3E;**"
+			}
+		},
+		"responses": {
+			"Default": {
+				"description": "Default response"
+			}
+		}
+	},
+	"security": [
+		{
+			"Bearer": []
+		}
+	],
+	"requestBodies": {
+		"Credentials": {
+			"content": {
+				"application/json": {
+					"schema": {
+						"type": "object",
+						"properties": {
+							"handle": {
+								"type": "string"
+							},
+							"password": {
+								"type": "string"
+							}
+						}
+					}
+				}
+			}
+		},
+		"RefreshToken": {
+			"content": {
+				"application/json": {
+					"schema": {
+						"type": "object",
+						"properties": {
+							"refreshToken": {
+								"type": "string"
+							}
+						}
+					}
+				}
+			}
+		},
+		"Post": {
+			"content": {
+				"multipart/form-data": {
+					"schema": {
+						"type": "object",
+						"properties": {
+							"content": {
+								"type": "string",
+								"format": "textarea"
+							},
+							"poll": {
+								"type": "object",
+								"properties": {
+									"first": {
+										"required": true,
+										"type": "string"
+									},
+									"second": {
+										"required": true,
+										"type": "string"
+									},
+									"third": {
+										"type": "string"
+									},
+									"fourth": {
+										"type": "string"
+									},
+									"duration": {
+										"type": "integer",
+										"format": "int64",
+										"minimum": 1800000,
+										"maximum": 604800000,
+										"default": 86400000
+									}
+								}
+							},
+							"media": {
+								"type": "file"
+							},
+							"media-description": {
+								"type": "string"
+							},
+							"location": {
+								"type": "object",
+								"properties": {
+									"type": {
+										"required": true,
+										"type": "string",
+										"enum": ["Point"]
+									},
+									"coordinates": {
+										"required": true,
+										"type": "array",
+										"items": {
+											"required": true,
+											"type": "integer",
+											"minimum": -180,
+											"maximum": 180
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"WordMute": {
+			"content": {
+				"application/json": {
+					"schema": {
+						"type": "object",
+						"properties": {
+							"word": {
+								"type": "string"
+							},
+							"match": {
+								"type": "string",
+								"enum": ["exact", "contains", "startsWith", "endsWith"]
+							}
+						}
+					}
+				}
+			}
+		},
+		"FollowRequests": {
+			"content": {
+				"application/json": {
+					"schema": {
+						"type": "object",
+						"properties": {
+							"requestIds": {
+								"type": "array",
+								"items": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"Settings": {
+			"content": {
+				"application/json": {
+					"schema": {
+						"type": "object",
+						"properties": {
+							"user": {
+								"type": "string"
+							},
+							"timeline": {
+								"type": "object",
+								"properties": {
+									"includeRepeats": {
+										"type": "boolean",
+										"default": true
+									},
+									"includeReplies": {
+										"type": "boolean",
+										"default": true
+									}
+								}
+							},
+							"activity": {
+								"type": "object",
+								"properties": {
+									"period": {
+										"type": "string",
+										"enum": ["day", "week", "month"]
+									}
+								}
+							},
+							"topmost": {
+								"type": "object",
+								"properties": {
+									"period": {
+										"type": "string",
+										"enum": ["day", "week", "month", "year", "all"]
+									}
+								}
+							},
+							"profile": {
+								"type": "object",
+								"properties": {
+									"includeRepeats": {
+										"type": "boolean",
+										"default": false
+									},
+									"includeReplies": {
+										"type": "boolean",
+										"default": false
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"EmailUpdate": {
+			"content": {
+				"application/json": {
+					"schema": {
+						"type": "object",
+						"properties": {
+							"email": {
+								"required": true,
+								"type": "string"
+							}
+						}
+					}
+				}
+			}
+		},
+		"PasswordUpdate": {
+			"content": {
+				"application/json": {
+					"schema": {
+						"type": "object",
+						"properties": {
+							"oldPassword": {
+								"required": true,
+								"type": "string"
+							},
+							"newPassword": {
+								"required": true,
+								"type": "string"
+							}
+						}
+					}
+				}
+			}
+		},
+		"ForgotPassword": {
+			"content": {
+				"application/json": {
+					"schema": {
+						"type": "object",
+						"properties": {
+							"handle": {
+								"required": true,
+								"type": "string"
+							},
+							"email": {
+								"required": true,
+								"type": "string"
+							}
+						}
+					}
+				}
+			}
+		},
+		"PasswordReset": {
+			"content": {
+				"application/json": {
+					"schema": {
+						"type": "object",
+						"properties": {
+							"password": {
+								"required": true,
+								"type": "string"
+							}
+						}
+					}
+				}
+			}
+		},
+		"List": {
+			"content": {
+				"application/json": {
+					"schema": {
+						"type": "object",
+						"properties": {
+							"name": {
+								"required": true,
+								"type": "string"
+							},
+							"includeRepeats": {
+								"type": "boolean",
+								"default": true
+							},
+							"includeReplies": {
+								"type": "boolean",
+								"default": true
+							}
+						}
+					}
+				}
+			}
+		},
+		"ListUpdate": {
+			"content": {
+				"application/json": {
+					"schema": {
+						"type": "object",
+						"properties": {
+							"name": {
+								"required": true,
+								"type": "string"
+							},
+							"newName": {
+								"type": "string"
+							},
+							"includeRepeats": {
+								"type": "boolean",
+								"default": true
+							},
+							"includeReplies": {
+								"type": "boolean",
+								"default": true
+							}
+						}
+					}
+				}
+			}
+		},
+		"ListMember": {
+			"content": {
+				"application/json": {
+					"schema": {
+						"type": "object",
+						"properties": {
+							"name": {
+								"required": true,
+								"type": "string"
+							},
+							"handle": {
+								"required": true,
+								"type": "string"
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"paths": {
+		"/timeline": {
+			"get": {
+				"summary": "/timeline",
+				"parameters": [
+					{
+						"name": "includeRepeats",
+						"in": "query",
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"name": "includeReplies",
+						"in": "query",
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"name": "lastPostId",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/hashtag/{name}": {
+			"get": {
+				"summary": "/hashtag/{name}",
+				"parameters": [
+					{
+						"name": "name",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "sortBy",
+						"in": "query",
+						"schema": {
+							"type": "string",
+							"enum": ["date", "popular"]
+						}
+					},
+					{
+						"name": "lastScore",
+						"in": "query",
+						"schema": {
+							"type": "integer"
+						}
+					},
+					{
+						"name": "lastPostId",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/reject-email/{token}": {
+			"get": {
+				"summary": "/reject-email/{token}",
+				"parameters": [
+					{
+						"name": "token",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/verify-email/{token}": {
+			"get": {
+				"summary": "/verify-email/{token}",
+				"parameters": [
+					{
+						"name": "token",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/forgot-password": {
+			"post": {
+				"summary": "/forgot-password",
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				},
+				"requestBody": {
+					"$ref": "#/requestBodies/ForgotPassword"
+				}
+			}
+		},
+		"/reset-password/{token}": {
+			"post": {
+				"summary": "/reset-password/{token}",
+				"parameters": [
+					{
+						"name": "token",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				},
+				"requestBody": {
+					"$ref": "#/requestBodies/PasswordReset"
+				}
+			}
+		},
+		"/auth/sign-up": {
+			"post": {
+				"summary": "/auth/sign-up",
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				},
+				"requestBody": {
+					"$ref": "#/requestBodies/Credentials"
+				}
+			}
+		},
+		"/auth/sign-in": {
+			"post": {
+				"summary": "/auth/sign-in",
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				},
+				"requestBody": {
+					"$ref": "#/requestBodies/Credentials"
+				}
+			}
+		},
+		"/auth/refresh-token": {
+			"post": {
+				"summary": "/auth/refresh-token",
+				"parameters": [
+					{
+						"name": "X-Slug",
+						"in": "header",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "X-UID",
+						"in": "header",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				},
+				"requestBody": {
+					"$ref": "#/requestBodies/RefreshToken"
+				}
+			}
+		},
+		"/auth/revoke-token/{token}": {
+			"get": {
+				"summary": "/auth/revoke-token/{token}",
+				"parameters": [
+					{
+						"name": "token",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/auth/sign-out": {
+			"get": {
+				"summary": "/auth/sign-out",
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/users/follow/{handle}": {
+			"get": {
+				"summary": "/users/follow/{handle}",
+				"parameters": [
+					{
+						"name": "handle",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/users/cancel-req/{handle}": {
+			"get": {
+				"summary": "/users/cancel-req/{handle}",
+				"parameters": [
+					{
+						"name": "handle",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/users/unfollow/{handle}": {
+			"get": {
+				"summary": "/users/unfollow/{handle}",
+				"parameters": [
+					{
+						"name": "handle",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/users/mute/{handle}": {
+			"get": {
+				"summary": "/users/mute/{handle}",
+				"parameters": [
+					{
+						"name": "handle",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/users/unmute/{handle}": {
+			"get": {
+				"summary": "/users/unmute/{handle}",
+				"parameters": [
+					{
+						"name": "handle",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/users/block/{handle}": {
+			"get": {
+				"summary": "/users/block/{handle}",
+				"parameters": [
+					{
+						"name": "handle",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "reason",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/users/unblock/{handle}": {
+			"get": {
+				"summary": "/users/unblock/{handle}",
+				"parameters": [
+					{
+						"name": "handle",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/users/{handle}": {
+			"get": {
+				"summary": "/users/{handle}",
+				"parameters": [
+					{
+						"name": "handle",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/users/{handle}/posts": {
+			"get": {
+				"summary": "/users/{handle}/posts",
+				"parameters": [
+					{
+						"name": "handle",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "includeRepeats",
+						"in": "query",
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"name": "includeReplies",
+						"in": "query",
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"name": "lastPostId",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/users/{handle}/favourites": {
+			"get": {
+				"summary": "/users/{handle}/favourites",
+				"parameters": [
+					{
+						"name": "handle",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "lastFavouriteId",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/users/{handle}/votes": {
+			"get": {
+				"summary": "/users/{handle}/votes",
+				"parameters": [
+					{
+						"name": "handle",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "lastVoteId",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/users/{handle}/bookmarks": {
+			"get": {
+				"summary": "/users/{handle}/bookmarks",
+				"parameters": [
+					{
+						"name": "handle",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "lastBookmarkId",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/users/{handle}/following": {
+			"get": {
+				"summary": "/users/{handle}/following",
+				"parameters": [
+					{
+						"name": "handle",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "lastFollowId",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/users/{handle}/followers": {
+			"get": {
+				"summary": "/users/{handle}/followers",
+				"parameters": [
+					{
+						"name": "handle",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "lastFollowId",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/users/{handle}/mentions": {
+			"get": {
+				"summary": "/users/{handle}/mentions",
+				"parameters": [
+					{
+						"name": "handle",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "lastMentionId",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/lists": {
+			"get": {
+				"summary": "/lists",
+				"parameters": [
+					{
+						"name": "memberHandle",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "lastListId",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/lists/create": {
+			"post": {
+				"summary": "/lists/create",
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				},
+				"requestBody": {
+					"$ref": "#/requestBodies/List"
+				}
+			}
+		},
+		"/lists/update": {
+			"post": {
+				"summary": "/lists/update",
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				},
+				"requestBody": {
+					"$ref": "#/requestBodies/ListUpdate"
+				}
+			}
+		},
+		"/lists/add-member": {
+			"post": {
+				"summary": "/lists/add-member",
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				},
+				"requestBody": {
+					"$ref": "#/requestBodies/ListMember"
+				}
+			}
+		},
+		"/lists/remove-member": {
+			"post": {
+				"summary": "/lists/remove-member",
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				},
+				"requestBody": {
+					"$ref": "#/requestBodies/ListMember"
+				}
+			}
+		},
+		"/lists/delete/{name}": {
+			"post": {
+				"summary": "/lists/delete/{name}",
+				"parameters": [
+					{
+						"name": "name",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/lists/{name}/members": {
+			"get": {
+				"summary": "/lists/{name}/members",
+				"parameters": [
+					{
+						"name": "name",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "lastMemberId",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/lists/{name}/posts": {
+			"get": {
+				"summary": "/lists/{name}/posts",
+				"parameters": [
+					{
+						"name": "name",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "includeRepeats",
+						"in": "query",
+						"schema": {
+							"type": "boolean",
+							"default": true
+						}
+					},
+					{
+						"name": "includeReplies",
+						"in": "query",
+						"schema": {
+							"type": "boolean",
+							"default": true
+						}
+					},
+					{
+						"name": "lastPostId",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/posts/create": {
+			"post": {
+				"summary": "/posts/create",
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				},
+				"requestBody": {
+					"$ref": "#/requestBodies/Post"
+				}
+			}
+		},
+		"/posts/update/{postId}": {
+			"post": {
+				"summary": "/posts/update/{postId}",
+				"parameters": [
+					{
+						"name": "postId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				},
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"content": {
+										"required": true,
+										"type": "string"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/posts/favourite/{postId}": {
+			"get": {
+				"summary": "/posts/favourite/{postId}",
+				"parameters": [
+					{
+						"name": "postId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/posts/unfavourite/{postId}": {
+			"get": {
+				"summary": "/posts/unfavourite/{postId}",
+				"parameters": [
+					{
+						"name": "postId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/posts/bookmark/{postId}": {
+			"get": {
+				"summary": "/posts/bookmark/{postId}",
+				"parameters": [
+					{
+						"name": "postId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/posts/unbookmark/{postId}": {
+			"get": {
+				"summary": "/posts/unbookmark/{postId}",
+				"parameters": [
+					{
+						"name": "postId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/posts/quote/{postId}": {
+			"post": {
+				"summary": "/posts/quote/{postId}",
+				"parameters": [
+					{
+						"name": "postId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				},
+				"requestBody": {
+					"$ref": "#/requestBodies/Post"
+				}
+			}
+		},
+		"/posts/repeat/{postId}": {
+			"get": {
+				"summary": "/posts/repeat/{postId}",
+				"parameters": [
+					{
+						"name": "postId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/posts/unrepeat/{postId}": {
+			"get": {
+				"summary": "/posts/unrepeat/{postId}",
+				"parameters": [
+					{
+						"name": "postId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/posts/reply/{postId}": {
+			"post": {
+				"summary": "/posts/reply/{postId}",
+				"parameters": [
+					{
+						"name": "postId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				},
+				"requestBody": {
+					"$ref": "#/requestBodies/Post"
+				}
+			}
+		},
+		"/posts/mute/{postId}": {
+			"get": {
+				"summary": "/posts/mute/{postId}",
+				"parameters": [
+					{
+						"name": "postId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/posts/unmute/{postId}": {
+			"get": {
+				"summary": "/posts/unmute/{postId}",
+				"parameters": [
+					{
+						"name": "postId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/posts/vote/{postId}": {
+			"get": {
+				"summary": "/posts/vote/{postId}",
+				"parameters": [
+					{
+						"name": "postId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "option",
+						"in": "query",
+						"required": true,
+						"schema": {
+							"type": "string",
+							"enum": ["first", "second", "third", "fourth", "nota"]
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/posts/delete/{postId}": {
+			"delete": {
+				"summary": "/posts/delete/{postId}",
+				"parameters": [
+					{
+						"name": "postId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/posts/{postId}": {
+			"get": {
+				"summary": "/posts/{postId}",
+				"parameters": [
+					{
+						"name": "postId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/posts/{postId}/quotes": {
+			"get": {
+				"summary": "/posts/{postId}/quotes",
+				"parameters": [
+					{
+						"name": "postId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "lastQuoteId",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/posts/{postId}/replies": {
+			"get": {
+				"summary": "/posts/{postId}/replies",
+				"parameters": [
+					{
+						"name": "postId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "lastReplyId",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/posts/{postId}/parent": {
+			"get": {
+				"summary": "/posts/{postId}/parent",
+				"parameters": [
+					{
+						"name": "postId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/search": {
+			"get": {
+				"summary": "/search",
+				"parameters": [
+					{
+						"name": "q",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "from",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "since",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "until",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "has-media",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "not-from",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "sort-by",
+						"in": "query",
+						"schema": {
+							"type": "string",
+							"enum": ["match", "date", "popular"]
+						}
+					},
+					{
+						"name": "date-order",
+						"in": "query",
+						"schema": {
+							"type": "string",
+							"enum": ["desc", "asc"]
+						}
+					},
+					{
+						"name": "replies",
+						"in": "query",
+						"schema": {
+							"type": "string",
+							"enum": ["exclude", "only"]
+						}
+					},
+					{
+						"name": "langs",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "langs-match",
+						"in": "query",
+						"schema": {
+							"type": "string",
+							"enum": ["any", "all"]
+						}
+					},
+					{
+						"name": "media-desc",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "lastScore",
+						"in": "query",
+						"schema": {
+							"type": "integer"
+						}
+					},
+					{
+						"name": "lastPostId",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/search/nearby": {
+			"get": {
+				"summary": "/search/nearby",
+				"parameters": [
+					{
+						"name": "long",
+						"in": "query",
+						"required": true,
+						"schema": {
+							"type": "number",
+							"format": "float",
+							"minimum": -180,
+							"maximum": 180
+						}
+					},
+					{
+						"name": "lat",
+						"in": "query",
+						"required": true,
+						"schema": {
+							"type": "number",
+							"format": "float",
+							"minimum": -90,
+							"maximum": 90
+						}
+					},
+					{
+						"name": "max-dist",
+						"in": "query",
+						"required": true,
+						"schema": {
+							"type": "integer",
+							"minimum": 0,
+							"maximum": 50000
+						}
+					},
+					{
+						"name": "lastDistance",
+						"in": "query",
+						"schema": {
+							"type": "number",
+							"format": "double"
+						}
+					},
+					{
+						"name": "lastPostId",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/search/users": {
+			"get": {
+				"summary": "/search/users",
+				"parameters": [
+					{
+						"name": "q",
+						"in": "query",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "match",
+						"in": "query",
+						"schema": {
+							"type": "string",
+							"enum": ["exact", "contains", "startsWith", "endsWith"]
+						}
+					},
+					{
+						"name": "date-order",
+						"in": "query",
+						"schema": {
+							"type": "string",
+							"enum": ["desc", "asc"]
+						}
+					},
+					{
+						"name": "lastUserId",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/settings": {
+			"post": {
+				"summary": "/settings",
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				},
+				"requestBody": {
+					"$ref": "#/requestBodies/Settings"
+				}
+			},
+			"get": {
+				"summary": "/settings",
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/settings/mute": {
+			"post": {
+				"summary": "/settings/mute",
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				},
+				"requestBody": {
+					"$ref": "#/requestBodies/WordMute"
+				}
+			}
+		},
+		"/settings/unmute": {
+			"post": {
+				"summary": "/settings/unmute",
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				},
+				"requestBody": {
+					"$ref": "#/requestBodies/WordMute"
+				}
+			}
+		},
+		"/settings/sent-reqs": {
+			"post": {
+				"summary": "/settings/sent-reqs",
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/settings/received-reqs": {
+			"post": {
+				"summary": "/settings/received-reqs",
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/settings/accept-req/{requestId}": {
+			"get": {
+				"summary": "/settings/accept-req/{requestId}",
+				"parameters": [
+					{
+						"name": "requestId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/settings/accept-reqs": {
+			"post": {
+				"summary": "/settings/accept-reqs",
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				},
+				"requestBody": {
+					"$ref": "#/requestBodies/FollowRequests"
+				}
+			}
+		},
+		"/settings/accept-all-reqs": {
+			"get": {
+				"summary": "/settings/accept-all-reqs",
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/settings/reject-req/{requestId}": {
+			"get": {
+				"summary": "/settings/reject-req/{requestId}",
+				"parameters": [
+					{
+						"name": "requestId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/settings/reject-reqs": {
+			"post": {
+				"summary": "/settings/reject-reqs",
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				},
+				"requestBody": {
+					"$ref": "#/requestBodies/FollowRequests"
+				}
+			}
+		},
+		"/settings/reject-all-reqs": {
+			"get": {
+				"summary": "/settings/reject-all-reqs",
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/settings/blocked": {
+			"get": {
+				"summary": "/settings/blocked",
+				"parameters": [
+					{
+						"name": "lastBlockId",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/settings/muted/users": {
+			"get": {
+				"summary": "/settings/muted/users",
+				"parameters": [
+					{
+						"name": "lastMuteId",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/settings/muted/posts": {
+			"get": {
+				"summary": "/settings/muted/posts",
+				"parameters": [
+					{
+						"name": "lastMuteId",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/settings/muted/words": {
+			"get": {
+				"summary": "/settings/muted/words",
+				"parameters": [
+					{
+						"name": "lastMuteId",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/settings/pin/{postId}": {
+			"get": {
+				"summary": "/settings/pin/{postId}",
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/settings/unpin": {
+			"get": {
+				"summary": "/settings/unpin",
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/settings/update-email": {
+			"post": {
+				"summary": "/settings/update-email",
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				},
+				"requestBody": {
+					"$ref": "#/requestBodies/EmailUpdate"
+				}
+			}
+		},
+		"/settings/change-password": {
+			"post": {
+				"summary": "/settings/change-password",
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				},
+				"requestBody": {
+					"$ref": "#/requestBodies/PasswordUpdate"
+				}
+			}
+		},
+		"/settings/deactivate": {
+			"get": {
+				"summary": "/settings/deactivate",
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/settings/activate": {
+			"get": {
+				"summary": "/settings/activate",
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/settings/delete": {
+			"delete": {
+				"summary": "/settings/delete",
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/settings/{path}": {
+			"put": {
+				"summary": "/settings/{path}",
+				"parameters": [
+					{
+						"name": "path",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "value",
+						"in": "query",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			},
+			"get": {
+				"summary": "/settings/{path}",
+				"parameters": [
+					{
+						"name": "path",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/activity/{period}": {
+			"get": {
+				"parameters": [
+					{
+						"name": "period",
+						"in": "path",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"enum": ["day", "week", "month"]
+						}
+					},
+					{
+						"name": "lastEntryId",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/topmost/{period}": {
+			"get": {
+				"parameters": [
+					{
+						"name": "period",
+						"in": "path",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"enum": ["day", "week", "month", "year", "all"]
+						}
+					},
+					{
+						"name": "lastScore",
+						"in": "query",
+						"schema": {
+							"type": "integer"
+						}
+					},
+					{
+						"name": "lastPostId",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		},
+		"/users/{handle}/topmost/{period}": {
+			"get": {
+				"parameters": [
+					{
+						"name": "handle",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "period",
+						"in": "path",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"enum": ["day", "week", "month", "year", "all"]
+						}
+					},
+					{
+						"name": "lastScore",
+						"in": "query",
+						"schema": {
+							"type": "integer"
+						}
+					},
+					{
+						"name": "lastPostId",
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"default": {
+						"$ref": "#/components/responses/Default"
+					}
+				}
+			}
+		}
+	}
+}
