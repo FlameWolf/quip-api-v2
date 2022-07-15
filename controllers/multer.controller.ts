@@ -6,7 +6,7 @@ import { File, FileFilterCallback } from "fastify-multer/lib/interfaces";
 import { megaByte } from "../library";
 
 const validMimeTypes = ["image", "video"];
-const extractMediaFile = multer({
+const factory = multer({
 	fileFilter: (request: FastifyRequest, file: File, cb: FileFilterCallback) => {
 		const [type, subtype] = file.mimetype.split("/");
 		request.fileType = type;
@@ -20,5 +20,5 @@ const extractMediaFile = multer({
 	storage: memoryStorage()
 });
 
-export const uploadMediaFileToCloud = extractMediaFile.single("media");
+export const extractMediaFile = factory.single("media");
 export const sanitiseFileName = (value: string, maxLength?: number) => value.trim().substring(0, maxLength).replace(/\W/g, "_");

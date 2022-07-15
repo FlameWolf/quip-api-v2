@@ -7,19 +7,19 @@ import * as bookmarksController from "../controllers/bookmarks.controller";
 import * as mutesController from "../controllers/mutes.controller";
 import * as multerController from "../controllers/multer.controller";
 import { postCreateSchema, postInteractAndCreateSchema, postInteractSchema, postQuotesSchema, postRepliesSchema, postUpdateSchema, postVoteSchema } from "../requestDefinitions/posts.requests";
-import { validatePostBody } from "../hooks/postBodyValidation";
+import { preValidatePostBody } from "../hooks/postBodyPreValidation";
 
 const postsRouter = (server: FastifyInstance, options: FastifyPluginOptions, done: HookHandlerDoneFunction) => {
-	server.post("/create", { preValidation: [multerController.uploadMediaFileToCloud, validatePostBody], schema: postCreateSchema, preHandler: server.auth([server.requireAuthentication]) }, postsController.createPost);
+	server.post("/create", { preValidation: [multerController.extractMediaFile, preValidatePostBody], schema: postCreateSchema, preHandler: server.auth([server.requireAuthentication]) }, postsController.createPost);
 	server.post("/update/:postId", { schema: postUpdateSchema, preHandler: server.auth([server.requireAuthentication]) }, postsController.updatePost);
 	server.get("/favourite/:postId", { schema: postInteractSchema, preHandler: server.auth([server.requireAuthentication]) }, favouritesController.addFavourite);
 	server.get("/unfavourite/:postId", { schema: postInteractSchema, preHandler: server.auth([server.requireAuthentication]) }, favouritesController.removeFavourite);
 	server.get("/bookmark/:postId", { schema: postInteractSchema, preHandler: server.auth([server.requireAuthentication]) }, bookmarksController.addBookmark);
 	server.get("/unbookmark/:postId", { schema: postInteractSchema, preHandler: server.auth([server.requireAuthentication]) }, bookmarksController.removeBookmark);
-	server.post("/quote/:postId", { preValidation: [multerController.uploadMediaFileToCloud, validatePostBody], schema: postInteractAndCreateSchema, preHandler: server.auth([server.requireAuthentication]) }, postsController.quotePost);
+	server.post("/quote/:postId", { preValidation: [multerController.extractMediaFile, preValidatePostBody], schema: postInteractAndCreateSchema, preHandler: server.auth([server.requireAuthentication]) }, postsController.quotePost);
 	server.get("/repeat/:postId", { schema: postInteractSchema, preHandler: server.auth([server.requireAuthentication]) }, postsController.repeatPost);
 	server.get("/unrepeat/:postId", { schema: postInteractSchema, preHandler: server.auth([server.requireAuthentication]) }, postsController.unrepeatPost);
-	server.post("/reply/:postId", { preValidation: [multerController.uploadMediaFileToCloud, validatePostBody], schema: postInteractAndCreateSchema, preHandler: server.auth([server.requireAuthentication]) }, postsController.replyToPost);
+	server.post("/reply/:postId", { preValidation: [multerController.extractMediaFile, preValidatePostBody], schema: postInteractAndCreateSchema, preHandler: server.auth([server.requireAuthentication]) }, postsController.replyToPost);
 	server.get("/mute/:postId", { schema: postInteractSchema, preHandler: server.auth([server.requireAuthentication]) }, mutesController.mutePost);
 	server.get("/unmute/:postId", { schema: postInteractSchema, preHandler: server.auth([server.requireAuthentication]) }, mutesController.unmutePost);
 	server.get("/vote/:postId", { schema: postVoteSchema, preHandler: server.auth([server.requireAuthentication]) }, postsController.castVote);
