@@ -65,7 +65,7 @@ server.register(multer.contentParser).after(() => {
 	server.register(fastifyAuth).after(() => {
 		server.decorate("authenticateRequest", authenticateRequest);
 		server.decorate("requireAuthentication", requireAuthentication);
-		server.addHook("preHandler", server.auth([server.authenticateRequest]));
+		server.addHook("onRequest", server.auth([server.authenticateRequest]));
 		server.register(indexRouter);
 		server.register(authRouter, { prefix: "/auth" });
 		server.register(usersRouter, { prefix: "/users" });
