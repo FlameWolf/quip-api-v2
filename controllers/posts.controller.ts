@@ -189,7 +189,7 @@ export const createPost = async (request: FastifyRequest, reply: FastifyReply) =
 				...(media && {
 					mediaFile: {
 						fileType: fileType as any,
-						src: (await uploadFile(media, fileType)).url as any,
+						src: (await uploadFile(media, fileType)).secure_url as any,
 						previewSrc: undefined,
 						description: mediaDescription
 					}
@@ -363,7 +363,7 @@ export const quotePost = async (request: FastifyRequest, reply: FastifyReply) =>
 					...(media && {
 						mediaFile: {
 							fileType: fileType as any,
-							src: (await uploadFile(media, fileType)).url as any,
+							src: (await uploadFile(media, fileType)).secure_url as any,
 							previewSrc: undefined,
 							description: mediaDescription
 						}
@@ -473,7 +473,7 @@ export const replyToPost = async (request: FastifyRequest, reply: FastifyReply) 
 						...(media && {
 							mediaFile: {
 								fileType: fileType as any,
-								src: (await uploadFile(media, fileType)).url as any,
+								src: (await uploadFile(media, fileType)).secure_url as any,
 								previewSrc: undefined,
 								description: mediaDescription
 							}
