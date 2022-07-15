@@ -19,6 +19,5 @@ const factory = multer({
 	},
 	storage: memoryStorage()
 });
-
 export const extractMediaFile = factory.single("media");
 export const sanitiseFileName = (value: string, maxLength?: number) => value.trim().substring(0, maxLength).replace(/\W/g, "_");
