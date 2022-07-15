@@ -82,7 +82,7 @@ server.setErrorHandler((err, request, reply) => {
 server.listen(
 	{
 		port: +(process.env.PORT || "3072"),
-		host: process.env.HOST || "127.0.0.1"
+		host: process.env.HOST || "::"
 	},
 	(err, address) => {
 		if (err) {
