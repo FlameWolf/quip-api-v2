@@ -109,6 +109,7 @@ const uploadFile = async (file: File, fileType: string) => {
 	const parser = new dataUriParser();
 	const data = parser.format("", file.buffer);
 	const response = await cloudinary.uploader.upload(data.content, {
+		resource_type: fileType,
 		folder: `${fileType}s/`,
 		public_id: `${multerController.sanitiseFileName(file.originalname.replace(/\.\w+$/, ""), 16)}_${Date.now().valueOf()}`
 	});
