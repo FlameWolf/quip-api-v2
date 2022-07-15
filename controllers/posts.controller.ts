@@ -7,7 +7,7 @@ import cld = require("cld");
 import { File } from "fastify-multer/lib/interfaces";
 import dataUriParser = require("datauri/parser");
 import { v2 as cloudinary } from "cloudinary";
-import { getUnicodeClusterCount, maxContentLength, nullId, quoteScore, repeatScore, replyScore, voteScore } from "../library";
+import { maxContentLength, nullId, quoteScore, repeatScore, replyScore, voteScore, getUnicodeClusterCount } from "../library";
 import postAggregationPipeline from "../db/pipelines/post";
 import postParentAggregationPipeline from "../db/pipelines/post-parent";
 import postQuotesAggregationPipeline from "../db/pipelines/post-quotes";

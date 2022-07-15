@@ -3,7 +3,7 @@
 import { ObjectId } from "bson";
 import { model, Schema } from "mongoose";
 import * as uniqueValidator from "mongoose-unique-validator";
-import { getUnicodeClusterCount, maxContentLength } from "../library";
+import { maxContentLength, getUnicodeClusterCount } from "../library";
 
 const blockSchema = new Schema(
 	{
