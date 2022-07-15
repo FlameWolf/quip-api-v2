@@ -1,12 +1,13 @@
 "use strict";
 
+import { FastifyRequest } from "fastify";
 import multer, { memoryStorage } from "fastify-multer";
 import { File, FileFilterCallback } from "fastify-multer/lib/interfaces";
 import { megaByte } from "../library";
 
 const validMimeTypes = ["image", "video"];
 const extractMediaFile = multer({
-	fileFilter: (request: Dictionary, file: File, cb: FileFilterCallback) => {
+	fileFilter: (request: FastifyRequest, file: File, cb: FileFilterCallback) => {
 		const [type, subtype] = file.mimetype.split("/");
 		request.fileType = type;
 		request.fileSubtype = subtype;
