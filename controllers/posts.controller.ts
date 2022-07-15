@@ -5,14 +5,14 @@ import { FastifyReply, FastifyRequest } from "fastify";
 import mongoose, { HydratedDocument, InferSchemaType } from "mongoose";
 import cld = require("cld");
 import { File } from "fastify-multer/lib/interfaces";
-import DataURIParser = require("datauri/parser");
+import dataUriParser = require("datauri/parser");
 import { v2 as cloudinary } from "cloudinary";
-import { sanitiseFileName } from "./multer.controller";
+import { contentLengthRegExp, maxContentLength, nullId, quoteScore, repeatScore, replyScore, voteScore } from "../library";
 import postAggregationPipeline from "../db/pipelines/post";
 import postParentAggregationPipeline from "../db/pipelines/post-parent";
 import postQuotesAggregationPipeline from "../db/pipelines/post-quotes";
 import postRepliesAggregationPipeline from "../db/pipelines/post-replies";
-import { contentLengthRegExp, maxContentLength, nullId, quoteScore, repeatScore, replyScore, voteScore } from "../library";
+import * as multerController from "./multer.controller";
 import Bookmark from "../models/bookmark.model";
 import Favourite from "../models/favourite.model";
 import MutedPost from "../models/muted.post.model";
@@ -106,11 +106,11 @@ const updateMentionsAndHashtags = async (content: string, post: Partial<PostMode
 	post.hashtags = postHashtags.size > 0 ? [...postHashtags] : undefined;
 };
 const uploadFile = async (file: File, fileType: string) => {
-	const parser = new DataURIParser();
+	const parser = new dataUriParser();
 	const data = parser.format("", file.buffer);
 	const response = await cloudinary.uploader.upload(data.content, {
 		folder: `${fileType}s/`,
-		public_id: `${sanitiseFileName(file.originalname.replace(/\.\w+$/, ""), 16)}_${Date.now().valueOf()}`
+		public_id: `${multerController.sanitiseFileName(file.originalname.replace(/\.\w+$/, ""), 16)}_${Date.now().valueOf()}`
 	});
 	return response;
 };
