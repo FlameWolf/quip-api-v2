@@ -5,7 +5,8 @@
 	"main": "index.ts",
 	"scripts": {
 		"dev": "nodemon --exec ts-node index.ts",
-		"build": "tsc && prettier --write ./dist",
+		"build": "tsc",
+		"prettify": "prettier --write .",
 		"start": "node --use-strict ./dist/index.js"
 	},
 	"author": "",
