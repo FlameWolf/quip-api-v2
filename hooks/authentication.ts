@@ -1,7 +1,7 @@
 "use strict";
 
 import * as jwt from "jsonwebtoken";
-import fastify, { FastifyRequest, FastifyReply, HookHandlerDoneFunction, FastifyInstance } from "fastify";
+import { FastifyRequest, FastifyReply, HookHandlerDoneFunction } from "fastify";
 
 export const authenticateRequest = (request: FastifyRequest, reply: FastifyReply, done: HookHandlerDoneFunction) => {
 	try {
