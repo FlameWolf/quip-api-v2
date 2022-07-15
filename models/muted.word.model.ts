@@ -2,7 +2,7 @@
 
 import { ObjectId } from "bson";
 import { Schema, model } from "mongoose";
-import { contentLengthRegExp, maxMutedWordLength, escapeRegExp } from "../library";
+import { maxMutedWordLength, escapeRegExp, getUnicodeClusterCount } from "../library";
 import * as uniqueValidator from "mongoose-unique-validator";
 
 const mutedWordSchema = new Schema(
@@ -13,7 +13,7 @@ const mutedWordSchema = new Schema(
 			required: true,
 			set: (value: string) => escapeRegExp(value),
 			validate: {
-				validator: (value: string) => (value.match(contentLengthRegExp)?.length || 0) <= maxMutedWordLength,
+				validator: (value: string) => getUnicodeClusterCount(value) <= maxMutedWordLength,
 				message: "Word length exceeds the maximum allowed limit"
 			},
 			index: true

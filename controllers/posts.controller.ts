@@ -7,7 +7,7 @@ import cld = require("cld");
 import { File } from "fastify-multer/lib/interfaces";
 import dataUriParser = require("datauri/parser");
 import { v2 as cloudinary } from "cloudinary";
-import { contentLengthRegExp, maxContentLength, nullId, quoteScore, repeatScore, replyScore, voteScore } from "../library";
+import { getUnicodeClusterCount, maxContentLength, nullId, quoteScore, repeatScore, replyScore, voteScore } from "../library";
 import postAggregationPipeline from "../db/pipelines/post";
 import postParentAggregationPipeline from "../db/pipelines/post-parent";
 import postQuotesAggregationPipeline from "../db/pipelines/post-quotes";
@@ -34,7 +34,7 @@ const validateContent = (content: string, poll?: any, media?: any, postId?: any)
 			throw new Error("No content");
 		}
 	}
-	if ((content.match(contentLengthRegExp)?.length || 0) > maxContentLength) {
+	if (getUnicodeClusterCount(content) > maxContentLength) {
 		throw new Error("Content too long");
 	}
 };

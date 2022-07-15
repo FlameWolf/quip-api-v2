@@ -2,11 +2,11 @@
 
 import { ObjectId } from "bson";
 import { Schema, SchemaTypes, model, ValidateOpts } from "mongoose";
-import { contentLengthRegExp, maxContentLength, maxPollOptionLength, minPollDuration, maxPollDuration } from "../library";
+import { maxContentLength, maxPollOptionLength, minPollDuration, maxPollDuration, getUnicodeClusterCount } from "../library";
 
 const { Url, Point } = SchemaTypes;
 const validatePollOption: ValidateOpts<string> = {
-	validator: (value: string) => (value.match(contentLengthRegExp)?.length || 0) <= maxPollOptionLength,
+	validator: (value: string) => getUnicodeClusterCount(value) <= maxPollOptionLength,
 	message: "Poll option length exceeds the maximum allowed limit"
 };
 const postSchema = new Schema(
@@ -15,7 +15,7 @@ const postSchema = new Schema(
 			type: String,
 			trim: true,
 			validate: {
-				validator: (value: string) => (value.match(contentLengthRegExp)?.length || 0) <= maxContentLength,
+				validator: (value: string) => getUnicodeClusterCount(value) <= maxContentLength,
 				message: "Content length exceeds the maximum allowed limit"
 			},
 			index: {

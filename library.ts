@@ -7,7 +7,6 @@ export const urlRegExp = /^(\w+[~@#$\-_+]?\w+:\/\/)((\w)+[\-\._~:\/\?#\[\]@!$&'\
 export const emailRegExp = /^[\w\.-]+@[\w\.-]+\.\w+$/;
 export const rounds = 10;
 export const authTokenLife = 1000 * 60 * 5;
-export const contentLengthRegExp = /\p{L}\p{M}?|\S|\s/gu;
 export const maxContentLength = 256;
 export const maxPollOptionLength = 32;
 export const maxMutedWordLength = 256;
@@ -56,4 +55,5 @@ export const getProperty = (operand: { [x: string]: any }, path: string | Array<
 	}
 	return operand;
 };
+export const getUnicodeClusterCount = (value: string) => Array.from(new Intl.Segmenter().segment(value)).length;
 export const escapeRegExp = (value: string) => value.replace(/[\/.*+?|[()\]{}\$^-]/g, (match: any) => `\\${match}`);

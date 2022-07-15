@@ -3,7 +3,7 @@
 import { ObjectId } from "bson";
 import { model, Schema } from "mongoose";
 import * as uniqueValidator from "mongoose-unique-validator";
-import { contentLengthRegExp, maxContentLength } from "../library";
+import { getUnicodeClusterCount, maxContentLength } from "../library";
 
 const blockSchema = new Schema(
 	{
@@ -13,7 +13,7 @@ const blockSchema = new Schema(
 			type: String,
 			trim: true,
 			validate: {
-				validator: (value: string) => (value.match(contentLengthRegExp)?.length || 0) <= maxContentLength,
+				validator: (value: string) => getUnicodeClusterCount(value) <= maxContentLength,
 				message: "Reason length exceeds the maximum allowed limit"
 			}
 		}
