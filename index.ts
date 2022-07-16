@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import "./schemaTypes/point";
 import "./schemaTypes/url";
 import fastify from "fastify";
+import fastifyCors from "@fastify/cors";
 import multer = require("fastify-multer");
 import { v2 as cloudinary } from "cloudinary";
 import fastifyAuth from "@fastify/auth";
@@ -36,7 +37,12 @@ cloudinary.config({
 });
 
 const server = fastify();
-server.register(require("@fastify/cors"));
+server.register(fastifyCors, {
+	origin: process.env.ALLOW_ORIGIN,
+	credentials: true,
+	allowedHeaders: ["Authorization", "Origin", "X-Requested-With", "Content-Type", "Accept", "X-Slug", "X-UID"],
+	methods: ["OPTIONS", "POST", "PUT", "PATCH", "GET", "DELETE"]
+});
 server.register(multer.contentParser).after(() => {
 	if (!isProdEnv) {
 		server.register(require("@fastify/swagger"), {
