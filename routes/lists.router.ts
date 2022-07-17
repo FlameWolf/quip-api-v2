@@ -1,7 +1,7 @@
 "use strict";
 
 import { FastifyInstance, FastifyPluginOptions, HookHandlerDoneFunction } from "fastify";
-import { requireAuthentication } from "../hooks/authentication";
+import requireAuthentication from "../hooks/require-authentication";
 import { listsSchema, listMemberSchema, listInteractSchema, listCreateSchema, listUpdateSchema, listMembersSchema, listPostsSchema } from "../requestDefinitions/lists.requests";
 import * as userController from "../controllers/users.controller";
 import * as listsController from "../controllers/lists.controller";

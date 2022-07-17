@@ -1,7 +1,7 @@
 "use strict";
 
 import { FastifyInstance, FastifyPluginOptions, HookHandlerDoneFunction } from "fastify";
-import { requireAuthentication } from "../hooks/authentication";
+import requireAuthentication from "../hooks/require-authentication";
 import { preValidatePostBody } from "../hooks/postBodyPreValidation";
 import { postCreateSchema, postInteractAndCreateSchema, postInteractSchema, postQuotesSchema, postRepliesSchema, postUpdateSchema, postVoteSchema } from "../requestDefinitions/posts.requests";
 import * as postsController from "../controllers/posts.controller";

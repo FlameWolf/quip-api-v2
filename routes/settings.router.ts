@@ -1,7 +1,7 @@
 "use strict";
 
 import { FastifyInstance, FastifyPluginOptions, HookHandlerDoneFunction } from "fastify";
-import { requireAuthentication } from "../hooks/authentication";
+import requireAuthentication from "../hooks/require-authentication";
 import { wordMuteSchema, settingsSchema, requestApprovalSchema, followRequestsSchema, blockedUsersSchema, mutedItemsSchema, updateEmailSchema, updateSettingSchema, getSettingSchema } from "../requestDefinitions/settings.requests";
 import { postInteractSchema } from "../requestDefinitions/posts.requests";
 import * as settingsController from "../controllers/settings.controller";

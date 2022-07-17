@@ -1,7 +1,7 @@
 "use strict";
 
 import { FastifyInstance, FastifyPluginOptions, FastifyReply, FastifyRequest, HookHandlerDoneFunction } from "fastify";
-import { requireAuthentication } from "../hooks/authentication";
+import requireAuthentication from "../hooks/require-authentication";
 import { activitySchema, emailApprovalSchema, forgotPasswordSchema, hashtagSchema, resetPasswordSchema, timelineSchema, topmostSchema } from "../requestDefinitions/index.requests";
 import * as indexController from "../controllers/index.controller";
 
