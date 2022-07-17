@@ -36,14 +36,11 @@ cloudinary.config({
 });
 
 const server = fastify();
-server.register((instance, options, done) => {
-	instance.addHook("onRequest", (request, reply, done) => {
-		const headers = request.headers as Dictionary;
-		headers["Access-Control-Allow-Origin"] = process.env.ALLOW_ORIGIN;
-		headers["Access-Control-Allow-Credentials"] = true;
-		headers["Access-Control-Allow-Headers"] = "Authorization, Origin, X-Requested-With, Content-Type, Accept, X-Slug, X-UID";
-		headers["Access-Control-Allow-Methods"] = "OPTIONS, POST, PUT, PATCH, GET, DELETE";
-	});
+server.addHook("onRequest", (request, reply, done) => {
+	reply.header("Access-Control-Allow-Origin", process.env.ALLOW_ORIGIN);
+	reply.header("Access-Control-Allow-Credentials", true);
+	reply.header("Access-Control-Allow-Headers", "Authorization, Origin, X-Requested-With, Content-Type, Accept, X-Slug, X-UID");
+	reply.header("Access-Control-Allow-Methods", "OPTIONS, POST, PUT, PATCH, GET, DELETE");
 	done();
 });
 server.register(multer.contentParser).after(() => {
