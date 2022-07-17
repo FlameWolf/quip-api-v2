@@ -67,9 +67,7 @@ server.register(multer.contentParser).after(() => {
 			}
 		});
 	}
-	server.decorate("authenticateRequest", authenticateRequest);
-	server.decorate("requireAuthentication", requireAuthentication);
-	server.addHook("onRequest", server.authenticateRequest);
+	server.addHook("onRequest", authenticateRequest);
 	server.register(indexRouter);
 	server.register(authRouter, { prefix: "/auth" });
 	server.register(usersRouter, { prefix: "/users" });

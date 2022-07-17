@@ -1,15 +1,16 @@
 "use strict";
 
 import { FastifyInstance, FastifyPluginOptions, HookHandlerDoneFunction } from "fastify";
+import { requireAuthentication } from "../hooks/authentication";
+import { wordMuteSchema, settingsSchema, requestApprovalSchema, followRequestsSchema, blockedUsersSchema, mutedItemsSchema, updateEmailSchema, updateSettingSchema, getSettingSchema } from "../requestDefinitions/settings.requests";
+import { postInteractSchema } from "../requestDefinitions/posts.requests";
 import * as settingsController from "../controllers/settings.controller";
 import * as mutesController from "../controllers/mutes.controller";
 import * as usersController from "../controllers/users.controller";
 import * as followRequestsController from "../controllers/follow-requests.controller";
-import { wordMuteSchema, settingsSchema, requestApprovalSchema, followRequestsSchema, blockedUsersSchema, mutedItemsSchema, updateEmailSchema, updateSettingSchema, getSettingSchema } from "../requestDefinitions/settings.requests";
-import { postInteractSchema } from "../requestDefinitions/posts.requests";
 
 const settingsRouter = (server: FastifyInstance, options: FastifyPluginOptions, done: HookHandlerDoneFunction) => {
-	server.addHook("onRequest", server.requireAuthentication);
+	server.addHook("onRequest", requireAuthentication);
 	server.post("/", { schema: settingsSchema }, settingsController.updateSettings);
 	server.get("/", settingsController.getSettings);
 	server.post("/mute", { schema: wordMuteSchema }, mutesController.muteWord);

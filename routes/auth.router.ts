@@ -1,8 +1,8 @@
 "use strict";
 
 import { FastifyInstance, FastifyPluginOptions, HookHandlerDoneFunction } from "fastify";
-import * as authController from "../controllers/auth.controller";
 import { credentialsSchema, refreshTokenSchema, revokeTokenSchema } from "../requestDefinitions/auth.requests";
+import * as authController from "../controllers/auth.controller";
 
 const authRouter = (server: FastifyInstance, options: FastifyPluginOptions, done: HookHandlerDoneFunction) => {
 	server.post("/sign-up", { schema: credentialsSchema }, authController.signUp);

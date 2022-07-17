@@ -1,8 +1,8 @@
 "use strict";
 
 import { FastifyInstance, FastifyPluginOptions, HookHandlerDoneFunction } from "fastify";
-import * as searchController from "../controllers/search.controller";
 import { searchNearbySchema, searchSchema, searchUsersSchema } from "../requestDefinitions/search.requests";
+import * as searchController from "../controllers/search.controller";
 
 const searchRouter = (server: FastifyInstance, options: FastifyPluginOptions, done: HookHandlerDoneFunction) => {
 	server.get("/", { schema: searchSchema }, searchController.searchPosts);
