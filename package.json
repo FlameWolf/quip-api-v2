@@ -13,7 +13,6 @@
 	"license": "ISC",
 	"dependencies": {
 		"@fastify/auth": "^3.0.2",
-		"@fastify/cors": "^8.0.0",
 		"@fastify/static": "^6.4.0",
 		"bcrypt": "^5.0.1",
 		"cld": "^2.8.1",
