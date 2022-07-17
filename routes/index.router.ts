@@ -12,8 +12,8 @@ const indexRouter = (server: FastifyInstance, options: FastifyPluginOptions, don
 		}
 		reply.status(404).send();
 	});
-	server.get("/timeline", { onRequest: server.auth([server.requireAuthentication]), schema: timelineSchema }, indexController.timeline);
-	server.get("/activity/:period?", { onRequest: server.auth([server.requireAuthentication]), schema: activitySchema }, indexController.activity);
+	server.get("/timeline", { onRequest: server.requireAuthentication, schema: timelineSchema }, indexController.timeline);
+	server.get("/activity/:period?", { onRequest: server.requireAuthentication, schema: activitySchema }, indexController.activity);
 	server.get("/topmost/:period?", { schema: topmostSchema }, indexController.topmost);
 	server.get("/hashtag/:name", { schema: hashtagSchema }, indexController.hashtag);
 	server.get("/reject-email/:token", { schema: emailApprovalSchema }, indexController.rejectEmail);

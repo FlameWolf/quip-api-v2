@@ -6,7 +6,6 @@ import "./schemaTypes/url";
 import fastify from "fastify";
 import multer = require("fastify-multer");
 import { v2 as cloudinary } from "cloudinary";
-import fastifyAuth from "@fastify/auth";
 import { authenticateRequest, requireAuthentication } from "./hooks/authentication";
 import indexRouter from "./routes/index.router";
 import authRouter from "./routes/auth.router";
@@ -68,18 +67,16 @@ server.register(multer.contentParser).after(() => {
 			}
 		});
 	}
-	server.register(fastifyAuth).after(() => {
-		server.decorate("authenticateRequest", authenticateRequest);
-		server.decorate("requireAuthentication", requireAuthentication);
-		server.addHook("onRequest", server.auth([server.authenticateRequest]));
-		server.register(indexRouter);
-		server.register(authRouter, { prefix: "/auth" });
-		server.register(usersRouter, { prefix: "/users" });
-		server.register(listsRouter, { prefix: "/lists" });
-		server.register(postsRouter, { prefix: "/posts" });
-		server.register(searchRouter, { prefix: "/search" });
-		server.register(settingsRouter, { prefix: "/settings" });
-	});
+	server.decorate("authenticateRequest", authenticateRequest);
+	server.decorate("requireAuthentication", requireAuthentication);
+	server.addHook("onRequest", server.authenticateRequest);
+	server.register(indexRouter);
+	server.register(authRouter, { prefix: "/auth" });
+	server.register(usersRouter, { prefix: "/users" });
+	server.register(listsRouter, { prefix: "/lists" });
+	server.register(postsRouter, { prefix: "/posts" });
+	server.register(searchRouter, { prefix: "/search" });
+	server.register(settingsRouter, { prefix: "/settings" });
 });
 server.setErrorHandler((err, request, reply) => {
 	request.log.error(err.toString());

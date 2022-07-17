@@ -9,7 +9,7 @@ import { wordMuteSchema, settingsSchema, requestApprovalSchema, followRequestsSc
 import { postInteractSchema } from "../requestDefinitions/posts.requests";
 
 const settingsRouter = (server: FastifyInstance, options: FastifyPluginOptions, done: HookHandlerDoneFunction) => {
-	server.addHook("onRequest", server.auth([server.requireAuthentication]));
+	server.addHook("onRequest", server.requireAuthentication);
 	server.post("/", { schema: settingsSchema }, settingsController.updateSettings);
 	server.get("/", settingsController.getSettings);
 	server.post("/mute", { schema: wordMuteSchema }, mutesController.muteWord);

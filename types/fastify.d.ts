@@ -1,12 +1,11 @@
-import fastify, { FastifyInstance, FastifyRequest, FastifySchema } from "fastify";
-import { FastifyAuthFunction } from "@fastify/auth";
+import fastify, { FastifyInstance, FastifyRequest, FastifySchema, onRequestHookHandler } from "fastify";
 import { File } from "fastify-multer/lib/interfaces";
 import { JwtPayload } from "jsonwebtoken";
 
 declare module "fastify" {
 	interface FastifyInstance {
-		authenticateRequest: FastifyAuthFunction;
-		requireAuthentication: FastifyAuthFunction;
+		authenticateRequest: onRequestHookHandler;
+		requireAuthentication: onRequestHookHandler;
 	}
 	interface FastifyRequest {
 		userInfo?: string | JwtPayload | UserInfo;
