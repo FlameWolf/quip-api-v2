@@ -9,23 +9,23 @@ import * as followRequestsController from "../controllers/follow-requests.contro
 import * as mutesController from "../controllers/mutes.controller";
 import * as blocksController from "../controllers/blocks.controller";
 
-const usersRouter = (server: FastifyInstance, options: FastifyPluginOptions, done: HookHandlerDoneFunction) => {
-	server.get("/follow/:handle", { onRequest: requireAuthentication, schema: userInteractSchema }, followsController.followUser);
-	server.get("/cancel-req/:handle", { onRequest: requireAuthentication, schema: userInteractSchema }, followRequestsController.cancelFollowRequest);
-	server.get("/unfollow/:handle", { onRequest: requireAuthentication, schema: userInteractSchema }, followsController.unfollowUser);
-	server.get("/mute/:handle", { onRequest: requireAuthentication, schema: userInteractSchema }, mutesController.muteUser);
-	server.get("/unmute/:handle", { onRequest: requireAuthentication, schema: userInteractSchema }, mutesController.unmuteUser);
-	server.get("/block/:handle", { onRequest: requireAuthentication, schema: blockUserSchema }, blocksController.blockUser);
-	server.get("/unblock/:handle", { onRequest: requireAuthentication, schema: userInteractSchema }, blocksController.unblockUser);
-	server.get("/:handle", { schema: userInteractSchema }, usersController.getUser);
-	server.get("/:handle/posts", { schema: userPostsSchema }, usersController.getUserPosts);
-	server.get("/:handle/topmost/:period?", { schema: userTopmostSchema }, usersController.getUserTopmost);
-	server.get("/:handle/favourites", { onRequest: requireAuthentication, schema: userFavouritesSchema }, usersController.getUserFavourites);
-	server.get("/:handle/votes", { onRequest: requireAuthentication, schema: userVotesSchema }, usersController.getUserVotes);
-	server.get("/:handle/bookmarks", { onRequest: requireAuthentication, schema: userBookmarksSchema }, usersController.getUserBookmarks);
-	server.get("/:handle/following", { onRequest: requireAuthentication, schema: userFollowsSchema }, usersController.getUserFollowing);
-	server.get("/:handle/followers", { onRequest: requireAuthentication, schema: userFollowsSchema }, usersController.getUserFollowers);
-	server.get("/:handle/mentions", { schema: userMentionsSchema }, usersController.getUserMentions);
+const usersRouter = (instance: FastifyInstance, options: FastifyPluginOptions, done: HookHandlerDoneFunction) => {
+	instance.get("/follow/:handle", { onRequest: requireAuthentication, schema: userInteractSchema }, followsController.followUser);
+	instance.get("/cancel-req/:handle", { onRequest: requireAuthentication, schema: userInteractSchema }, followRequestsController.cancelFollowRequest);
+	instance.get("/unfollow/:handle", { onRequest: requireAuthentication, schema: userInteractSchema }, followsController.unfollowUser);
+	instance.get("/mute/:handle", { onRequest: requireAuthentication, schema: userInteractSchema }, mutesController.muteUser);
+	instance.get("/unmute/:handle", { onRequest: requireAuthentication, schema: userInteractSchema }, mutesController.unmuteUser);
+	instance.get("/block/:handle", { onRequest: requireAuthentication, schema: blockUserSchema }, blocksController.blockUser);
+	instance.get("/unblock/:handle", { onRequest: requireAuthentication, schema: userInteractSchema }, blocksController.unblockUser);
+	instance.get("/:handle", { schema: userInteractSchema }, usersController.getUser);
+	instance.get("/:handle/posts", { schema: userPostsSchema }, usersController.getUserPosts);
+	instance.get("/:handle/topmost/:period?", { schema: userTopmostSchema }, usersController.getUserTopmost);
+	instance.get("/:handle/favourites", { onRequest: requireAuthentication, schema: userFavouritesSchema }, usersController.getUserFavourites);
+	instance.get("/:handle/votes", { onRequest: requireAuthentication, schema: userVotesSchema }, usersController.getUserVotes);
+	instance.get("/:handle/bookmarks", { onRequest: requireAuthentication, schema: userBookmarksSchema }, usersController.getUserBookmarks);
+	instance.get("/:handle/following", { onRequest: requireAuthentication, schema: userFollowsSchema }, usersController.getUserFollowing);
+	instance.get("/:handle/followers", { onRequest: requireAuthentication, schema: userFollowsSchema }, usersController.getUserFollowers);
+	instance.get("/:handle/mentions", { schema: userMentionsSchema }, usersController.getUserMentions);
 	done();
 };
 

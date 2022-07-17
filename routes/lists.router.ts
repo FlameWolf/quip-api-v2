@@ -6,16 +6,16 @@ import { listsSchema, listMemberSchema, listInteractSchema, listCreateSchema, li
 import * as userController from "../controllers/users.controller";
 import * as listsController from "../controllers/lists.controller";
 
-const listsRouter = (server: FastifyInstance, options: FastifyPluginOptions, done: HookHandlerDoneFunction) => {
-	server.addHook("onRequest", requireAuthentication);
-	server.get("/", { schema: listsSchema }, userController.getLists);
-	server.post("/create", { schema: listCreateSchema }, listsController.createList);
-	server.post("/update", { schema: listUpdateSchema }, listsController.updateList);
-	server.post("/add-member", { schema: listMemberSchema }, listsController.addMember);
-	server.post("/remove-member", { schema: listMemberSchema }, listsController.removeMember);
-	server.post("/delete/:name", { schema: listInteractSchema }, listsController.deleteList);
-	server.get("/:name/members", { schema: listMembersSchema }, userController.getListMembers);
-	server.get("/:name/posts", { schema: listPostsSchema }, listsController.getPosts);
+const listsRouter = (instance: FastifyInstance, options: FastifyPluginOptions, done: HookHandlerDoneFunction) => {
+	instance.addHook("onRequest", requireAuthentication);
+	instance.get("/", { schema: listsSchema }, userController.getLists);
+	instance.post("/create", { schema: listCreateSchema }, listsController.createList);
+	instance.post("/update", { schema: listUpdateSchema }, listsController.updateList);
+	instance.post("/add-member", { schema: listMemberSchema }, listsController.addMember);
+	instance.post("/remove-member", { schema: listMemberSchema }, listsController.removeMember);
+	instance.post("/delete/:name", { schema: listInteractSchema }, listsController.deleteList);
+	instance.get("/:name/members", { schema: listMembersSchema }, userController.getListMembers);
+	instance.get("/:name/posts", { schema: listPostsSchema }, listsController.getPosts);
 	done();
 };
 
