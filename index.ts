@@ -25,7 +25,6 @@ require("cloudinary").v2.config({
 
 const server = fastify();
 server.register(require("@fastify/helmet"));
-server.register(require("@fastify/compress"));
 server.addHook("onRequest", (request, reply, done) => {
 	reply.header("Access-Control-Allow-Origin", process.env.ALLOW_ORIGIN);
 	reply.header("Access-Control-Allow-Credentials", true);
