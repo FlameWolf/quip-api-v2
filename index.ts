@@ -59,12 +59,11 @@ if (!isProdEnv) {
 		}
 	});
 }
-server.addHook("onRequest", (request, reply, done) => {
+server.addHook("onRequest", async (request, reply) => {
 	try {
 		const authToken = request.headers.authorization?.replace(/^bearer\s+/i, "");
 		request.userInfo = authToken && (jwt.verify(authToken, process.env.JWT_AUTH_SECRET as string) as UserInfo);
 	} catch (err) {}
-	done();
 });
 server.register(require("./routes/index.router"));
 server.register(require("./routes/auth.router"), { prefix: "/auth" });
@@ -73,8 +72,7 @@ server.register(require("./routes/lists.router"), { prefix: "/lists" });
 server.register(require("./routes/posts.router"), { prefix: "/posts" });
 server.register(require("./routes/search.router"), { prefix: "/search" });
 server.register(require("./routes/settings.router"), { prefix: "/settings" });
-server.setErrorHandler((error, request, reply) => {
-	request.log.error(error.toString());
+server.setErrorHandler(async (error, request, reply) => {
 	reply.send(error);
 });
 server.listen(

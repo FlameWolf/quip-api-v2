@@ -2,12 +2,10 @@
 
 import { FastifyRequest, FastifyReply, HookHandlerDoneFunction } from "fastify";
 
-const requireAuthentication = (request: FastifyRequest, reply: FastifyReply, done: HookHandlerDoneFunction) => {
+const requireAuthentication = async (request: FastifyRequest, reply: FastifyReply) => {
 	if (!request.userInfo) {
 		reply.status(401).send();
-		return;
 	}
-	done();
 };
 
 export default requireAuthentication;

@@ -2,7 +2,7 @@
 
 import { FastifyReply, FastifyRequest, HookHandlerDoneFunction } from "fastify";
 
-export const preValidatePostBody = (request: FastifyRequest, reply: FastifyReply, done: HookHandlerDoneFunction) => {
+export const preValidatePostBody = async (request: FastifyRequest, reply: FastifyReply) => {
 	const requestBody = request.body as Dictionary;
 	const { poll, location } = requestBody;
 	request.body = {
@@ -10,5 +10,4 @@ export const preValidatePostBody = (request: FastifyRequest, reply: FastifyReply
 		poll: poll ? JSON.parse(poll) : undefined,
 		location: location ? JSON.parse(location) : undefined
 	};
-	done();
 };
