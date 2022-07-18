@@ -14,6 +14,9 @@ declare module "fastify" {
 		fileSubtype?: string;
 	}
 	interface FastifySchema {
+		hide?: readonly boolean;
+		tags?: readonly string[];
 		consumes?: readonly string[];
+		produces?: readonly string[];
 	}
 }

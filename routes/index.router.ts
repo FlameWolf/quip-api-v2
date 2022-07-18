@@ -6,13 +6,21 @@ import { activitySchema, emailApprovalSchema, forgotPasswordSchema, hashtagSchem
 import * as indexController from "../controllers/index.controller";
 
 const indexRouter = (instance: FastifyInstance, options: FastifyPluginOptions, done: HookHandlerDoneFunction) => {
-	instance.get("/", async (request: FastifyRequest, reply: FastifyReply) => {
-		if (process.env.NODE_ENV !== "production") {
-			reply.redirect("/swagger");
-			return;
+	instance.get(
+		"/",
+		{
+			schema: {
+				hide: true
+			}
+		},
+		async (request: FastifyRequest, reply: FastifyReply) => {
+			if (process.env.NODE_ENV !== "production") {
+				reply.redirect("/swagger");
+				return;
+			}
+			reply.status(404).send();
 		}
-		reply.status(404).send();
-	});
+	);
 	instance.get("/timeline", { onRequest: requireAuthentication, schema: timelineSchema }, indexController.timeline);
 	instance.get("/activity/:period?", { onRequest: requireAuthentication, schema: activitySchema }, indexController.activity);
 	instance.get("/topmost/:period?", { schema: topmostSchema }, indexController.topmost);
