@@ -1,6 +1,6 @@
 "use strict";
 
-import { FastifyReply, FastifyRequest, HookHandlerDoneFunction } from "fastify";
+import { FastifyReply, FastifyRequest } from "fastify";
 
 export const preValidatePostBody = async (request: FastifyRequest, reply: FastifyReply) => {
 	const requestBody = request.body as Dictionary;

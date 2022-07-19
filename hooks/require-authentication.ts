@@ -1,6 +1,6 @@
 "use strict";
 
-import { FastifyRequest, FastifyReply, HookHandlerDoneFunction } from "fastify";
+import { FastifyRequest, FastifyReply } from "fastify";
 
 const requireAuthentication = async (request: FastifyRequest, reply: FastifyReply) => {
 	if (!request.userInfo) {

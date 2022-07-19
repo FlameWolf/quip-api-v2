@@ -6,7 +6,7 @@ import * as jwt from "jsonwebtoken";
 import { invalidHandles, handleRegExp, passwordRegExp, rounds, authTokenLife } from "../library";
 import User from "../models/user.model";
 import RefreshToken from "../models/refresh-token.model";
-import { FastifyReply, FastifyRequest, HookHandlerDoneFunction } from "fastify";
+import { FastifyReply, FastifyRequest } from "fastify";
 import { AuthPayload, CredentialsBody, RefreshTokenBody, RefreshTokenHeaders, RevokeTokenParams } from "../requestDefinitions/auth.requests";
 
 const generateAuthToken = (handle: string, userId: string) => {
