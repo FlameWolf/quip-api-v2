@@ -1,6 +1,6 @@
 "use strict";
 
-import { FastifyInstance, FastifyPluginOptions, HookHandlerDoneFunction } from "fastify";
+import { FastifyInstance, FastifyPluginOptions } from "fastify";
 import requireAuthentication from "../hooks/require-authentication";
 import { blockUserSchema, userBookmarksSchema, userFavouritesSchema, userFollowsSchema, userMentionsSchema, userPostsSchema, userTopmostSchema, userVotesSchema, userInteractSchema } from "../requestDefinitions/users.requests";
 import * as usersController from "../controllers/users.controller";
@@ -9,7 +9,7 @@ import * as followRequestsController from "../controllers/follow-requests.contro
 import * as mutesController from "../controllers/mutes.controller";
 import * as blocksController from "../controllers/blocks.controller";
 
-const usersRouter = (instance: FastifyInstance, options: FastifyPluginOptions, done: HookHandlerDoneFunction) => {
+const usersRouter = async (instance: FastifyInstance, options: FastifyPluginOptions) => {
 	instance.get("/follow/:handle", { onRequest: requireAuthentication, schema: userInteractSchema }, followsController.followUser);
 	instance.get("/cancel-req/:handle", { onRequest: requireAuthentication, schema: userInteractSchema }, followRequestsController.cancelFollowRequest);
 	instance.get("/unfollow/:handle", { onRequest: requireAuthentication, schema: userInteractSchema }, followsController.unfollowUser);
@@ -26,7 +26,6 @@ const usersRouter = (instance: FastifyInstance, options: FastifyPluginOptions, d
 	instance.get("/:handle/following", { onRequest: requireAuthentication, schema: userFollowsSchema }, usersController.getUserFollowing);
 	instance.get("/:handle/followers", { onRequest: requireAuthentication, schema: userFollowsSchema }, usersController.getUserFollowers);
 	instance.get("/:handle/mentions", { schema: userMentionsSchema }, usersController.getUserMentions);
-	done();
 };
 
 export default usersRouter;

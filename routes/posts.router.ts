@@ -1,6 +1,6 @@
 "use strict";
 
-import { FastifyInstance, FastifyPluginOptions, HookHandlerDoneFunction } from "fastify";
+import { FastifyInstance, FastifyPluginOptions } from "fastify";
 import requireAuthentication from "../hooks/require-authentication";
 import { preValidatePostBody } from "../hooks/postBodyPreValidation";
 import { postCreateSchema, postInteractAndCreateSchema, postInteractSchema, postQuotesSchema, postRepliesSchema, postUpdateSchema, postVoteSchema } from "../requestDefinitions/posts.requests";
@@ -10,7 +10,7 @@ import * as bookmarksController from "../controllers/bookmarks.controller";
 import * as mutesController from "../controllers/mutes.controller";
 import * as multerController from "../controllers/multer.controller";
 
-const postsRouter = (instance: FastifyInstance, options: FastifyPluginOptions, done: HookHandlerDoneFunction) => {
+const postsRouter = async (instance: FastifyInstance, options: FastifyPluginOptions) => {
 	instance.post("/create", { onRequest: requireAuthentication, preValidation: [multerController.extractMediaFile, preValidatePostBody], schema: postCreateSchema }, postsController.createPost);
 	instance.post("/update/:postId", { onRequest: requireAuthentication, schema: postUpdateSchema }, postsController.updatePost);
 	instance.get("/favourite/:postId", { onRequest: requireAuthentication, schema: postInteractSchema }, favouritesController.addFavourite);
@@ -29,7 +29,6 @@ const postsRouter = (instance: FastifyInstance, options: FastifyPluginOptions, d
 	instance.get("/:postId/quotes", { schema: postQuotesSchema }, postsController.getPostQuotes);
 	instance.get("/:postId/replies", { schema: postRepliesSchema }, postsController.getPostReplies);
 	instance.get("/:postId/parent", { schema: postInteractSchema }, postsController.getPostParent);
-	done();
 };
 
 export default postsRouter;

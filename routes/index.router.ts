@@ -1,11 +1,11 @@
 "use strict";
 
-import { FastifyInstance, FastifyPluginOptions, FastifyReply, FastifyRequest, HookHandlerDoneFunction } from "fastify";
+import { FastifyInstance, FastifyPluginOptions, FastifyReply, FastifyRequest } from "fastify";
 import requireAuthentication from "../hooks/require-authentication";
 import { activitySchema, emailApprovalSchema, forgotPasswordSchema, hashtagSchema, resetPasswordSchema, timelineSchema, topmostSchema } from "../requestDefinitions/index.requests";
 import * as indexController from "../controllers/index.controller";
 
-const indexRouter = (instance: FastifyInstance, options: FastifyPluginOptions, done: HookHandlerDoneFunction) => {
+const indexRouter = async (instance: FastifyInstance, options: FastifyPluginOptions) => {
 	instance.get(
 		"/",
 		{
@@ -29,7 +29,6 @@ const indexRouter = (instance: FastifyInstance, options: FastifyPluginOptions, d
 	instance.get("/verify-email/:token", { schema: emailApprovalSchema }, indexController.verifyEmail);
 	instance.post("/forgot-password", { schema: forgotPasswordSchema }, indexController.forgotPassword);
 	instance.post("/reset-password/:token", { schema: resetPasswordSchema }, indexController.resetPassword);
-	done();
 };
 
 export default indexRouter;

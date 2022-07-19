@@ -1,6 +1,6 @@
 "use strict";
 
-import { FastifyInstance, FastifyPluginOptions, HookHandlerDoneFunction } from "fastify";
+import { FastifyInstance, FastifyPluginOptions } from "fastify";
 import requireAuthentication from "../hooks/require-authentication";
 import { wordMuteSchema, settingsSchema, requestApprovalSchema, followRequestsSchema, blockedUsersSchema, mutedItemsSchema, updateEmailSchema, updateSettingSchema, getSettingSchema } from "../requestDefinitions/settings.requests";
 import { postInteractSchema } from "../requestDefinitions/posts.requests";
@@ -9,7 +9,7 @@ import * as mutesController from "../controllers/mutes.controller";
 import * as usersController from "../controllers/users.controller";
 import * as followRequestsController from "../controllers/follow-requests.controller";
 
-const settingsRouter = (instance: FastifyInstance, options: FastifyPluginOptions, done: HookHandlerDoneFunction) => {
+const settingsRouter = async (instance: FastifyInstance, options: FastifyPluginOptions) => {
 	instance.addHook("onRequest", requireAuthentication);
 	instance.post("/", { schema: settingsSchema }, settingsController.updateSettings);
 	instance.get("/", settingsController.getSettings);
@@ -36,7 +36,6 @@ const settingsRouter = (instance: FastifyInstance, options: FastifyPluginOptions
 	instance.delete("/delete", usersController.deleteUser);
 	instance.put("/:path", { schema: updateSettingSchema }, settingsController.updateSettingByPath);
 	instance.get("/:path", { schema: getSettingSchema }, settingsController.getSettingByPath);
-	done();
 };
 
 export default settingsRouter;
