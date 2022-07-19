@@ -31,7 +31,7 @@ server.addHook("onRequest", async (request, reply) => {
 	reply.header("Access-Control-Allow-Headers", "Authorization, Origin, X-Requested-With, Content-Type, Accept, X-Slug, X-UID");
 	reply.header("Access-Control-Allow-Methods", "OPTIONS, POST, PUT, PATCH, GET, DELETE");
 	if (request.method === "OPTIONS") {
-		reply.send();
+		reply.status(200).send();
 	}
 });
 server.register(require("fastify-multer").contentParser);
