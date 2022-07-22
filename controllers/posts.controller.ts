@@ -41,15 +41,7 @@ const validateContent = (content: string, poll?: any, media?: any, postId?: any)
 const detectLanguages = async (value: string) => {
 	if (value.trim()) {
 		try {
-			return (
-				await cld.detect(value, {
-					isHTML: false,
-					languageHint: "",
-					encodingHint: "",
-					tldHint: "",
-					httpHint: ""
-				})
-			).languages.map((language: { code: string }) => language.code);
+			return (await cld.detect(value)).languages.map((language: { code: string }) => language.code);
 		} catch {
 			return ["xx"];
 		}
@@ -60,16 +52,16 @@ const updateLanguages = async (post: Partial<PostModel>) => {
 	const languages = new Set(post.languages);
 	const promises = [];
 	const { content, attachments } = post;
-	promises.push(content && detectLanguages(content as string));
+	promises.push(content && (await detectLanguages(content as string)));
 	if (attachments) {
 		const { poll, mediaFile } = attachments;
 		if (poll) {
 			const { first, second, third, fourth } = poll;
-			promises.push(first && detectLanguages(first), second && detectLanguages(second), third && detectLanguages(third), fourth && detectLanguages(fourth));
+			promises.push(first && (await detectLanguages(first as string)), second && (await detectLanguages(second as string)), third && (await detectLanguages(third as string)), fourth && (await detectLanguages(fourth as string)));
 		}
 		if (mediaFile) {
 			const mediaDescription = mediaFile.description;
-			promises.push(mediaDescription && detectLanguages(mediaDescription));
+			promises.push(mediaDescription && (await detectLanguages(mediaDescription as string)));
 		}
 	}
 	for (const language of (await Promise.all(promises)).flat()) {
@@ -240,12 +232,12 @@ export const updatePost = async (request: FastifyRequest, reply: FastifyReply) =
 			const originalPostId = post._id;
 			const postFilter = { post: originalPostId };
 			const repliedPostId = post.replyTo;
-			const mentions: Array<typeof ObjectId | string> = [];
+			const mentions: Array<ObjectId | string> = [];
 			if (repliedPostId) {
-				mentions.push((await Post.findById(repliedPostId))?.author || nullId);
+				mentions.push(((await Post.findById(repliedPostId))?.author as ObjectId) || nullId);
 			}
 			if (quotedPostId) {
-				mentions.push((await Post.findById(quotedPostId))?.author || nullId);
+				mentions.push(((await Post.findById(quotedPostId))?.author as ObjectId) || nullId);
 			}
 			const model = {
 				content,
