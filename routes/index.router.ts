@@ -15,7 +15,7 @@ const indexRouter = async (instance: FastifyInstance, options: FastifyPluginOpti
 		},
 		async (request: FastifyRequest, reply: FastifyReply) => {
 			if (process.env.NODE_ENV !== "production") {
-				reply.redirect("/swagger");
+				reply.status(302).redirect("/swagger");
 				return;
 			}
 			reply.status(404).send();
