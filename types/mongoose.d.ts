@@ -1,3 +1,5 @@
+"use strict";
+
 import mongoose, { Schema, SchemaType } from "mongoose";
 
 declare module "mongoose" {

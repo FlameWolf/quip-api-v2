@@ -1,3 +1,5 @@
+"use strict";
+
 import fastify, { FastifyInstance, FastifyRequest, FastifySchema, onRequestHookHandler } from "fastify";
 import { File } from "fastify-multer/lib/interfaces";
 import { JwtPayload } from "jsonwebtoken";

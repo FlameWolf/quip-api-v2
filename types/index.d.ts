@@ -1,3 +1,5 @@
+"use strict";
+
 declare global {
 	type DeepPartial<T> = T extends object
 		? {
@@ -5,7 +7,7 @@ declare global {
 		  }
 		: T;
 	type Dictionary = {
-		[key: string]: any;
+		[key: string | symbol]: any;
 	};
 	type UserInfo = {
 		handle: string;
