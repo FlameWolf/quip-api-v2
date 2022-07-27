@@ -12,6 +12,7 @@ export const maxPollOptionLength = 32;
 export const maxMutedWordLength = 256;
 export const minPollDuration = 1000 * 60 * 30;
 export const maxPollDuration = 1000 * 60 * 60 * 24 * 7;
+export const validMimeTypes = ["image", "video"];
 export const favouriteScore = 1;
 export const quoteScore = 2;
 export const replyScore = 2;
