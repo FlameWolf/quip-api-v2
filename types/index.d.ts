@@ -6,8 +6,8 @@ declare global {
 				[P in keyof T]?: DeepPartial<T[P]>;
 		  }
 		: T;
-	type Dictionary = {
-		[key: string | symbol]: any;
+	type Dictionary<T = any> = {
+		[key: string | symbol]: T;
 	};
 	type UserInfo = {
 		handle: string;
