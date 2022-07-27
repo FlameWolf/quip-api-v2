@@ -1,7 +1,7 @@
 "use strict";
 
-import { FastifyInstance, FastifyPluginOptions } from "fastify";
-import requireAuthentication from "../hooks/require-authentication";
+import { FastifyPluginAsync } from "fastify";
+import requireAuthentication from "../hooks/requireAuthentication";
 import { wordMuteSchema, settingsSchema, requestApprovalSchema, followRequestsSchema, blockedUsersSchema, mutedItemsSchema, updateEmailSchema, updateSettingSchema, getSettingSchema } from "../requestDefinitions/settings.requests";
 import { postInteractSchema } from "../requestDefinitions/posts.requests";
 import * as settingsController from "../controllers/settings.controller";
@@ -9,7 +9,7 @@ import * as mutesController from "../controllers/mutes.controller";
 import * as usersController from "../controllers/users.controller";
 import * as followRequestsController from "../controllers/follow-requests.controller";
 
-const settingsRouter = async (instance: FastifyInstance, options: FastifyPluginOptions) => {
+const settingsRouter: FastifyPluginAsync = async (instance, options) => {
 	instance.addHook("onRequest", requireAuthentication);
 	instance.post("/", { schema: settingsSchema }, settingsController.updateSettings);
 	instance.get("/", settingsController.getSettings);

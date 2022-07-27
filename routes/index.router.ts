@@ -1,11 +1,11 @@
 "use strict";
 
-import { FastifyInstance, FastifyPluginOptions, FastifyReply, FastifyRequest } from "fastify";
-import requireAuthentication from "../hooks/require-authentication";
+import { FastifyPluginAsync } from "fastify";
+import requireAuthentication from "../hooks/requireAuthentication";
 import { activitySchema, emailApprovalSchema, forgotPasswordSchema, hashtagSchema, resetPasswordSchema, timelineSchema, topmostSchema } from "../requestDefinitions/index.requests";
 import * as indexController from "../controllers/index.controller";
 
-const indexRouter = async (instance: FastifyInstance, options: FastifyPluginOptions) => {
+const indexRouter: FastifyPluginAsync = async (instance, options) => {
 	instance.get(
 		"/",
 		{
@@ -13,7 +13,7 @@ const indexRouter = async (instance: FastifyInstance, options: FastifyPluginOpti
 				hide: true
 			}
 		},
-		async (request: FastifyRequest, reply: FastifyReply) => {
+		async (request, reply) => {
 			if (process.env.NODE_ENV !== "production") {
 				reply.status(302).redirect("/swagger");
 				return;

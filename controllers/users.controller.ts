@@ -2,7 +2,7 @@
 
 import * as bcrypt from "bcrypt";
 import { ObjectId } from "bson";
-import { RouteHandlerMethod, FastifyRequest, FastifyReply } from "fastify";
+import { RouteHandlerMethod } from "fastify";
 import mongoose, { HydratedDocument, ObjectExpressionOperator, InferSchemaType } from "mongoose";
 import blocksAggregationPipeline from "../db/pipelines/blocks";
 import bookmarksAggregationPipeline from "../db/pipelines/bookmarks";
@@ -66,7 +66,7 @@ export const findBlocksByUserId = async (userId: any, lastBlockId?: any) => awai
 export const findMutedUsersByUserId = async (userId: any, lastMuteId?: any) => await MutedUser.aggregate(mutedUsersAggregationPipeline(userId, lastMuteId));
 export const findMutedPostsByUserId = async (userId: any, lastMuteId?: any) => await MutedPost.aggregate(mutedPostsAggregationPipeline(userId, lastMuteId));
 export const findMutedWordsByUserId = async (userId: any, lastMuteId?: any) => (await MutedWord.aggregate(mutedWordsAggregationPipeline(userId, lastMuteId))) as Array<{ word: string; match: string }>;
-export const getUser: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
+export const getUser: RouteHandlerMethod = async (request, reply) => {
 	const { handle } = request.params as UserInteractParams;
 	const user = (
 		await User.aggregate([
@@ -86,7 +86,7 @@ export const getUser: RouteHandlerMethod = async (request: FastifyRequest, reply
 	}
 	reply.status(200).send({ user });
 };
-export const getUserPosts: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
+export const getUserPosts: RouteHandlerMethod = async (request, reply) => {
 	const { handle } = request.params as UserInteractParams;
 	const { includeRepeats, includeReplies, lastPostId } = request.query as UserPostsQueryString;
 	const user = await findActiveUserByHandle(handle);
@@ -97,7 +97,7 @@ export const getUserPosts: RouteHandlerMethod = async (request: FastifyRequest, 
 	const posts = await findPostsByUserId(user._id, includeRepeats, includeReplies, lastPostId);
 	reply.status(200).send({ posts });
 };
-export const getUserTopmost: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
+export const getUserTopmost: RouteHandlerMethod = async (request, reply) => {
 	const { handle, period } = request.params as UserTopmostParams;
 	const { lastScore, lastPostId } = request.query as UserTopmostQueryString;
 	const filter = { handle };
@@ -127,7 +127,7 @@ export const getUserTopmost: RouteHandlerMethod = async (request: FastifyRequest
 	]);
 	reply.status(200).send({ posts });
 };
-export const getUserFavourites: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
+export const getUserFavourites: RouteHandlerMethod = async (request, reply) => {
 	const { handle } = request.params as UserInteractParams;
 	const { lastFavouriteId } = request.query as UserFavouritesQueryString;
 	const userInfo = request.userInfo as UserInfo;
@@ -138,7 +138,7 @@ export const getUserFavourites: RouteHandlerMethod = async (request: FastifyRequ
 	const favourites = await findFavouritesByUserId(userInfo.userId, lastFavouriteId);
 	reply.status(200).send({ favourites });
 };
-export const getUserVotes: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
+export const getUserVotes: RouteHandlerMethod = async (request, reply) => {
 	const { handle } = request.params as UserInteractParams;
 	const { lastVoteId } = request.query as UserVotesQueryString;
 	const userInfo = request.userInfo as UserInfo;
@@ -149,7 +149,7 @@ export const getUserVotes: RouteHandlerMethod = async (request: FastifyRequest, 
 	const votes = await findVotesByUserId(userInfo.userId, lastVoteId);
 	reply.status(200).send({ votes });
 };
-export const getUserBookmarks: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
+export const getUserBookmarks: RouteHandlerMethod = async (request, reply) => {
 	const { handle } = request.params as UserInteractParams;
 	const { lastBookmarkId } = request.query as UserBookmarksQueryString;
 	const userInfo = request.userInfo as UserInfo;
@@ -160,7 +160,7 @@ export const getUserBookmarks: RouteHandlerMethod = async (request: FastifyReque
 	const bookmarks = await findBookmarksByUserId(userInfo.userId, lastBookmarkId);
 	reply.status(200).send({ bookmarks });
 };
-export const getUserFollowing: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
+export const getUserFollowing: RouteHandlerMethod = async (request, reply) => {
 	const { handle } = request.params as UserInteractParams;
 	const { lastFollowId } = request.query as UserFollowsQueryString;
 	const userInfo = request.userInfo as UserInfo;
@@ -171,7 +171,7 @@ export const getUserFollowing: RouteHandlerMethod = async (request: FastifyReque
 	const following = await findFollowingByUserId(userInfo.userId, lastFollowId);
 	reply.status(200).send({ following });
 };
-export const getUserFollowers: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
+export const getUserFollowers: RouteHandlerMethod = async (request, reply) => {
 	const { handle } = request.params as UserInteractParams;
 	const { lastFollowId } = request.query as UserFollowsQueryString;
 	const userInfo = request.userInfo as UserInfo;
@@ -182,7 +182,7 @@ export const getUserFollowers: RouteHandlerMethod = async (request: FastifyReque
 	const followers = await findFollowersByUserId(userInfo.userId, lastFollowId);
 	reply.status(200).send({ followers });
 };
-export const getUserFollowRequestsSent: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
+export const getUserFollowRequestsSent: RouteHandlerMethod = async (request, reply) => {
 	const { handle } = request.params as UserInteractParams;
 	const { lastFollowRequestId } = request.query as UserFollowRequestsQueryString;
 	const userInfo = request.userInfo as UserInfo;
@@ -193,7 +193,7 @@ export const getUserFollowRequestsSent: RouteHandlerMethod = async (request: Fas
 	const followRequests = await findFollowRequestsSentByUserId(userInfo.userId, lastFollowRequestId);
 	reply.status(200).send({ followRequests });
 };
-export const getUserFollowRequestsReceived: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
+export const getUserFollowRequestsReceived: RouteHandlerMethod = async (request, reply) => {
 	const { handle } = request.params as UserInteractParams;
 	const { lastFollowRequestId } = request.query as UserFollowRequestsQueryString;
 	const userInfo = request.userInfo as UserInfo;
@@ -204,7 +204,7 @@ export const getUserFollowRequestsReceived: RouteHandlerMethod = async (request:
 	const followRequests = await findFollowRequestsReceivedByUserId(userInfo.userId, lastFollowRequestId);
 	reply.status(200).send({ followRequests });
 };
-export const getUserMentions: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
+export const getUserMentions: RouteHandlerMethod = async (request, reply) => {
 	const { handle } = request.params as UserInteractParams;
 	const { lastMentionId } = request.query as UserMentionsQueryString;
 	const user = await findActiveUserByHandle(handle);
@@ -215,7 +215,7 @@ export const getUserMentions: RouteHandlerMethod = async (request: FastifyReques
 	const mentions = await findMentionsByUserId(user._id, (request.userInfo as UserInfo)?.userId, lastMentionId);
 	reply.status(200).send({ mentions });
 };
-export const getLists: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
+export const getLists: RouteHandlerMethod = async (request, reply) => {
 	const { memberHandle, lastListId } = request.query as ListsQueryString;
 	const userId = (request.userInfo as UserInfo).userId;
 	const member = await findUserByHandle(memberHandle);
@@ -226,7 +226,7 @@ export const getLists: RouteHandlerMethod = async (request: FastifyRequest, repl
 	const lists = await findListsByUserId(userId, member?._id, lastListId);
 	reply.status(200).send({ lists });
 };
-export const getListMembers: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
+export const getListMembers: RouteHandlerMethod = async (request, reply) => {
 	const name = (request.params as any).name;
 	const { lastMemberId } = request.query as ListMembersQueryString;
 	const userId = (request.userInfo as UserInfo).userId;
@@ -238,25 +238,25 @@ export const getListMembers: RouteHandlerMethod = async (request: FastifyRequest
 	const members = await findMembersByListId(list._id, lastMemberId);
 	reply.status(200).send({ members });
 };
-export const getBlocks: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
+export const getBlocks: RouteHandlerMethod = async (request, reply) => {
 	const { lastBlockId } = request.query as BlockedUsersQueryString;
 	const userId = (request.userInfo as UserInfo).userId;
 	const blockedUsers = await findBlocksByUserId(userId, lastBlockId);
 	reply.status(200).send({ blockedUsers });
 };
-export const getMutedUsers: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
+export const getMutedUsers: RouteHandlerMethod = async (request, reply) => {
 	const { lastMuteId } = request.query as MutedItemsQueryString;
 	const userId = (request.userInfo as UserInfo).userId;
 	const mutedUsers = await findMutedUsersByUserId(userId, lastMuteId);
 	reply.status(200).send({ mutedUsers });
 };
-export const getMutedPosts: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
+export const getMutedPosts: RouteHandlerMethod = async (request, reply) => {
 	const { lastMuteId } = request.query as MutedItemsQueryString;
 	const userId = (request.userInfo as UserInfo).userId;
 	const mutedPosts = await findMutedPostsByUserId(userId, lastMuteId);
 	reply.status(200).send({ mutedPosts });
 };
-export const getMutedWords: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
+export const getMutedWords: RouteHandlerMethod = async (request, reply) => {
 	const { lastMuteId } = request.query as MutedItemsQueryString;
 	const userId = (request.userInfo as UserInfo).userId;
 	const mutedWords = await findMutedWordsByUserId(userId, lastMuteId);
@@ -265,7 +265,7 @@ export const getMutedWords: RouteHandlerMethod = async (request: FastifyRequest,
 	}
 	reply.status(200).send({ mutedWords });
 };
-export const pinPost: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
+export const pinPost: RouteHandlerMethod = async (request, reply) => {
 	const { postId } = request.params as PostInteractParams;
 	const userId = (request.userInfo as UserInfo).userId;
 	const post = await postsController.findPostById(postId);
@@ -280,12 +280,12 @@ export const pinPost: RouteHandlerMethod = async (request: FastifyRequest, reply
 	const pinned = await User.findByIdAndUpdate(userId, { pinnedPost: post._id }, { new: true });
 	reply.status(200).send({ pinned });
 };
-export const unpinPost: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
+export const unpinPost: RouteHandlerMethod = async (request, reply) => {
 	const userId = (request.userInfo as UserInfo).userId;
 	const unpinned = await User.findByIdAndUpdate(userId, { pinnedPost: undefined }, { new: true });
 	reply.status(200).send({ unpinned });
 };
-export const updateEmail: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
+export const updateEmail: RouteHandlerMethod = async (request, reply) => {
 	const { email: newEmail } = request.body as UpdateEmailBody;
 	const { handle, userId } = request.userInfo as UserInfo;
 	const { email: currentEmail } = (await User.findById(userId, { email: 1 })) as HydratedDocument<UserModel>;
@@ -301,7 +301,7 @@ export const updateEmail: RouteHandlerMethod = async (request: FastifyRequest, r
 	}
 	emailController.sendEmail(noReplyEmail, newEmail, "Verify email address", emailTemplates.actions.verifyEmail(handle, newEmail, `${process.env.ALLOW_ORIGIN}/verify-email/${emailVerification.token}`));
 };
-export const changePassword: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
+export const changePassword: RouteHandlerMethod = async (request, reply) => {
 	const userId = (request.userInfo as UserInfo).userId;
 	const { oldPassword, newPassword } = request.body as ChangePasswordBody;
 	const user = (await User.findById(userId).select("+password +email")) as HydratedDocument<UserModel>;
@@ -322,7 +322,7 @@ export const changePassword: RouteHandlerMethod = async (request: FastifyRequest
 		emailController.sendEmail(noReplyEmail, email, "Password changed", emailTemplates.notifications.passwordChanged(user.handle));
 	}
 };
-export const deactivateUser: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
+export const deactivateUser: RouteHandlerMethod = async (request, reply) => {
 	const userId = (request.userInfo as UserInfo).userId;
 	const session = await mongoose.startSession();
 	try {
@@ -339,7 +339,7 @@ export const deactivateUser: RouteHandlerMethod = async (request: FastifyRequest
 		await session.endSession();
 	}
 };
-export const activateUser: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
+export const activateUser: RouteHandlerMethod = async (request, reply) => {
 	const userId = (request.userInfo as UserInfo).userId;
 	const activated = (await User.findByIdAndUpdate(
 		userId,
@@ -356,7 +356,7 @@ export const activateUser: RouteHandlerMethod = async (request: FastifyRequest, 
 		emailController.sendEmail(noReplyEmail, email, "Account activated", emailTemplates.notifications.activated(activated.handle));
 	}
 };
-export const deleteUser: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
+export const deleteUser: RouteHandlerMethod = async (request, reply) => {
 	const userId = (request.userInfo as UserInfo).userId;
 	const session = await mongoose.startSession();
 	try {

@@ -7,17 +7,17 @@ import Follow from "../models/follow.model";
 import Block from "../models/block.model";
 import List from "../models/list.model";
 import ListMember from "../models/list-member.model";
-import { RouteHandlerMethod, FastifyRequest, FastifyReply } from "fastify";
+import { RouteHandlerMethod } from "fastify";
 import { ListInteractParams, ListPostsQueryString, ListCreateBody, ListMemberBody, ListUpdateBody } from "../requestDefinitions/lists.requests";
 
 const findListPostsByNameAndOwnerId = async (listName: string, ownerId: any, includeRepeats = true, includeReplies = true, lastPostId: any = undefined) => await List.aggregate(listPostsAggregationPipeline(listName, ownerId, includeRepeats, includeReplies, lastPostId));
-export const createList: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
+export const createList: RouteHandlerMethod = async (request, reply) => {
 	const { name, includeRepeats, includeReplies } = request.body as ListCreateBody;
 	const userId = (request.userInfo as UserInfo).userId;
 	const list = await new List({ name, owner: userId, includeRepeats, includeReplies }).save();
 	reply.status(201).send({ list });
 };
-export const updateList: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
+export const updateList: RouteHandlerMethod = async (request, reply) => {
 	const { name, newName, includeRepeats, includeReplies } = request.body as ListUpdateBody;
 	const userId = (request.userInfo as UserInfo).userId;
 	const filter = { name, owner: userId };
@@ -34,7 +34,7 @@ export const updateList: RouteHandlerMethod = async (request: FastifyRequest, re
 	const updated = await List.findOneAndUpdate(filter, { name: newName, includeRepeats, includeReplies }, { new: true });
 	reply.status(200).send({ updated });
 };
-export const addMember: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
+export const addMember: RouteHandlerMethod = async (request, reply) => {
 	const { name, handle } = request.body as ListMemberBody;
 	const userId = (request.userInfo as UserInfo).userId;
 	const list = await List.findOne({ name, owner: userId });
@@ -63,7 +63,7 @@ export const addMember: RouteHandlerMethod = async (request: FastifyRequest, rep
 	const added = await new ListMember({ list: list._id, user: memberId }).save();
 	reply.status(200).send({ added });
 };
-export const removeMember: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
+export const removeMember: RouteHandlerMethod = async (request, reply) => {
 	const { name, handle } = request.body as ListMemberBody;
 	const userId = (request.userInfo as UserInfo).userId;
 	const list = await List.findOne({ name, owner: userId });
@@ -80,14 +80,14 @@ export const removeMember: RouteHandlerMethod = async (request: FastifyRequest, 
 	const removed = await ListMember.findOneAndDelete({ list: list._id, user: memberId });
 	reply.status(200).send({ removed });
 };
-export const getPosts: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
+export const getPosts: RouteHandlerMethod = async (request, reply) => {
 	const { name } = request.params as ListInteractParams;
 	const { includeRepeats, includeReplies, lastPostId } = request.query as ListPostsQueryString;
 	const userId = (request.userInfo as UserInfo).userId;
 	const posts = await findListPostsByNameAndOwnerId(name, userId, includeRepeats, includeReplies, lastPostId);
 	reply.status(200).send({ posts });
 };
-export const deleteList: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
+export const deleteList: RouteHandlerMethod = async (request, reply) => {
 	const { name } = request.params as ListInteractParams;
 	const userId = (request.userInfo as UserInfo).userId;
 	const session = await mongoose.startSession();

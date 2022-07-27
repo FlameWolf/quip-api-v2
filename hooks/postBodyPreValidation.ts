@@ -1,8 +1,8 @@
 "use strict";
 
-import { FastifyReply, FastifyRequest } from "fastify";
+import { preValidationAsyncHookHandler } from "fastify";
 
-export const preValidatePostBody = async (request: FastifyRequest, reply: FastifyReply) => {
+const preValidatePostBody: preValidationAsyncHookHandler = async (request, reply) => {
 	const requestBody = request.body as Dictionary;
 	const { poll, location } = requestBody;
 	request.body = {
@@ -11,3 +11,5 @@ export const preValidatePostBody = async (request: FastifyRequest, reply: Fastif
 		location: location ? JSON.parse(location) : undefined
 	};
 };
+
+export default preValidatePostBody;

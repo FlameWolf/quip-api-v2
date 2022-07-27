@@ -1,7 +1,7 @@
 "use strict";
 
-import { FastifyInstance, FastifyPluginOptions } from "fastify";
-import requireAuthentication from "../hooks/require-authentication";
+import { FastifyPluginAsync } from "fastify";
+import requireAuthentication from "../hooks/requireAuthentication";
 import { blockUserSchema, userBookmarksSchema, userFavouritesSchema, userFollowsSchema, userMentionsSchema, userPostsSchema, userTopmostSchema, userVotesSchema, userInteractSchema } from "../requestDefinitions/users.requests";
 import * as usersController from "../controllers/users.controller";
 import * as followsController from "../controllers/follows.controller";
@@ -9,7 +9,7 @@ import * as followRequestsController from "../controllers/follow-requests.contro
 import * as mutesController from "../controllers/mutes.controller";
 import * as blocksController from "../controllers/blocks.controller";
 
-const usersRouter = async (instance: FastifyInstance, options: FastifyPluginOptions) => {
+const usersRouter: FastifyPluginAsync = async (instance, options) => {
 	instance.get("/follow/:handle", { onRequest: requireAuthentication, schema: userInteractSchema }, followsController.followUser);
 	instance.get("/cancel-req/:handle", { onRequest: requireAuthentication, schema: userInteractSchema }, followRequestsController.cancelFollowRequest);
 	instance.get("/unfollow/:handle", { onRequest: requireAuthentication, schema: userInteractSchema }, followsController.unfollowUser);

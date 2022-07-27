@@ -1,13 +1,12 @@
 "use strict";
 
-import { FastifyRequest } from "fastify";
 import multer, { memoryStorage } from "fastify-multer";
-import { File, FileFilterCallback } from "fastify-multer/lib/interfaces";
 import { megaByte } from "../library";
+import { preValidationHookHandler } from "fastify";
 
 const validMimeTypes = ["image", "video"];
 const factory = multer({
-	fileFilter: (request: FastifyRequest, file: File, cb: FileFilterCallback) => {
+	fileFilter: (request, file, cb) => {
 		const [type, subtype] = file.mimetype.split("/");
 		request.fileType = type.trim();
 		request.fileSubtype = subtype.trim();
@@ -19,5 +18,6 @@ const factory = multer({
 	},
 	storage: memoryStorage()
 });
-export const extractMediaFile = factory.single("media");
-export const sanitiseFileName = (value: string, maxLength?: number) => value.trim().substring(0, maxLength).replace(/\W/g, "_");
+const extractMediaFile = factory.single("media") as preValidationHookHandler;
+
+export default extractMediaFile;

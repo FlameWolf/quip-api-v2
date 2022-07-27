@@ -1,12 +1,12 @@
 "use strict";
 
-import { FastifyInstance, FastifyPluginOptions } from "fastify";
-import requireAuthentication from "../hooks/require-authentication";
+import { FastifyPluginAsync } from "fastify";
+import requireAuthentication from "../hooks/requireAuthentication";
 import { listsSchema, listMemberSchema, listInteractSchema, listCreateSchema, listUpdateSchema, listMembersSchema, listPostsSchema } from "../requestDefinitions/lists.requests";
 import * as userController from "../controllers/users.controller";
 import * as listsController from "../controllers/lists.controller";
 
-const listsRouter = async (instance: FastifyInstance, options: FastifyPluginOptions) => {
+const listsRouter: FastifyPluginAsync = async (instance, options) => {
 	instance.addHook("onRequest", requireAuthentication);
 	instance.get("/", { schema: listsSchema }, userController.getLists);
 	instance.post("/create", { schema: listCreateSchema }, listsController.createList);

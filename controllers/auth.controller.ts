@@ -5,7 +5,7 @@ import * as jwt from "jsonwebtoken";
 import { invalidHandles, handleRegExp, passwordRegExp, rounds, authTokenLife } from "../library";
 import User from "../models/user.model";
 import RefreshToken from "../models/refresh-token.model";
-import { RouteHandlerMethod, FastifyRequest, FastifyReply } from "fastify";
+import { RouteHandlerMethod } from "fastify";
 import { AuthPayload, CredentialsBody, RefreshTokenBody, RefreshTokenHeaders, RevokeTokenParams } from "../requestDefinitions/auth.requests";
 
 const generateAuthToken = (handle: string, userId: string) => {
@@ -37,7 +37,7 @@ const authSuccess = async (handle: string, userId: string, includeRefreshToken =
 	}
 	return payload;
 };
-export const signUp: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
+export const signUp: RouteHandlerMethod = async (request, reply) => {
 	const { handle, password } = request.body as CredentialsBody;
 	if (!(validateHandle(handle) && validatePassword(password))) {
 		reply.status(400).send("Invalid username/password");
@@ -52,7 +52,7 @@ export const signUp: RouteHandlerMethod = async (request: FastifyRequest, reply:
 	const userId = user._id;
 	reply.status(201).send(await authSuccess(handle, userId.toString()));
 };
-export const signIn: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
+export const signIn: RouteHandlerMethod = async (request, reply) => {
 	const { handle, password } = request.body as CredentialsBody;
 	const user = await User.findOne({ handle }).select("+password");
 	if (!user) {
@@ -67,7 +67,7 @@ export const signIn: RouteHandlerMethod = async (request: FastifyRequest, reply:
 	const userId = user._id;
 	reply.status(200).send(await authSuccess(handle, userId.toString()));
 };
-export const refreshAuthToken: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
+export const refreshAuthToken: RouteHandlerMethod = async (request, reply) => {
 	const { refreshToken } = request.body as RefreshTokenBody;
 	const { "x-slug": handle, "x-uid": userId } = request.headers as RefreshTokenHeaders;
 	if (!refreshToken) {
@@ -87,7 +87,7 @@ export const refreshAuthToken: RouteHandlerMethod = async (request: FastifyReque
 	await RefreshToken.findOneAndUpdate(filter, { lastUsed: new Date() });
 	reply.status(200).send(await authSuccess(handle, userId, false));
 };
-export const revokeRefreshToken: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
+export const revokeRefreshToken: RouteHandlerMethod = async (request, reply) => {
 	const { token: refreshToken } = request.params as RevokeTokenParams;
 	if (!refreshToken) {
 		reply.status(400).send("Refresh token not found");

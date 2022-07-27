@@ -57,3 +57,4 @@ export const getProperty = (operand: { [x: string]: any }, path: string | Array<
 };
 export const getUnicodeClusterCount = (value: string) => Array.from(new Intl.Segmenter().segment(value)).length;
 export const escapeRegExp = (value: string) => value.replace(/[\/.*+?|[()\]{}\$^-]/g, (match: any) => `\\${match}`);
+export const sanitiseFileName = (value: string, maxLength?: number) => value.trim().substring(0, maxLength).replace(/\W/g, "_");

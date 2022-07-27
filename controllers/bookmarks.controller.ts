@@ -2,10 +2,10 @@
 
 import * as postsController from "./posts.controller";
 import Bookmark from "../models/bookmark.model";
-import { RouteHandlerMethod, FastifyRequest, FastifyReply } from "fastify";
+import { RouteHandlerMethod } from "fastify";
 import { PostInteractParams } from "../requestDefinitions/posts.requests";
 
-export const addBookmark: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
+export const addBookmark: RouteHandlerMethod = async (request, reply) => {
 	const { postId } = request.params as PostInteractParams;
 	const userId = (request.userInfo as UserInfo).userId;
 	const post = await postsController.findPostById(postId);
@@ -19,7 +19,7 @@ export const addBookmark: RouteHandlerMethod = async (request: FastifyRequest, r
 	}).save();
 	reply.status(200).send({ bookmarked });
 };
-export const removeBookmark: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
+export const removeBookmark: RouteHandlerMethod = async (request, reply) => {
 	const { postId } = request.params as PostInteractParams;
 	const userId = (request.userInfo as UserInfo).userId;
 	const unbookmarked = await Bookmark.findOneAndDelete({
