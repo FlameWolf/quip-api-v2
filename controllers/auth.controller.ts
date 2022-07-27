@@ -1,6 +1,5 @@
 "use strict";
 
-import process = require("node:process");
 import * as bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
 import { invalidHandles, handleRegExp, passwordRegExp, rounds, authTokenLife } from "../library";
