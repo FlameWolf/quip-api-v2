@@ -199,6 +199,7 @@ export const createPost: RouteHandlerMethod = async (request, reply) => {
 export const updatePost: RouteHandlerMethod = async (request, reply) => {
 	const { postId } = request.params as PostInteractParams;
 	const { content = "" } = request.body as PostUpdateBody;
+	const userId = (request.userInfo as UserInfo).userId;
 	const session = await mongoose.startSession();
 	try {
 		if (!content.trim()) {
@@ -210,7 +211,7 @@ export const updatePost: RouteHandlerMethod = async (request, reply) => {
 			reply.status(404).send("Post not found");
 			return;
 		}
-		if (post.author.valueOf() !== (request.userInfo as UserInfo).userId) {
+		if (post.author !== userId) {
 			reply.status(403).send("You are not allowed to perform this action");
 			return;
 		}
@@ -511,7 +512,7 @@ export const castVote: RouteHandlerMethod = async (request, reply) => {
 			reply.status(422).send("Poll does not include the specified option");
 			return;
 		}
-		if (post.author.valueOf() === userId) {
+		if (post.author === userId) {
 			reply.status(403).send("User cannot vote on their own poll");
 			return;
 		}
@@ -549,7 +550,7 @@ export const deletePost: RouteHandlerMethod = async (request, reply) => {
 		reply.status(404).send("Post not found");
 		return;
 	}
-	if (post.author.valueOf() !== userId) {
+	if (post.author !== userId) {
 		reply.status(403).send("You are not allowed to perform this action");
 		return;
 	}
