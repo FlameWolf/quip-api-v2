@@ -7,10 +7,10 @@ import Follow from "../models/follow.model";
 import List from "../models/list.model";
 import ListMember from "../models/list-member.model";
 import Block from "../models/block.model";
-import { FastifyRequest, FastifyReply } from "fastify";
+import { RouteHandlerMethod, FastifyRequest, FastifyReply } from "fastify";
 import { BlockUserQueryString, UserInteractParams } from "../requestDefinitions/users.requests";
 
-export const blockUser = async (request: FastifyRequest, reply: FastifyReply) => {
+export const blockUser: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
 	const { handle: blockeeHandle } = request.params as UserInteractParams;
 	const { reason: blockReason } = request.query as BlockUserQueryString;
 	const { handle: blockerHandle, userId: blockerUserId } = request.userInfo as UserInfo;
@@ -64,7 +64,7 @@ export const blockUser = async (request: FastifyRequest, reply: FastifyReply) =>
 		await session.endSession();
 	}
 };
-export const unblockUser = async (request: FastifyRequest, reply: FastifyReply) => {
+export const unblockUser: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
 	const { handle: unblockeeHandle } = request.params as UserInteractParams;
 	const { handle: unblockerHandle, userId: unblockerUserId } = request.userInfo as UserInfo;
 	if (unblockeeHandle === unblockerHandle) {

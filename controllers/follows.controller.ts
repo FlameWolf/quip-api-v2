@@ -4,10 +4,10 @@ import * as usersController from "./users.controller";
 import Block from "../models/block.model";
 import FollowRequest from "../models/follow-request.model";
 import Follow from "../models/follow.model";
-import { FastifyRequest, FastifyReply } from "fastify";
+import { RouteHandlerMethod, FastifyRequest, FastifyReply } from "fastify";
 import { UserInteractParams } from "../requestDefinitions/users.requests";
 
-export const followUser = async (request: FastifyRequest, reply: FastifyReply) => {
+export const followUser: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
 	const { handle: followeeHandle } = request.params as UserInteractParams;
 	const { handle: followerHandle, userId: followerUserId } = request.userInfo as UserInfo;
 	if (followeeHandle === followerHandle) {
@@ -43,7 +43,7 @@ export const followUser = async (request: FastifyRequest, reply: FastifyReply) =
 		[isFolloweeProtected ? "requested" : "followed"]: result
 	});
 };
-export const unfollowUser = async (request: FastifyRequest, reply: FastifyReply) => {
+export const unfollowUser: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
 	const { handle: unfolloweeHandle } = request.params as UserInteractParams;
 	const { handle: unfollowerHandle, userId: unfollowerUserId } = request.userInfo as UserInfo;
 	if (unfolloweeHandle === unfollowerHandle) {

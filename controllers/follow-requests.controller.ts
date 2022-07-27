@@ -4,13 +4,13 @@ import mongoose, { FilterQuery } from "mongoose";
 import * as usersController from "./users.controller";
 import FollowRequest from "../models/follow-request.model";
 import Follow from "../models/follow.model";
-import { FastifyRequest, FastifyReply } from "fastify";
+import { RouteHandlerMethod, FastifyRequest, FastifyReply } from "fastify";
 import { UserInteractParams } from "../requestDefinitions/users.requests";
 import { FollowRequestBody, RequestApprovalParams } from "../requestDefinitions/settings.requests";
 
 const batchSize = 65536;
 
-export const acceptFollowRequest = async (request: FastifyRequest, reply: FastifyReply) => {
+export const acceptFollowRequest: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
 	const { requestId: followRequestId } = request.params as RequestApprovalParams;
 	const acceptorUserId = (request.userInfo as UserInfo).userId;
 	const session = await mongoose.startSession();
@@ -39,7 +39,7 @@ export const acceptFollowRequest = async (request: FastifyRequest, reply: Fastif
 		await session.endSession();
 	}
 };
-export const acceptSelectedFollowRequests = async (request: FastifyRequest, reply: FastifyReply) => {
+export const acceptSelectedFollowRequests: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
 	const { requestIds: followRequestIds } = request.body as FollowRequestBody;
 	const acceptorUserId = (request.userInfo as UserInfo).userId;
 	const session = await mongoose.startSession();
@@ -68,7 +68,7 @@ export const acceptSelectedFollowRequests = async (request: FastifyRequest, repl
 		await session.endSession();
 	}
 };
-export const acceptAllFollowRequests = async (request: FastifyRequest, reply: FastifyReply) => {
+export const acceptAllFollowRequests: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
 	const acceptorUserId = (request.userInfo as UserInfo).userId;
 	const session = await mongoose.startSession();
 	try {
@@ -97,7 +97,7 @@ export const acceptAllFollowRequests = async (request: FastifyRequest, reply: Fa
 		await session.endSession();
 	}
 };
-export const cancelFollowRequest = async (request: FastifyRequest, reply: FastifyReply) => {
+export const cancelFollowRequest: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
 	const { handle } = request.params as UserInteractParams;
 	const cancellerUserId = (request.userInfo as UserInfo).userId;
 	const user = await usersController.findUserByHandle(handle);
@@ -111,7 +111,7 @@ export const cancelFollowRequest = async (request: FastifyRequest, reply: Fastif
 	});
 	reply.status(200).send({ cancelled });
 };
-export const rejectFollowRequest = async (request: FastifyRequest, reply: FastifyReply) => {
+export const rejectFollowRequest: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
 	const { requestId: followRequestId } = request.params as RequestApprovalParams;
 	const rejectorUserId = (request.userInfo as UserInfo).userId;
 	const rejected = await FollowRequest.findOneAndDelete({
@@ -120,7 +120,7 @@ export const rejectFollowRequest = async (request: FastifyRequest, reply: Fastif
 	});
 	reply.status(200).send({ rejected });
 };
-export const rejectSelectedFollowRequests = async (request: FastifyRequest, reply: FastifyReply) => {
+export const rejectSelectedFollowRequests: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
 	const { requestIds: followRequestIds } = request.body as FollowRequestBody;
 	const rejectorUserId = (request.userInfo as UserInfo).userId;
 	const result = await FollowRequest.deleteMany({
@@ -131,7 +131,7 @@ export const rejectSelectedFollowRequests = async (request: FastifyRequest, repl
 	});
 	reply.status(200).send({ rejectedRequestsCount: result.deletedCount });
 };
-export const rejectAllFollowRequests = async (request: FastifyRequest, reply: FastifyReply) => {
+export const rejectAllFollowRequests: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
 	const rejectorUserId = (request.userInfo as UserInfo).userId;
 	const result = await FollowRequest.deleteMany({ user: rejectorUserId });
 	reply.status(200).send({ rejectedRequestsCount: result.deletedCount });

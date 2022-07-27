@@ -13,35 +13,35 @@ import User from "../models/user.model";
 import Post from "../models/post.model";
 import EmailVerification from "../models/email-verification.model";
 import PasswordReset from "../models/password-reset.model";
-import { FastifyRequest, FastifyReply } from "fastify";
+import { RouteHandlerMethod, FastifyRequest, FastifyReply } from "fastify";
 import { ActivityParams, ActivityQueryString, EmailApprovalParams, ForgotPasswordBody, HashtagParams, HashtagQueryString, ResetPasswordBody, ResetPasswordParams, TimelineQueryString, TopmostParams, TopmostQueryString } from "../requestDefinitions/index.requests";
 
-export const timeline = async (request: FastifyRequest, reply: FastifyReply) => {
+export const timeline: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
 	const { includeRepeats, includeReplies, lastPostId } = request.query as TimelineQueryString;
 	const userId = (request.userInfo as UserInfo).userId;
 	const posts = await User.aggregate(timelineAggregationPipeline(userId, includeRepeats, includeReplies, lastPostId));
 	reply.status(200).send({ posts });
 };
-export const activity = async (request: FastifyRequest, reply: FastifyReply) => {
+export const activity: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
 	const { period } = request.params as ActivityParams;
 	const { lastEntryId } = request.query as ActivityQueryString;
 	const userId = (request.userInfo as UserInfo).userId;
 	const entries = await User.aggregate(activityAggregationPipeline(userId, period, lastEntryId));
 	reply.status(200).send({ entries });
 };
-export const topmost = async (request: FastifyRequest, reply: FastifyReply) => {
+export const topmost: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
 	const { period } = request.params as TopmostParams;
 	const { lastScore, lastPostId } = request.query as TopmostQueryString;
 	const posts = await Post.aggregate(topmostAggregationPipeline((request.userInfo as UserInfo)?.userId, period, lastScore, lastPostId));
 	reply.status(200).send({ posts });
 };
-export const hashtag = async (request: FastifyRequest, reply: FastifyReply) => {
+export const hashtag: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
 	const { name: tagName } = request.params as HashtagParams;
 	const { sortBy, lastScore, lastPostId } = request.query as HashtagQueryString;
 	const posts = await Post.aggregate(hashtagAggregationPipeline(tagName, (request.userInfo as UserInfo)?.userId, sortBy, lastScore, lastPostId));
 	reply.status(200).send({ posts });
 };
-export const rejectEmail = async (request: FastifyRequest, reply: FastifyReply) => {
+export const rejectEmail: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
 	const { token } = request.params as EmailApprovalParams;
 	const session = await mongoose.startSession();
 	try {
@@ -63,7 +63,7 @@ export const rejectEmail = async (request: FastifyRequest, reply: FastifyReply) 
 		await session.endSession();
 	}
 };
-export const verifyEmail = async (request: FastifyRequest, reply: FastifyReply) => {
+export const verifyEmail: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
 	const { token } = request.params as EmailApprovalParams;
 	const emailVerification = await EmailVerification.findOne({ token });
 	if (!emailVerification) {
@@ -75,7 +75,7 @@ export const verifyEmail = async (request: FastifyRequest, reply: FastifyReply) 
 	reply.status(200).send();
 	emailController.sendEmail(noReplyEmail, email, "Email address change verified", emailTemplates.notifications.emailVerified(user?.handle as string, email));
 };
-export const forgotPassword = async (request: FastifyRequest, reply: FastifyReply) => {
+export const forgotPassword: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
 	const { handle, email } = request.body as ForgotPasswordBody;
 	const user = await User.findOne({ handle, deleted: false }).select("+email");
 	if (!user) {
@@ -93,7 +93,7 @@ export const forgotPassword = async (request: FastifyRequest, reply: FastifyRepl
 	reply.status(200).send({ passwordReset });
 	emailController.sendEmail(noReplyEmail, email, "Reset password", emailTemplates.actions.resetPassword(handle, `${process.env.ALLOW_ORIGIN}/reset-password/${passwordReset.token}`));
 };
-export const resetPassword = async (request: FastifyRequest, reply: FastifyReply) => {
+export const resetPassword: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
 	const { token } = request.params as ResetPasswordParams;
 	const { password } = request.body as ResetPasswordBody;
 	const session = await mongoose.startSession();

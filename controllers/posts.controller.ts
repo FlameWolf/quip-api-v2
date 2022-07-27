@@ -1,7 +1,7 @@
 "use strict";
 
 import { ObjectId } from "bson";
-import { FastifyReply, FastifyRequest } from "fastify";
+import { RouteHandlerMethod, FastifyRequest, FastifyReply } from "fastify";
 import mongoose, { HydratedDocument, InferSchemaType } from "mongoose";
 import cld = require("cld");
 import { File } from "fastify-multer/lib/interfaces";
@@ -163,7 +163,7 @@ const deletePostWithCascade = async (post: HydratedDocument<PostModel>) => {
 	});
 	await session.endSession();
 };
-export const createPost = async (request: FastifyRequest, reply: FastifyReply) => {
+export const createPost: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
 	const { content = "", poll, "media-description": mediaDescription, location } = request.body as PostCreateBody;
 	const { file: media, fileType } = request;
 	const userId = (request.userInfo as UserInfo).userId;
@@ -197,7 +197,7 @@ export const createPost = async (request: FastifyRequest, reply: FastifyReply) =
 	const post = await new Post(model).save();
 	reply.status(201).send({ post });
 };
-export const updatePost = async (request: FastifyRequest, reply: FastifyReply) => {
+export const updatePost: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
 	const { postId } = request.params as PostInteractParams;
 	const { content = "" } = request.body as PostUpdateBody;
 	const session = await mongoose.startSession();
@@ -273,7 +273,7 @@ export const updatePost = async (request: FastifyRequest, reply: FastifyReply) =
 		await session.endSession();
 	}
 };
-export const getPost = async (request: FastifyRequest, reply: FastifyReply) => {
+export const getPost: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
 	const { postId } = request.params as PostInteractParams;
 	const originalPost = await findPostById(postId);
 	if (!originalPost) {
@@ -292,7 +292,7 @@ export const getPost = async (request: FastifyRequest, reply: FastifyReply) => {
 	).shift();
 	reply.status(200).send({ post });
 };
-export const getPostQuotes = async (request: FastifyRequest, reply: FastifyReply) => {
+export const getPostQuotes: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
 	const { postId } = request.params as PostInteractParams;
 	const { lastQuoteId } = request.query as PostQuotesQueryString;
 	const post = await findPostById(postId);
@@ -303,7 +303,7 @@ export const getPostQuotes = async (request: FastifyRequest, reply: FastifyReply
 	const quotes = await Post.aggregate(postQuotesAggregationPipeline(post._id, (request.userInfo as UserInfo)?.userId, lastQuoteId));
 	reply.status(200).send({ quotes });
 };
-export const getPostReplies = async (request: FastifyRequest, reply: FastifyReply) => {
+export const getPostReplies: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
 	const { postId } = request.params as PostInteractParams;
 	const { lastReplyId } = request.query as PostRepliesQueryString;
 	const post = await findPostById(postId);
@@ -314,7 +314,7 @@ export const getPostReplies = async (request: FastifyRequest, reply: FastifyRepl
 	const replies = await Post.aggregate(postRepliesAggregationPipeline(post._id, (request.userInfo as UserInfo)?.userId, lastReplyId));
 	reply.status(200).send({ replies });
 };
-export const getPostParent = async (request: FastifyRequest, reply: FastifyReply) => {
+export const getPostParent: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
 	const { postId } = request.params as PostInteractParams;
 	const post = await findPostById(postId);
 	if (!post) {
@@ -328,7 +328,7 @@ export const getPostParent = async (request: FastifyRequest, reply: FastifyReply
 	const parent = (await Post.aggregate(postParentAggregationPipeline(post._id, (request.userInfo as UserInfo)?.userId))).shift();
 	reply.status(200).send({ parent });
 };
-export const quotePost = async (request: FastifyRequest, reply: FastifyReply) => {
+export const quotePost: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
 	const { postId } = request.params as PostInteractParams;
 	const { content = "", poll, "media-description": mediaDescription, location } = request.body as PostCreateBody;
 	const { file: media, fileType } = request;
@@ -382,7 +382,7 @@ export const quotePost = async (request: FastifyRequest, reply: FastifyReply) =>
 		await session.endSession();
 	}
 };
-export const repeatPost = async (request: FastifyRequest, reply: FastifyReply) => {
+export const repeatPost: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
 	const { postId } = request.params as PostInteractParams;
 	const userId = (request.userInfo as UserInfo).userId;
 	const session = await mongoose.startSession();
@@ -413,7 +413,7 @@ export const repeatPost = async (request: FastifyRequest, reply: FastifyReply) =
 		await session.endSession();
 	}
 };
-export const unrepeatPost = async (request: FastifyRequest, reply: FastifyReply) => {
+export const unrepeatPost: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
 	const { postId } = request.params as PostInteractParams;
 	const userId = (request.userInfo as UserInfo).userId;
 	const session = await mongoose.startSession();
@@ -436,7 +436,7 @@ export const unrepeatPost = async (request: FastifyRequest, reply: FastifyReply)
 		await session.endSession();
 	}
 };
-export const replyToPost = async (request: FastifyRequest, reply: FastifyReply) => {
+export const replyToPost: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
 	const { postId } = request.params as PostInteractParams;
 	const { content = "", poll, "media-description": mediaDescription, location } = request.body as PostCreateBody;
 	const { file: media, fileType } = request;
@@ -491,7 +491,7 @@ export const replyToPost = async (request: FastifyRequest, reply: FastifyReply) 
 		await session.endSession();
 	}
 };
-export const castVote = async (request: FastifyRequest, reply: FastifyReply) => {
+export const castVote: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
 	const { postId } = request.params as PostInteractParams;
 	const { option } = request.query as PostVoteQueryString;
 	const userId = (request.userInfo as UserInfo).userId;
@@ -542,7 +542,7 @@ export const castVote = async (request: FastifyRequest, reply: FastifyReply) => 
 		await session.endSession();
 	}
 };
-export const deletePost = async (request: FastifyRequest, reply: FastifyReply) => {
+export const deletePost: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
 	const { postId } = request.params as PostInteractParams;
 	const userId = (request.userInfo as UserInfo).userId;
 	const post = await Post.findById(postId);

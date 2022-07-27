@@ -5,12 +5,12 @@ import * as postsController from "./posts.controller";
 import MutedUser from "../models/muted.user.model";
 import MutedPost from "../models/muted.post.model";
 import MutedWord from "../models/muted.word.model";
-import { FastifyRequest, FastifyReply } from "fastify";
+import { RouteHandlerMethod, FastifyRequest, FastifyReply } from "fastify";
 import { PostInteractParams } from "../requestDefinitions/posts.requests";
 import { WordMuteBody } from "../requestDefinitions/settings.requests";
 import { UserInteractParams } from "../requestDefinitions/users.requests";
 
-export const muteUser = async (request: FastifyRequest, reply: FastifyReply) => {
+export const muteUser: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
 	const { handle: muteeHandle } = request.params as UserInteractParams;
 	const { handle: muterHandle, userId: muterUserId } = request.userInfo as UserInfo;
 	if (muteeHandle === muterHandle) {
@@ -25,7 +25,7 @@ export const muteUser = async (request: FastifyRequest, reply: FastifyReply) => 
 	const muted = await new MutedUser({ user: mutee._id, mutedBy: muterUserId }).save();
 	reply.status(200).send({ muted });
 };
-export const unmuteUser = async (request: FastifyRequest, reply: FastifyReply) => {
+export const unmuteUser: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
 	const { handle: unmuteeHandle } = request.params as UserInteractParams;
 	const { handle: unmuterHandle, userId: unmuterUserId } = request.userInfo as UserInfo;
 	if (unmuteeHandle === unmuterHandle) {
@@ -40,7 +40,7 @@ export const unmuteUser = async (request: FastifyRequest, reply: FastifyReply) =
 	const unmuted = await MutedUser.findOneAndDelete({ user: unmutee._id, mutedBy: unmuterUserId });
 	reply.status(200).send({ unmuted });
 };
-export const mutePost = async (request: FastifyRequest, reply: FastifyReply) => {
+export const mutePost: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
 	const { postId } = request.params as PostInteractParams;
 	const userId = (request.userInfo as UserInfo).userId;
 	const post = await postsController.findPostById(postId);
@@ -51,19 +51,19 @@ export const mutePost = async (request: FastifyRequest, reply: FastifyReply) => 
 	const muted = await new MutedPost({ post: post._id, mutedBy: userId }).save();
 	reply.status(200).send({ muted });
 };
-export const unmutePost = async (request: FastifyRequest, reply: FastifyReply) => {
+export const unmutePost: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
 	const { postId } = request.params as PostInteractParams;
 	const userId = (request.userInfo as UserInfo).userId;
 	const unmuted = await MutedPost.findOneAndDelete({ post: postId, mutedBy: userId });
 	reply.status(200).send({ unmuted });
 };
-export const muteWord = async (request: FastifyRequest, reply: FastifyReply) => {
+export const muteWord: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
 	const { word, match } = request.body as WordMuteBody;
 	const userId = (request.userInfo as UserInfo).userId;
 	const muted = await new MutedWord({ word, match, mutedBy: userId }).save();
 	reply.status(200).send({ muted });
 };
-export const unmuteWord = async (request: FastifyRequest, reply: FastifyReply) => {
+export const unmuteWord: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
 	const { word, match } = request.body as WordMuteBody;
 	const userId = (request.userInfo as UserInfo).userId;
 	const unmuted = await MutedWord.findOneAndDelete({ word, match, mutedBy: userId });

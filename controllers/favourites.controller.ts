@@ -5,11 +5,11 @@ import { favouriteScore } from "../library";
 import * as postsController from "./posts.controller";
 import Post from "../models/post.model";
 import Favourite from "../models/favourite.model";
-import { FastifyRequest, FastifyReply } from "fastify";
+import { RouteHandlerMethod, FastifyRequest, FastifyReply } from "fastify";
 import { PostInteractParams } from "../requestDefinitions/posts.requests";
 import { request } from "http";
 
-export const addFavourite = async (request: FastifyRequest, reply: FastifyReply) => {
+export const addFavourite: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
 	const { postId } = request.params as PostInteractParams;
 	const userId = (request.userInfo as UserInfo).userId;
 	const session = await mongoose.startSession();
@@ -36,7 +36,7 @@ export const addFavourite = async (request: FastifyRequest, reply: FastifyReply)
 		await session.endSession();
 	}
 };
-export const removeFavourite = async (request: FastifyRequest, reply: FastifyReply) => {
+export const removeFavourite: RouteHandlerMethod = async (request: FastifyRequest, reply: FastifyReply) => {
 	const { postId } = request.params as PostInteractParams;
 	const userId = (request.userInfo as UserInfo).userId;
 	const session = await mongoose.startSession();
