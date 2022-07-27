@@ -1,14 +1,10 @@
 "use strict";
 
-import fastify, { FastifyInstance, FastifyRequest, FastifySchema, onRequestHookHandler } from "fastify";
+import fastify, { FastifyRequest, FastifySchema } from "fastify";
 import { File } from "fastify-multer/lib/interfaces";
 import { JwtPayload } from "jsonwebtoken";
 
 declare module "fastify" {
-	interface FastifyInstance {
-		authenticateRequest: onRequestHookHandler;
-		requireAuthentication: onRequestHookHandler;
-	}
 	interface FastifyRequest {
 		userInfo?: string | JwtPayload | UserInfo;
 		file?: File;
