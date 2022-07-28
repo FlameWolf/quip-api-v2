@@ -1,6 +1,6 @@
 "use strict";
 
-import mongoose, { InferSchemaType } from "mongoose";
+import mongoose, { HydratedDocument, InferSchemaType } from "mongoose";
 import * as usersController from "./users.controller";
 import FollowRequest from "../models/follow-request.model";
 import Follow from "../models/follow.model";
@@ -85,7 +85,7 @@ export const acceptAllFollowRequests: RouteHandlerMethod = async (request, reply
 					}
 				}).session(session);
 				const result = await Follow.bulkSave(
-					followRequests.map(followRequest => {
+					followRequests.map((followRequest: Partial<HydratedDocument<FollowRequestModel>>) => {
 						delete followRequest._id;
 						return new Follow(followRequest);
 					}),

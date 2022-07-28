@@ -21,7 +21,8 @@ import Vote from "../models/vote.model";
 import { PostCreateBody, PostInteractParams, PostQuotesQueryString, PostRepliesQueryString, PostUpdateBody, PostVoteQueryString } from "../requestDefinitions/posts.requests";
 
 type PostModel = InferSchemaType<typeof Post.schema>;
-type PollModel = Required<PostModel>["attachments"]["poll"];
+type AttachmentsModel = Required<PostModel>["attachments"];
+type PollModel = AttachmentsModel["poll"];
 type LanguageEntry = InferArrayElementType<PostModel["languages"]>;
 type MentionEntry = InferArrayElementType<PostModel["mentions"]>;
 type HashtagEntry = InferArrayElementType<PostModel["hashtags"]>;
@@ -51,7 +52,7 @@ const detectLanguages = async (value: string) => {
 	}
 	return [];
 };
-const updateLanguages = async (post: Partial<PostModel>) => {
+const updateLanguages = async (post: Partial<PostModel> | DeepPartial<PostModel>) => {
 	const languages = new Set(post.languages);
 	const promises = [];
 	const { content, attachments } = post;
@@ -74,7 +75,7 @@ const updateLanguages = async (post: Partial<PostModel>) => {
 	}
 	post.languages = [...languages];
 };
-const updateMentionsAndHashtags = async (content: string, post: Partial<PostModel>) => {
+const updateMentionsAndHashtags = async (content: string, post: Partial<PostModel> | DeepPartial<PostModel>) => {
 	const postMentions = new Set(post.mentions);
 	const postHashtags = new Set(post.hashtags);
 	const contentMentions = content.match(/\B@\w+/g);
@@ -102,8 +103,8 @@ const updateMentionsAndHashtags = async (content: string, post: Partial<PostMode
 };
 const uploadFile = async (file: File, fileType: string) => {
 	const parser = new dataUriParser();
-	const data = parser.format("", file.buffer);
-	const response = await cloudinary.uploader.upload(data.content, {
+	const data = parser.format("", file.buffer as Buffer);
+	const response = await cloudinary.uploader.upload(data.content as string, {
 		resource_type: fileType,
 		folder: `${fileType}s/`,
 		public_id: `${sanitiseFileName(file.originalname.replace(/\.\w+$/, ""), 16)}_${Date.now().valueOf()}`
@@ -185,7 +186,7 @@ export const createPost: RouteHandlerMethod = async (request, reply) => {
 				...(media && {
 					mediaFile: {
 						fileType: fileType as any,
-						src: (await uploadFile(media, fileType)).secure_url as any,
+						src: (await uploadFile(media, fileType as string)).secure_url as any,
 						previewSrc: undefined,
 						description: mediaDescription
 					}
@@ -223,7 +224,7 @@ export const updatePost: RouteHandlerMethod = async (request, reply) => {
 			reply.status(422).send("Post was edited once and cannot be edited again");
 			return;
 		}
-		const { poll, mediaFile, post: quotedPostId } = post.attachments;
+		const { poll, mediaFile, post: quotedPostId } = post.attachments as AttachmentsModel;
 		if (poll) {
 			reply.status(422).send("Cannot edit a post that includes a poll");
 			return;
@@ -248,9 +249,6 @@ export const updatePost: RouteHandlerMethod = async (request, reply) => {
 				...(mediaFile && {
 					attachments: {
 						mediaFile: {
-							fileType: undefined,
-							src: undefined,
-							previewSrc: undefined,
 							description: mediaFile.description
 						}
 					}
@@ -360,7 +358,7 @@ export const quotePost: RouteHandlerMethod = async (request, reply) => {
 					...(media && {
 						mediaFile: {
 							fileType: fileType as any,
-							src: (await uploadFile(media, fileType)).secure_url as any,
+							src: (await uploadFile(media, fileType as string)).secure_url as any,
 							previewSrc: undefined,
 							description: mediaDescription
 						}
@@ -470,7 +468,7 @@ export const replyToPost: RouteHandlerMethod = async (request, reply) => {
 						...(media && {
 							mediaFile: {
 								fileType: fileType as any,
-								src: (await uploadFile(media, fileType)).secure_url as any,
+								src: (await uploadFile(media, fileType as string)).secure_url as any,
 								previewSrc: undefined,
 								description: mediaDescription
 							}

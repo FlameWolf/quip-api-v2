@@ -218,7 +218,7 @@ export const getUserMentions: RouteHandlerMethod = async (request, reply) => {
 export const getLists: RouteHandlerMethod = async (request, reply) => {
 	const { memberHandle, lastListId } = request.query as ListsQueryString;
 	const userId = (request.userInfo as UserInfo).userId;
-	const member = await findUserByHandle(memberHandle);
+	const member = await findUserByHandle(memberHandle as string);
 	if (memberHandle && !member) {
 		reply.status(404).send("User not found");
 		return;

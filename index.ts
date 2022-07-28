@@ -77,7 +77,7 @@ server.setErrorHandler(async (error, request, reply) => {
 });
 server.listen(
 	{
-		port: +process.env.PORT || 3072,
+		port: +(process.env.PORT as string) || 3072,
 		host: process.env.HOST || "::"
 	},
 	(err, address) => {
