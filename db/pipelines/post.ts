@@ -1,5 +1,6 @@
 "use strict";
 
+import { ObjectId } from "bson";
 import interactionsAggregationPipeline from "./interactions";
 
 const authorLookupAndUnwind = [
@@ -24,7 +25,7 @@ const authorLookupAndUnwind = [
 		$unwind: "$author"
 	}
 ];
-const postAggregationPipeline = (userId: any = undefined): Array<any> => {
+const postAggregationPipeline = (userId?: string | ObjectId): Array<any> => {
 	return [
 		{
 			$unset: "score"

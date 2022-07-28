@@ -2,7 +2,7 @@
 
 import { ObjectId } from "bson";
 
-const userAggregationPipeline = (selfId: any = undefined): Array<any> => {
+const userAggregationPipeline = (selfId?: string | ObjectId): Array<any> => {
 	const lookupStages = [];
 	if (selfId) {
 		const selfObjectId = new ObjectId(selfId);

@@ -3,7 +3,7 @@
 import { ObjectId } from "bson";
 import postAggregationPipeline from "./post";
 
-const votesAggregationPipeline = (userId: any, lastVoteId: any = undefined) => [
+const votesAggregationPipeline = (userId: string | ObjectId, lastVoteId?: string | ObjectId) => [
 	{
 		$match: {
 			_id: new ObjectId(userId)

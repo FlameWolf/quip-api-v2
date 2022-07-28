@@ -2,7 +2,7 @@
 
 import { ObjectId } from "bson";
 
-const mutedUsersAggregationPipeline = (userId: any, lastMuteId: any = undefined): Array<any> => [
+const mutedUsersAggregationPipeline = (userId: string | ObjectId, lastMuteId?: string | ObjectId): Array<any> => [
 	{
 		$match: {
 			mutedBy: new ObjectId(userId)

@@ -38,7 +38,7 @@ export const emailTemplates = {
 	}
 };
 
-export const setProperty = (operand: { [x: string]: any }, path: string | Array<string>, value: any) => {
+export const setProperty = (operand: Dictionary, path: string | Array<string>, value: any) => {
 	const segments: Array<string> = Array.isArray(path) ? path : path.split(".");
 	operand = operand || {};
 	if (segments.length > 1) {
@@ -49,7 +49,7 @@ export const setProperty = (operand: { [x: string]: any }, path: string | Array<
 		operand[segments.pop() as string] = value;
 	}
 };
-export const getProperty = (operand: { [x: string]: any }, path: string | Array<string>): any => {
+export const getProperty = (operand: Dictionary, path: string | Array<string>): any => {
 	const segments: Array<string> = Array.isArray(path) ? path : path.split(".");
 	if (operand && segments.length) {
 		return getProperty(operand[segments.shift() as string], segments);

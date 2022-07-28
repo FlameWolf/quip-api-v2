@@ -2,7 +2,7 @@
 
 import { ObjectId } from "bson";
 
-const filtersAggregationPipeline = (userId: any): Array<any> => {
+const filtersAggregationPipeline = (userId?: string | ObjectId): Array<any> => {
 	if (!userId) {
 		return [];
 	}

@@ -7,7 +7,7 @@ SchemaTypes.Point = class Point extends SchemaType {
 		super(key, options, "Point");
 	}
 
-	cast(value: { type: any; coordinates: any }) {
+	cast(value: { type: string; coordinates: Array<number> }) {
 		const { type, coordinates } = value;
 		const [longitude, latitude] = coordinates;
 		if (!type) {

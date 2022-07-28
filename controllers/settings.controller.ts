@@ -1,11 +1,12 @@
 "use strict";
 
+import { ObjectId } from "bson";
 import { RouteHandlerMethod } from "fastify";
 import { setProperty, getProperty } from "../library";
 import Settings from "../models/settings.model";
 import { GetSettingParams, UpdateSettingQueryString, SettingsBody } from "../requestDefinitions/settings.requests";
 
-const getSettingsByUserId = async (userId: any) => {
+const getSettingsByUserId = async (userId: string | ObjectId) => {
 	const param = { user: userId };
 	const settings = await Settings.findOne(param);
 	if (!settings) {
@@ -13,7 +14,7 @@ const getSettingsByUserId = async (userId: any) => {
 	}
 	return settings;
 };
-export const updateSettingsByUserId = async (userId: any, settings: any) =>
+export const updateSettingsByUserId = async (userId: string | ObjectId, settings: Dictionary) =>
 	await Settings.findOneAndUpdate(
 		{
 			user: userId

@@ -3,7 +3,7 @@
 import { ObjectId } from "bson";
 import postAggregationPipeline from "./post";
 
-const userPostsAggregationPipeline = (userId: any, includeRepeats: boolean = false, includeReplies: boolean = false, lastPostId: any = undefined): Array<any> => {
+const userPostsAggregationPipeline = (userId: string | ObjectId, includeRepeats: boolean = false, includeReplies: boolean = false, lastPostId?: string | ObjectId): Array<any> => {
 	const matchConditions = {
 		...(!includeRepeats && {
 			repeatPost: {

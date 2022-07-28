@@ -3,7 +3,7 @@
 import { ObjectId } from "bson";
 import postAggregationPipeline from "./post";
 
-const getPageConditions = (lastPostId: undefined, sortByDate: boolean, lastScore: any) => {
+const getPageConditions = (sortByDate: boolean, lastScore?: number, lastPostId?: string | ObjectId) => {
 	if (lastPostId) {
 		const lastPostObjectId = new ObjectId(lastPostId);
 		if (sortByDate) {
@@ -13,14 +13,13 @@ const getPageConditions = (lastPostId: undefined, sortByDate: boolean, lastScore
 				}
 			};
 		} else if (lastScore) {
-			const parsedLastScore = parseInt(lastScore);
 			return {
 				$expr: {
 					$or: [
 						{
 							$and: [
 								{
-									$eq: ["$score", parsedLastScore]
+									$eq: ["$score", lastScore]
 								},
 								{
 									$lt: ["$_id", lastPostObjectId]
@@ -28,7 +27,7 @@ const getPageConditions = (lastPostId: undefined, sortByDate: boolean, lastScore
 							]
 						},
 						{
-							$lt: ["$score", parsedLastScore]
+							$lt: ["$score", lastScore]
 						}
 					]
 				}
@@ -36,7 +35,7 @@ const getPageConditions = (lastPostId: undefined, sortByDate: boolean, lastScore
 		}
 	}
 };
-const hashtagAggregationPipeline = (hashtag: string, userId: any = undefined, sortBy: string = "date", lastScore: any = undefined, lastPostId: any = undefined): Array<any> => {
+const hashtagAggregationPipeline = (hashtag: string, userId?: string | ObjectId, sortBy: string = "date", lastScore?: number, lastPostId?: string | ObjectId): Array<any> => {
 	const sortByDate = sortBy !== "popular";
 	return [
 		{
@@ -56,7 +55,7 @@ const hashtagAggregationPipeline = (hashtag: string, userId: any = undefined, so
 				  }
 		},
 		{
-			$match: getPageConditions(lastPostId, sortByDate, lastScore)
+			$match: getPageConditions(sortByDate, lastScore, lastPostId)
 		},
 		{
 			$limit: 20

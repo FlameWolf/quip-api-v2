@@ -40,7 +40,7 @@ const postSchema = new Schema(
 					validate: [
 						{
 							validator: function () {
-								return Boolean((this as any).third);
+								return Boolean((this as Dictionary).third);
 							},
 							message: "Cannot specify fourth option when third option is blank"
 						},
@@ -59,13 +59,13 @@ const postSchema = new Schema(
 					third: {
 						type: Number,
 						default: function () {
-							return (this as any).third && 0;
+							return (this as Dictionary).third && 0;
 						}
 					},
 					fourth: {
 						type: Number,
 						default: function () {
-							return (this as any).fourth && 0;
+							return (this as Dictionary).fourth && 0;
 						}
 					},
 					nota: { type: Number, default: 0 }

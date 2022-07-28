@@ -3,7 +3,7 @@
 import { ObjectId } from "bson";
 import postAggregationPipeline from "./post";
 
-const bookmarksAggregationPipeline = (userId: any, lastBookmarkId: any = undefined): Array<any> => [
+const bookmarksAggregationPipeline = (userId: string | ObjectId, lastBookmarkId?: string | ObjectId): Array<any> => [
 	{
 		$match: {
 			_id: new ObjectId(userId)

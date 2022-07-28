@@ -4,9 +4,9 @@ import { ObjectId } from "bson";
 import filtersAggregationPipeline from "./filters";
 import postAggregationPipeline from "./post";
 
-const topmostAggregationPipeline = (userId: any = undefined, period: string = "", lastScore: any = undefined, lastPostId: any = undefined) => {
-	const matchConditions: any = {};
-	const pageConditions: any = {};
+const topmostAggregationPipeline = (userId?: string | ObjectId, period: string = "", lastScore?: number, lastPostId?: string | ObjectId) => {
+	const matchConditions: Dictionary = {};
+	const pageConditions: Dictionary = {};
 	if (period !== "all") {
 		const maxDate = new Date();
 		switch (period.toLowerCase()) {
@@ -27,13 +27,12 @@ const topmostAggregationPipeline = (userId: any = undefined, period: string = ""
 		matchConditions.createdAt = { $gte: maxDate };
 	}
 	if (lastScore && lastPostId) {
-		const parsedLastScore = parseInt(lastScore);
 		pageConditions.$expr = {
 			$or: [
 				{
 					$and: [
 						{
-							$eq: ["$score", parsedLastScore]
+							$eq: ["$score", lastScore]
 						},
 						{
 							$lt: ["$_id", new ObjectId(lastPostId)]
@@ -41,7 +40,7 @@ const topmostAggregationPipeline = (userId: any = undefined, period: string = ""
 					]
 				},
 				{
-					$lt: ["$score", parsedLastScore]
+					$lt: ["$score", lastScore]
 				}
 			]
 		};

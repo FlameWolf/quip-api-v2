@@ -2,7 +2,7 @@
 
 import { ObjectId } from "bson";
 
-const blocksAggregationPipeline = (userId: any, lastBlockId: any = undefined): Array<any> => [
+const blocksAggregationPipeline = (userId: string | ObjectId, lastBlockId?: string | ObjectId): Array<any> => [
 	{
 		$match: {
 			blockedBy: new ObjectId(userId)

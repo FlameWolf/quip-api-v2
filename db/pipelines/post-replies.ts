@@ -4,7 +4,7 @@ import { ObjectId } from "bson";
 import filtersAggregationPipeline from "./filters";
 import postAggregationPipeline from "./post";
 
-const postRepliesAggregationPipeline = (postId: any, userId: any = undefined, lastReplyId: any = undefined) => [
+const postRepliesAggregationPipeline = (postId: string | ObjectId, userId?: string | ObjectId, lastReplyId?: string | ObjectId) => [
 	{
 		$match: {
 			replyTo: new ObjectId(postId)

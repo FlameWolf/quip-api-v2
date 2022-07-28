@@ -1,6 +1,6 @@
 "use strict";
 
-import mongoose, { FilterQuery } from "mongoose";
+import mongoose, { InferSchemaType } from "mongoose";
 import * as usersController from "./users.controller";
 import FollowRequest from "../models/follow-request.model";
 import Follow from "../models/follow.model";
@@ -9,6 +9,7 @@ import { UserInteractParams } from "../requestDefinitions/users.requests";
 import { FollowRequestBody, RequestApprovalParams } from "../requestDefinitions/settings.requests";
 
 const batchSize = 65536;
+type FollowRequestModel = InferSchemaType<typeof FollowRequest.schema>;
 
 export const acceptFollowRequest: RouteHandlerMethod = async (request, reply) => {
 	const { requestId: followRequestId } = request.params as RequestApprovalParams;
@@ -28,7 +29,7 @@ export const acceptFollowRequest: RouteHandlerMethod = async (request, reply) =>
 			reply.status(404).send(new Error("Follow request not found"));
 		}
 		await session.withTransaction(async () => {
-			await FollowRequest.deleteOne(followRequest?.toJSON() as FilterQuery<any>).session(session);
+			await FollowRequest.deleteOne(followRequest as FollowRequestModel).session(session);
 			const accepted = await new Follow({
 				user: acceptorUserId,
 				followedBy: followRequest?.requestedBy
@@ -77,15 +78,17 @@ export const acceptAllFollowRequests: RouteHandlerMethod = async (request, reply
 		await session.withTransaction(async () => {
 			const filter = { user: acceptorUserId };
 			do {
-				const followRequests: Array<any> = await FollowRequest.find(filter, { user: acceptorUserId, followedBy: "$requestedBy" }).limit(batchSize).session(session);
+				const followRequests = await FollowRequest.find(filter, { user: acceptorUserId, followedBy: "$requestedBy" }).limit(batchSize).session(session);
 				await FollowRequest.deleteMany({
 					_id: {
 						$in: followRequests.map(followRequest => followRequest._id)
 					}
 				}).session(session);
-				followRequests.forEach(followRequest => delete followRequest._id);
 				const result = await Follow.bulkSave(
-					followRequests.map(followRequest => new Follow(followRequest)),
+					followRequests.map(followRequest => {
+						delete followRequest._id;
+						return new Follow(followRequest);
+					}),
 					{ session }
 				);
 				batchCount = result.insertedCount;

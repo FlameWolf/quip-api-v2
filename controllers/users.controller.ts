@@ -39,7 +39,7 @@ import RefreshToken from "../models/refresh-token.model";
 import Settings from "../models/settings.model";
 import User from "../models/user.model";
 import Vote from "../models/vote.model";
-import { ListMembersQueryString, ListsQueryString } from "../requestDefinitions/lists.requests";
+import { ListInteractParams, ListMembersQueryString, ListsQueryString } from "../requestDefinitions/lists.requests";
 import { PostInteractParams } from "../requestDefinitions/posts.requests";
 import { BlockedUsersQueryString, ChangePasswordBody, MutedItemsQueryString, UpdateEmailBody } from "../requestDefinitions/settings.requests";
 import { UserBookmarksQueryString, UserFavouritesQueryString, UserFollowRequestsQueryString, UserFollowsQueryString, UserInteractParams, UserMentionsQueryString, UserPostsQueryString, UserTopmostParams, UserTopmostQueryString, UserVotesQueryString } from "../requestDefinitions/users.requests";
@@ -49,23 +49,23 @@ import * as postsController from "./posts.controller";
 type UserModel = InferSchemaType<typeof User.schema>;
 
 export const findActiveUserByHandle = async (handle: string) => (await User.findOne({ handle, deactivated: false, deleted: false })) as HydratedDocument<UserModel>;
-export const findUserById = async (userId: any) => (await User.findOne({ _id: userId, deleted: false })) as HydratedDocument<UserModel>;
+export const findUserById = async (userId: string | ObjectId) => (await User.findOne({ _id: userId, deleted: false })) as HydratedDocument<UserModel>;
 export const findUserByHandle = async (handle: string) => (await User.findOne({ handle, deleted: false })) as HydratedDocument<UserModel>;
-export const findPostsByUserId = async (userId: ObjectId, includeRepeats?: boolean, includeReplies?: boolean, lastPostId?: any) => await User.aggregate(userPostsAggregationPipeline(userId, includeRepeats, includeReplies, lastPostId));
-export const findFavouritesByUserId = async (userId: any, lastFavouriteId?: any) => await User.aggregate(favouritesAggregationPipeline(userId, lastFavouriteId));
-export const findVotesByUserId = async (userId: any, lastVoteId?: any) => await User.aggregate(votesAggregationPipeline(userId, lastVoteId));
-export const findBookmarksByUserId = async (userId: any, lastBookmarkId?: any) => await User.aggregate(bookmarksAggregationPipeline(userId, lastBookmarkId));
-export const findFollowingByUserId = async (userId: any, lastFollowId?: any) => await Follow.aggregate(followingAggregationPipeline(userId, lastFollowId));
-export const findFollowersByUserId = async (userId: any, lastFollowId?: any) => await Follow.aggregate(followersAggregationPipeline(userId, lastFollowId));
-export const findFollowRequestsSentByUserId = async (userId: any, lastFollowRequestId?: any) => await Follow.aggregate(followRequestsSentAggregationPipeline(userId, lastFollowRequestId));
-export const findFollowRequestsReceivedByUserId = async (userId: any, lastFollowRequestId?: any) => await Follow.aggregate(followRequestsReceivedAggregationPipeline(userId, lastFollowRequestId));
-export const findMentionsByUserId = async (userId: ObjectId, selfId?: any, lastMentionId?: any) => await Post.aggregate(mentionsAggregationPipeline(userId, selfId, lastMentionId));
-export const findListsByUserId = async (userId: any, memberId?: any, lastListId?: any) => await List.aggregate(listsAggregationPipeline(userId, memberId, lastListId));
-export const findMembersByListId = async (listId: ObjectId, lastMemberId?: any) => await ListMember.aggregate(listMembersAggregationPipeline(listId, lastMemberId));
-export const findBlocksByUserId = async (userId: any, lastBlockId?: any) => await Block.aggregate(blocksAggregationPipeline(userId, lastBlockId));
-export const findMutedUsersByUserId = async (userId: any, lastMuteId?: any) => await MutedUser.aggregate(mutedUsersAggregationPipeline(userId, lastMuteId));
-export const findMutedPostsByUserId = async (userId: any, lastMuteId?: any) => await MutedPost.aggregate(mutedPostsAggregationPipeline(userId, lastMuteId));
-export const findMutedWordsByUserId = async (userId: any, lastMuteId?: any) => (await MutedWord.aggregate(mutedWordsAggregationPipeline(userId, lastMuteId))) as Array<{ word: string; match: string }>;
+export const findPostsByUserId = async (userId: ObjectId, includeRepeats?: boolean, includeReplies?: boolean, lastPostId?: string | ObjectId) => await User.aggregate(userPostsAggregationPipeline(userId, includeRepeats, includeReplies, lastPostId));
+export const findFavouritesByUserId = async (userId: string | ObjectId, lastFavouriteId?: string | ObjectId) => await User.aggregate(favouritesAggregationPipeline(userId, lastFavouriteId));
+export const findVotesByUserId = async (userId: string | ObjectId, lastVoteId?: string | ObjectId) => await User.aggregate(votesAggregationPipeline(userId, lastVoteId));
+export const findBookmarksByUserId = async (userId: string | ObjectId, lastBookmarkId?: string | ObjectId) => await User.aggregate(bookmarksAggregationPipeline(userId, lastBookmarkId));
+export const findFollowingByUserId = async (userId: string | ObjectId, lastFollowId?: string | ObjectId) => await Follow.aggregate(followingAggregationPipeline(userId, lastFollowId));
+export const findFollowersByUserId = async (userId: string | ObjectId, lastFollowId?: string | ObjectId) => await Follow.aggregate(followersAggregationPipeline(userId, lastFollowId));
+export const findFollowRequestsSentByUserId = async (userId: string | ObjectId, lastFollowRequestId?: string | ObjectId) => await Follow.aggregate(followRequestsSentAggregationPipeline(userId, lastFollowRequestId));
+export const findFollowRequestsReceivedByUserId = async (userId: string | ObjectId, lastFollowRequestId?: string | ObjectId) => await Follow.aggregate(followRequestsReceivedAggregationPipeline(userId, lastFollowRequestId));
+export const findMentionsByUserId = async (userId: ObjectId, selfId?: string | ObjectId, lastMentionId?: string | ObjectId) => await Post.aggregate(mentionsAggregationPipeline(userId, selfId, lastMentionId));
+export const findListsByUserId = async (userId: string | ObjectId, memberId?: string | ObjectId, lastListId?: string | ObjectId) => await List.aggregate(listsAggregationPipeline(userId, memberId, lastListId));
+export const findMembersByListId = async (listId: ObjectId, lastMemberId?: string | ObjectId) => await ListMember.aggregate(listMembersAggregationPipeline(listId, lastMemberId));
+export const findBlocksByUserId = async (userId: string | ObjectId, lastBlockId?: string | ObjectId) => await Block.aggregate(blocksAggregationPipeline(userId, lastBlockId));
+export const findMutedUsersByUserId = async (userId: string | ObjectId, lastMuteId?: string | ObjectId) => await MutedUser.aggregate(mutedUsersAggregationPipeline(userId, lastMuteId));
+export const findMutedPostsByUserId = async (userId: string | ObjectId, lastMuteId?: string | ObjectId) => await MutedPost.aggregate(mutedPostsAggregationPipeline(userId, lastMuteId));
+export const findMutedWordsByUserId = async (userId: string | ObjectId, lastMuteId?: string | ObjectId) => (await MutedWord.aggregate(mutedWordsAggregationPipeline(userId, lastMuteId))) as Array<{ word: string; match: string }>;
 export const getUser: RouteHandlerMethod = async (request, reply) => {
 	const { handle } = request.params as UserInteractParams;
 	const user = (
@@ -227,7 +227,7 @@ export const getLists: RouteHandlerMethod = async (request, reply) => {
 	reply.status(200).send({ lists });
 };
 export const getListMembers: RouteHandlerMethod = async (request, reply) => {
-	const name = (request.params as any).name;
+	const { name } = request.params as ListInteractParams;
 	const { lastMemberId } = request.query as ListMembersQueryString;
 	const userId = (request.userInfo as UserInfo).userId;
 	const list = await List.findOne({ name, owner: userId });
@@ -316,7 +316,7 @@ export const changePassword: RouteHandlerMethod = async (request, reply) => {
 		return;
 	}
 	const passwordHash = await bcrypt.hash(newPassword, rounds);
-	await User.updateOne(user.toObject(), { password: passwordHash });
+	await User.updateOne(user as UserModel, { password: passwordHash });
 	reply.status(200).send();
 	if (email) {
 		emailController.sendEmail(noReplyEmail, email, "Password changed", emailTemplates.notifications.passwordChanged(user.handle));

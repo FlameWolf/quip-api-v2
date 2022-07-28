@@ -6,7 +6,9 @@ import postAggregationPipeline from "./post";
 const getMatchConditions = (searchText: string, searchOptions: { from?: string; since?: string; until?: string; hasMedia?: boolean; notFrom?: string; replies?: string; languages?: string; includeLanguages?: string; mediaDescription?: string }) => {
 	const separator = "|";
 	const atSign = "@";
-	const matchConditions: any = { $expr: {} };
+	const matchConditions: Dictionary = {
+		$expr: {}
+	};
 	if (searchText) {
 		matchConditions.$text = { $search: searchText, $language: "none" };
 	}
@@ -86,19 +88,18 @@ const getSortConditions = (sortByDate: boolean, dateSort: number) =>
 				score: -1,
 				createdAt: dateSort
 		  };
-const getPageConditions = (sortByDate: boolean, idCompare: string, lastScore: any, lastPostId: any) => {
-	const pageConditions: any = {};
+const getPageConditions = (sortByDate: boolean, idCompare: string, lastScore?: number, lastPostId?: string | ObjectId) => {
+	const pageConditions: Dictionary = {};
 	if (lastPostId) {
 		const lastPostObjectId = new ObjectId(lastPostId);
 		if (sortByDate) {
 			pageConditions._id[idCompare] = lastPostObjectId;
 		} else if (lastScore) {
-			const parsedLastScore = parseFloat(lastScore);
 			pageConditions.$expr.$or = [
 				{
 					$and: [
 						{
-							$eq: ["$score", parsedLastScore]
+							$eq: ["$score", lastScore]
 						},
 						{
 							[idCompare]: ["$_id", lastPostObjectId]
@@ -106,14 +107,14 @@ const getPageConditions = (sortByDate: boolean, idCompare: string, lastScore: an
 					]
 				},
 				{
-					$lt: ["$score", parsedLastScore]
+					$lt: ["$score", lastScore]
 				}
 			];
 		}
 	}
 	return pageConditions;
 };
-const searchPostsAggregationPipeline = (searchText: string = "", searchOptions: Object = {}, sortBy: string = "match", dateOrder: string = "desc", userId: any = undefined, lastScore: any = undefined, lastPostId: any = undefined) => {
+const searchPostsAggregationPipeline = (searchText: string = "", searchOptions: Dictionary = {}, sortBy: string = "match", dateOrder: string = "desc", userId?: string | ObjectId, lastScore?: number, lastPostId?: string | ObjectId) => {
 	const sortByDate = sortBy === "date";
 	const [dateSort, idCompare] = dateOrder === "asc" ? [1, "$gt"] : [-1, "$lt"];
 	return [

@@ -4,7 +4,7 @@ import { ObjectId } from "bson";
 import filtersAggregationPipeline from "./filters";
 import postAggregationPipeline from "./post";
 
-const activityAggregationPipeline = (userId: any, period: string = "", lastEntryId: any = undefined): Array<any> => {
+const activityAggregationPipeline = (userId: string | ObjectId, period: string = "", lastEntryId?: string | ObjectId): Array<any> => {
 	const maxDate = new Date();
 	switch (period.toLowerCase()) {
 		case "month":

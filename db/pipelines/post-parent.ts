@@ -3,7 +3,7 @@
 import { ObjectId } from "bson";
 import postAggregationPipeline from "./post";
 
-const postParentAggregationPipeline = (postId: any, userId: any = undefined) => [
+const postParentAggregationPipeline = (postId: string | ObjectId, userId?: string | ObjectId) => [
 	{
 		$match: {
 			_id: new ObjectId(postId)

@@ -2,7 +2,7 @@
 
 import { ObjectId } from "bson";
 
-const listMembersAggregationPipeline = (listId: any, lastMemberId: any = undefined): Array<any> => [
+const listMembersAggregationPipeline = (listId: string | ObjectId, lastMemberId?: string | ObjectId): Array<any> => [
 	{
 		$match: {
 			list: new ObjectId(listId)

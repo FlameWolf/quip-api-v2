@@ -3,7 +3,7 @@
 import { ObjectId } from "bson";
 import postAggregationPipeline from "./post";
 
-const postQuotesAggregationPipeline = (postId: any, userId: any = undefined, lastQuoteId: any = undefined) => [
+const postQuotesAggregationPipeline = (postId: string | ObjectId, userId?: string | ObjectId, lastQuoteId?: string | ObjectId) => [
 	{
 		$match: {
 			"attachments.post": new ObjectId(postId)

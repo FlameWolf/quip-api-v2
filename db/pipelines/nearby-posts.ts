@@ -3,16 +3,15 @@
 import { ObjectId } from "bson";
 import postAggregationPipeline from "./post";
 
-const getPageConditions = (lastDistance: any, lastPostId: any) => {
-	const pageConditions: any = {};
+const getPageConditions = (lastDistance?: number, lastPostId?: string | ObjectId) => {
+	const pageConditions: Dictionary = {};
 	if (lastDistance && lastPostId) {
-		const parsedLastDistance = parseFloat(lastDistance);
 		pageConditions.$expr = {
 			$or: [
 				{
 					$and: [
 						{
-							$eq: ["$distance", parsedLastDistance]
+							$eq: ["$distance", lastDistance]
 						},
 						{
 							$lt: ["$_id", new ObjectId(lastPostId)]
@@ -20,14 +19,14 @@ const getPageConditions = (lastDistance: any, lastPostId: any) => {
 					]
 				},
 				{
-					$gt: ["$distance", parsedLastDistance]
+					$gt: ["$distance", lastDistance]
 				}
 			]
 		};
 	}
 	return pageConditions;
 };
-const nearbyPostsAggregationPipeline = ([longitude, latitude]: Array<number>, maxDistance: number = 5000, userId: any = undefined, lastDistance: any = undefined, lastPostId: any = undefined) => [
+const nearbyPostsAggregationPipeline = ([longitude, latitude]: Array<number>, maxDistance: number = 5000, userId?: string | ObjectId, lastDistance?: number, lastPostId?: string | ObjectId) => [
 	{
 		$geoNear: {
 			near: {

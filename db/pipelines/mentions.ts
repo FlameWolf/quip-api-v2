@@ -3,7 +3,7 @@
 import { ObjectId } from "bson";
 import postAggregationPipeline from "./post";
 
-const mentionsAggregationPipeline = (userId: any, selfId: any = undefined, lastPostId: any = undefined) => [
+const mentionsAggregationPipeline = (userId: string | ObjectId, selfId?: string | ObjectId, lastPostId?: string | ObjectId) => [
 	{
 		$match: {
 			mentions: new ObjectId(userId)

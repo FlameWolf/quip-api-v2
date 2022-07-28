@@ -1,5 +1,6 @@
 "use strict";
 
+import { ObjectId } from "bson";
 import mongoose from "mongoose";
 import listPostsAggregationPipeline from "../db/pipelines/list-posts";
 import * as usersController from "./users.controller";
@@ -10,7 +11,7 @@ import ListMember from "../models/list-member.model";
 import { RouteHandlerMethod } from "fastify";
 import { ListInteractParams, ListPostsQueryString, ListCreateBody, ListMemberBody, ListUpdateBody } from "../requestDefinitions/lists.requests";
 
-const findListPostsByNameAndOwnerId = async (listName: string, ownerId: any, includeRepeats = true, includeReplies = true, lastPostId: any = undefined) => await List.aggregate(listPostsAggregationPipeline(listName, ownerId, includeRepeats, includeReplies, lastPostId));
+const findListPostsByNameAndOwnerId = async (listName: string, ownerId: string | ObjectId, includeRepeats = true, includeReplies = true, lastPostId?: string | ObjectId) => await List.aggregate(listPostsAggregationPipeline(listName, ownerId, includeRepeats, includeReplies, lastPostId));
 export const createList: RouteHandlerMethod = async (request, reply) => {
 	const { name, includeRepeats, includeReplies } = request.body as ListCreateBody;
 	const userId = (request.userInfo as UserInfo).userId;

@@ -2,7 +2,7 @@
 
 import { ObjectId } from "bson";
 
-const followRequestsReceivedAggregationPipeline = (userId: any, lastFollowRequestId: any = undefined): Array<any> => [
+const followRequestsReceivedAggregationPipeline = (userId: string | ObjectId, lastFollowRequestId?: string | ObjectId): Array<any> => [
 	{
 		$match: {
 			user: new ObjectId(userId)

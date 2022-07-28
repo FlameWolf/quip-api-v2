@@ -16,9 +16,9 @@ const getMatchExpression = (match: string, searchText: string) => {
 			return new RegExp(`^${searchText}`, "i");
 	}
 };
-const searchUsersAggregationPipeline = (searchText: string, match: string = "startsWith", dateOrder: string = "desc", selfId: any = undefined, lastUserId: any = undefined): Array<any> => {
-	const sortConditions: any = {};
-	const pageConditions: any = {};
+const searchUsersAggregationPipeline = (searchText: string, match: string = "startsWith", dateOrder: string = "desc", selfId?: string | ObjectId, lastUserId?: string | ObjectId): Array<any> => {
+	const sortConditions: Dictionary = {};
+	const pageConditions: Dictionary = {};
 	const [dateSort, idCompare] = dateOrder === "asc" ? [1, "$gt"] : [-1, "$lt"];
 	sortConditions.createdAt = dateSort;
 	if (lastUserId) {

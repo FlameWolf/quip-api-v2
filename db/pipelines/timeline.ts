@@ -4,7 +4,7 @@ import { ObjectId } from "bson";
 import filtersAggregationPipeline from "./filters";
 import postAggregationPipeline from "./post";
 
-const timelineAggregationPipeline = (userId: any, includeRepeats: boolean = true, includeReplies: boolean = true, lastPostId: any = undefined): Array<any> => {
+const timelineAggregationPipeline = (userId: string | ObjectId, includeRepeats: boolean = true, includeReplies: boolean = true, lastPostId?: string | ObjectId): Array<any> => {
 	const matchConditions = {
 		...(!includeRepeats && {
 			repeatPost: {

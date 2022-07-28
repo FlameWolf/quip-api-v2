@@ -3,7 +3,7 @@
 import { ObjectId } from "bson";
 import postAggregationPipeline from "./post";
 
-const mutedPostsAggregationPipeline = (userId: any, lastMuteId: any = undefined): Array<any> => [
+const mutedPostsAggregationPipeline = (userId: string | ObjectId, lastMuteId?: string | ObjectId): Array<any> => [
 	{
 		$match: {
 			mutedBy: new ObjectId(userId)

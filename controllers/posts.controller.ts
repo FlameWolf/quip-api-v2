@@ -21,13 +21,17 @@ import Vote from "../models/vote.model";
 import { PostCreateBody, PostInteractParams, PostQuotesQueryString, PostRepliesQueryString, PostUpdateBody, PostVoteQueryString } from "../requestDefinitions/posts.requests";
 
 type PostModel = InferSchemaType<typeof Post.schema>;
+type PollModel = Required<PostModel>["attachments"]["poll"];
+type LanguageEntry = InferArrayElementType<PostModel["languages"]>;
+type MentionEntry = InferArrayElementType<PostModel["mentions"]>;
+type HashtagEntry = InferArrayElementType<PostModel["hashtags"]>;
 
-export const findPostById = async (postId: any): Promise<HydratedDocument<PostModel>> => {
+export const findPostById = async (postId: string | ObjectId): Promise<HydratedDocument<PostModel>> => {
 	const post = await Post.findById(postId);
-	const repeatPost = post?.repeatPost;
+	const repeatPost = post?.repeatPost as ObjectId;
 	return repeatPost ? await findPostById(repeatPost) : (post as HydratedDocument<PostModel>);
 };
-const validateContent = (content: string, poll?: any, media?: any, postId?: any) => {
+const validateContent = (content: string, poll?: Dictionary, media?: File, postId?: string | ObjectId) => {
 	if (!content.trim()) {
 		if (poll || !(media || postId)) {
 			throw new Error("No content");
@@ -65,7 +69,7 @@ const updateLanguages = async (post: Partial<PostModel>) => {
 	}
 	for (const language of (await Promise.all(promises)).flat()) {
 		if (language) {
-			languages.add(language as any);
+			languages.add(language as LanguageEntry);
 		}
 	}
 	post.languages = [...languages];
@@ -88,10 +92,10 @@ const updateMentionsAndHashtags = async (content: string, post: Partial<PostMode
 				_id: 1
 			}
 		);
-		users.map(user => user._id.toString()).forEach((userId: any) => postMentions.add(userId));
+		users.map(user => user._id).forEach(userId => postMentions.add(userId as MentionEntry));
 	}
 	if (contentHashtags) {
-		contentHashtags.map(hashtag => hashtag.substring(1)).forEach((hashtag: any) => postHashtags.add(hashtag));
+		contentHashtags.map(hashtag => hashtag.substring(1)).forEach(hashtag => postHashtags.add(hashtag as HashtagEntry));
 	}
 	post.mentions = postMentions.size > 0 ? [...postMentions] : undefined;
 	post.hashtags = postHashtags.size > 0 ? [...postHashtags] : undefined;
@@ -114,7 +118,7 @@ const deletePostWithCascade = async (post: HydratedDocument<PostModel>) => {
 		const repeatedPostId = post.repeatPost;
 		const repliedToPostId = post.replyTo;
 		const attachments = post.attachments;
-		await Post.deleteOne(post.toObject()).session(session);
+		await Post.deleteOne(post as PostModel).session(session);
 		if (repeatedPostId) {
 			await Post.findByIdAndUpdate(repeatedPostId, {
 				$inc: {
@@ -131,7 +135,7 @@ const deletePostWithCascade = async (post: HydratedDocument<PostModel>) => {
 		}
 		if (attachments) {
 			const quotedPostId = attachments.post;
-			const poll = attachments.poll;
+			const poll = attachments.poll as HydratedDocument<PollModel>;
 			if (quotedPostId) {
 				await Post.findByIdAndUpdate(quotedPostId, {
 					$inc: {
@@ -140,7 +144,7 @@ const deletePostWithCascade = async (post: HydratedDocument<PostModel>) => {
 				}).session(session);
 			}
 			if (poll) {
-				await Vote.deleteMany({ poll: (poll as any)._id }).session(session);
+				await Vote.deleteMany({ poll: poll._id }).session(session);
 			}
 		}
 		await Promise.all([
@@ -174,7 +178,7 @@ export const createPost: RouteHandlerMethod = async (request, reply) => {
 	}
 	const model = {
 		content,
-		author: userId,
+		author: userId as any,
 		...((poll || media) && {
 			attachments: {
 				...(poll && { poll }),
@@ -232,7 +236,7 @@ export const updatePost: RouteHandlerMethod = async (request, reply) => {
 			const originalPostId = post._id;
 			const postFilter = { post: originalPostId };
 			const repliedPostId = post.replyTo;
-			const mentions: Array<ObjectId | string> = [];
+			const mentions: Array<string | ObjectId> = [];
 			if (repliedPostId) {
 				mentions.push(((await Post.findById(repliedPostId))?.author as ObjectId) || nullId);
 			}
@@ -350,7 +354,7 @@ export const quotePost: RouteHandlerMethod = async (request, reply) => {
 			const originalPostId = originalPost._id;
 			const model = {
 				content,
-				author: userId,
+				author: userId as any,
 				attachments: {
 					...(poll && { poll }),
 					...(media && {
@@ -458,7 +462,7 @@ export const replyToPost: RouteHandlerMethod = async (request, reply) => {
 			const originalPostId = originalPost._id;
 			const model = {
 				content,
-				author: userId,
+				author: userId as any,
 				replyTo: originalPostId as any,
 				...((poll || media) && {
 					attachments: {
@@ -502,7 +506,7 @@ export const castVote: RouteHandlerMethod = async (request, reply) => {
 			reply.status(404).send("Post not found");
 			return;
 		}
-		const poll = (post.attachments as any).poll;
+		const poll = post.attachments?.poll as HydratedDocument<PollModel> & Dictionary;
 		if (!poll) {
 			reply.status(422).send("Post does not include a poll");
 			return;
@@ -516,7 +520,7 @@ export const castVote: RouteHandlerMethod = async (request, reply) => {
 			reply.status(403).send("User cannot vote on their own poll");
 			return;
 		}
-		const pollExpiryDate = (post as any).createdAt;
+		const pollExpiryDate = (post as Dictionary).createdAt;
 		pollExpiryDate.setMilliseconds(pollExpiryDate.getMilliseconds() + poll.duration);
 		if (new Date() > pollExpiryDate) {
 			reply.status(422).send("Poll has expired");
