@@ -58,4 +58,8 @@ export const getProperty = (operand: Dictionary, path: string | Array<string>): 
 };
 export const getUnicodeClusterCount = (value: string) => Array.from(new Intl.Segmenter().segment(value)).length;
 export const escapeRegExp = (value: string) => value.replace(/[\/.*+?|[()\]{}\$^-]/g, (match: any) => `\\${match}`);
-export const sanitiseFileName = (value: string, maxLength?: number) => value.trim().substring(0, maxLength).replace(/\W/g, "_");
+export const sanitiseFileName = (value: string, maxLength?: number) =>
+	value
+		.trim()
+		.substring(0, maxLength)
+		.replace(/[^\p{L}\p{M}\d]/gu, "_");
