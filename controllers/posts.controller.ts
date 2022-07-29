@@ -4,10 +4,9 @@ import { ObjectId } from "bson";
 import { RouteHandlerMethod } from "fastify";
 import mongoose, { HydratedDocument, InferSchemaType } from "mongoose";
 import cld = require("cld");
-import { File } from "fastify-multer/lib/interfaces";
-import dataUriParser = require("datauri/parser");
+import { File as MulterFile } from "fastify-multer/lib/interfaces";
 import { v2 as cloudinary } from "cloudinary";
-import { maxContentLength, nullId, quoteScore, repeatScore, replyScore, voteScore, getUnicodeClusterCount, sanitiseFileName } from "../library";
+import { maxContentLength, nullId, quoteScore, repeatScore, replyScore, voteScore, getUnicodeClusterCount } from "../library";
 import postAggregationPipeline from "../db/pipelines/post";
 import postParentAggregationPipeline from "../db/pipelines/post-parent";
 import postQuotesAggregationPipeline from "../db/pipelines/post-quotes";
@@ -32,7 +31,7 @@ export const findPostById = async (postId: string | ObjectId): Promise<HydratedD
 	const repeatPost = post?.repeatPost as ObjectId;
 	return repeatPost ? await findPostById(repeatPost) : (post as HydratedDocument<PostModel>);
 };
-const validateContent = (content: string, poll?: Dictionary, media?: File, postId?: string | ObjectId) => {
+const validateContent = (content: string, poll?: Dictionary, media?: MulterFile, postId?: string | ObjectId) => {
 	if (!content.trim()) {
 		if (poll || !(media || postId)) {
 			throw new Error("No content");
@@ -101,13 +100,11 @@ const updateMentionsAndHashtags = async (content: string, post: Partial<PostMode
 	post.mentions = postMentions.size > 0 ? [...postMentions] : undefined;
 	post.hashtags = postHashtags.size > 0 ? [...postHashtags] : undefined;
 };
-const uploadFile = async (file: File, fileType: string) => {
-	const parser = new dataUriParser();
-	const data = parser.format("", file.buffer as Buffer);
-	const response = await cloudinary.uploader.upload(data.content as string, {
+const uploadFile = async (file: MulterFile, fileType: string) => {
+	const response = await cloudinary.uploader.upload(file.path as string, {
 		resource_type: fileType,
 		folder: `${fileType}s/`,
-		public_id: `${sanitiseFileName(file.originalname.replace(/\.\w+$/, ""), 16)}_${Date.now().valueOf()}`
+		public_id: file.filename
 	});
 	return response;
 };

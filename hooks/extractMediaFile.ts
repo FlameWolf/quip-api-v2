@@ -1,7 +1,8 @@
 "use strict";
 
-import multer, { memoryStorage } from "fastify-multer";
-import { validMimeTypes, megaByte } from "../library";
+import multer, { diskStorage } from "fastify-multer";
+import * as path from "path";
+import { validMimeTypes, megaByte, sanitiseFileName } from "../library";
 import { preValidationHookHandler } from "fastify";
 
 const extractMediaFile = multer({
@@ -15,7 +16,14 @@ const extractMediaFile = multer({
 	limits: {
 		fileSize: megaByte * 5
 	},
-	storage: memoryStorage()
+	storage: diskStorage({
+		destination: (req, file, cb) => {
+			cb(null, path.join("public", `${req.fileType}s`));
+		},
+		filename: (req, file, cb) => {
+			cb(null, `${sanitiseFileName(file.originalname.replace(new RegExp(`\.${req.fileSubtype as string}$`), ""), 16)}_${Date.now().valueOf()}`);
+		}
+	})
 }).single("media") as preValidationHookHandler;
 
 export default extractMediaFile;
