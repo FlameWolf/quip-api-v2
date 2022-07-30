@@ -1,13 +1,14 @@
 "use strict";
 
 import fastify from "fastify";
+import * as jwt from "jsonwebtoken";
+import "./schemaTypes/point";
+import "./schemaTypes/url";
+
 const isProdEnv = process.env.NODE_ENV === "production";
 if (!isProdEnv) {
 	require("dotenv").config();
 }
-import * as jwt from "jsonwebtoken";
-import "./schemaTypes/point";
-import "./schemaTypes/url";
 
 require("mongoose")
 	.connect(process.env.DB_CONNECTION as string)
