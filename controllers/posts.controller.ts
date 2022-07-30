@@ -3,7 +3,7 @@
 import { ObjectId } from "bson";
 import { RouteHandlerMethod } from "fastify";
 import mongoose, { HydratedDocument, InferSchemaType } from "mongoose";
-import cld = require("cld");
+import * as cld from "cld";
 import { File as MulterFile } from "fastify-multer/lib/interfaces";
 import { v2 as cloudinary } from "cloudinary";
 import { maxContentLength, nullId, quoteScore, repeatScore, replyScore, voteScore, getUnicodeClusterCount } from "../library";

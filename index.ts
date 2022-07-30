@@ -5,7 +5,7 @@ const isProdEnv = process.env.NODE_ENV === "production";
 if (!isProdEnv) {
 	require("dotenv").config();
 }
-import jwt = require("jsonwebtoken");
+import * as jwt from "jsonwebtoken";
 import "./schemaTypes/point";
 import "./schemaTypes/url";
 
