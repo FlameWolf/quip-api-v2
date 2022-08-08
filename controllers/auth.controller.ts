@@ -70,10 +70,6 @@ export const signIn: RouteHandlerMethod = async (request, reply) => {
 export const refreshAuthToken: RouteHandlerMethod = async (request, reply) => {
 	const { refreshToken } = request.body as RefreshTokenBody;
 	const { "x-slug": handle, "x-uid": userId } = request.headers as RefreshTokenHeaders;
-	if (!refreshToken) {
-		reply.status(400).send("Refresh token not found");
-		return;
-	}
 	const userInfo = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET as string) as UserInfo;
 	const filter = { user: userId, token: refreshToken };
 	if (userInfo.handle !== handle || userInfo.userId !== userId) {
@@ -88,11 +84,6 @@ export const refreshAuthToken: RouteHandlerMethod = async (request, reply) => {
 	reply.status(200).send(await authSuccess(handle, userId, false));
 };
 export const revokeRefreshToken: RouteHandlerMethod = async (request, reply) => {
-	const { token: refreshToken } = request.params as RevokeTokenParams;
-	if (!refreshToken) {
-		reply.status(400).send("Refresh token not found");
-		return;
-	}
-	const deleted = await RefreshToken.findOneAndDelete({ token: refreshToken });
+	const deleted = await RefreshToken.findOneAndDelete({ token: (request.params as RevokeTokenParams).token });
 	reply.status(deleted ? 200 : 404).send();
 };
