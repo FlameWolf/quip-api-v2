@@ -1,1 +1,0 @@
-web: node --use-strict ./dist/index.js
