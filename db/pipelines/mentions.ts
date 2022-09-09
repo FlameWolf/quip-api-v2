@@ -1,9 +1,10 @@
 "use strict";
 
 import { ObjectId } from "bson";
+import { PipelineStage } from "mongoose";
 import postAggregationPipeline from "./post";
 
-const mentionsAggregationPipeline = (userId: string | ObjectId, selfId?: string | ObjectId, lastPostId?: string | ObjectId) => [
+const mentionsAggregationPipeline = (userId: string | ObjectId, selfId?: string | ObjectId, lastPostId?: string | ObjectId): Array<PipelineStage> => [
 	{
 		$match: {
 			mentions: new ObjectId(userId)

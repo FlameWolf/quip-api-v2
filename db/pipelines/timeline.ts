@@ -1,10 +1,11 @@
 "use strict";
 
 import { ObjectId } from "bson";
+import { PipelineStage } from "mongoose";
 import filtersAggregationPipeline from "./filters";
 import postAggregationPipeline from "./post";
 
-const timelineAggregationPipeline = (userId: string | ObjectId, includeRepeats: boolean = true, includeReplies: boolean = true, lastPostId?: string | ObjectId): Array<any> => {
+const timelineAggregationPipeline = (userId: string | ObjectId, includeRepeats: boolean = true, includeReplies: boolean = true, lastPostId?: string | ObjectId): Array<PipelineStage> => {
 	const matchConditions = {
 		...(!includeRepeats && {
 			repeatPost: {
@@ -132,13 +133,15 @@ const timelineAggregationPipeline = (userId: string | ObjectId, includeRepeats: 
 									}
 								},
 								{
-									$replaceWith: {
-										$ifNull: ["$repeatedPost", "$$ROOT"]
+									$replaceRoot: {
+										newRoot: {
+											$ifNull: ["$repeatedPost", "$$ROOT"]
+										}
 									}
 								}
 						  ]
 						: []),
-					...filtersAggregationPipeline(userId),
+					...(filtersAggregationPipeline(userId) as Array<any>),
 					{
 						$match: lastPostId
 							? {
@@ -189,7 +192,9 @@ const timelineAggregationPipeline = (userId: string | ObjectId, includeRepeats: 
 			$unwind: "$posts"
 		},
 		{
-			$replaceWith: "$posts"
+			$replaceRoot: {
+				newRoot: "$posts"
+			}
 		}
 	];
 };

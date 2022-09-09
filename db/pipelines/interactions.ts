@@ -1,8 +1,9 @@
 "use strict";
 
 import { ObjectId } from "bson";
+import { PipelineStage } from "mongoose";
 
-const interactionsAggregationPipeline = (userId?: string | ObjectId) => {
+const interactionsAggregationPipeline = (userId?: string | ObjectId): Array<PipelineStage> => {
 	if (!userId) {
 		return [];
 	}

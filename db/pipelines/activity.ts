@@ -1,10 +1,11 @@
 "use strict";
 
 import { ObjectId } from "bson";
+import { PipelineStage } from "mongoose";
 import filtersAggregationPipeline from "./filters";
 import postAggregationPipeline from "./post";
 
-const activityAggregationPipeline = (userId: string | ObjectId, period: string = "", lastEntryId?: string | ObjectId): Array<any> => {
+const activityAggregationPipeline = (userId: string | ObjectId, period: string = "", lastEntryId?: string | ObjectId): Array<PipelineStage> => {
 	const maxDate = new Date();
 	switch (period.toLowerCase()) {
 		case "month":
@@ -325,7 +326,7 @@ const activityAggregationPipeline = (userId: string | ObjectId, period: string =
 				from: "posts",
 				localField: "entry.post._id",
 				foreignField: "_id",
-				pipeline: [...filtersAggregationPipeline(userId), ...postAggregationPipeline(userId)],
+				pipeline: [...(filtersAggregationPipeline(userId) as Array<any>), ...(postAggregationPipeline(userId) as Array<any>)],
 				as: "entry.post"
 			}
 		},
@@ -376,7 +377,9 @@ const activityAggregationPipeline = (userId: string | ObjectId, period: string =
 			}
 		},
 		{
-			$replaceWith: "$entry"
+			$replaceRoot: {
+				newRoot: "$entry"
+			}
 		}
 	];
 };

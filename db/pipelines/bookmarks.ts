@@ -1,9 +1,10 @@
 "use strict";
 
 import { ObjectId } from "bson";
+import { PipelineStage } from "mongoose";
 import postAggregationPipeline from "./post";
 
-const bookmarksAggregationPipeline = (userId: string | ObjectId, lastBookmarkId?: string | ObjectId): Array<any> => [
+const bookmarksAggregationPipeline = (userId: string | ObjectId, lastBookmarkId?: string | ObjectId): Array<PipelineStage> => [
 	{
 		$match: {
 			_id: new ObjectId(userId)
@@ -42,7 +43,7 @@ const bookmarksAggregationPipeline = (userId: string | ObjectId, lastBookmarkId?
 						from: "posts",
 						localField: "post",
 						foreignField: "_id",
-						pipeline: postAggregationPipeline(userId),
+						pipeline: postAggregationPipeline(userId) as Array<any>,
 						as: "post"
 					}
 				},
@@ -62,7 +63,9 @@ const bookmarksAggregationPipeline = (userId: string | ObjectId, lastBookmarkId?
 		$unwind: "$bookmarks"
 	},
 	{
-		$replaceWith: "$bookmarks"
+		$replaceRoot: {
+			newRoot: "$bookmarks"
+		}
 	}
 ];
 

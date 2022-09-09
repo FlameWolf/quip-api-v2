@@ -1,9 +1,10 @@
 "use strict";
 
 import { ObjectId } from "bson";
+import { PipelineStage } from "mongoose";
 import postAggregationPipeline from "./post";
 
-const mutedPostsAggregationPipeline = (userId: string | ObjectId, lastMuteId?: string | ObjectId): Array<any> => [
+const mutedPostsAggregationPipeline = (userId: string | ObjectId, lastMuteId?: string | ObjectId): Array<PipelineStage> => [
 	{
 		$match: {
 			mutedBy: new ObjectId(userId)
@@ -33,7 +34,7 @@ const mutedPostsAggregationPipeline = (userId: string | ObjectId, lastMuteId?: s
 			from: "posts",
 			localField: "post",
 			foreignField: "_id",
-			pipeline: postAggregationPipeline(userId),
+			pipeline: postAggregationPipeline(userId) as Array<any>,
 			as: "post"
 		}
 	},

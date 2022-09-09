@@ -1,10 +1,11 @@
 "use strict";
 
 import { ObjectId } from "bson";
+import { PipelineStage } from "mongoose";
 import filtersAggregationPipeline from "./filters";
 import postAggregationPipeline from "./post";
 
-const postRepliesAggregationPipeline = (postId: string | ObjectId, userId?: string | ObjectId, lastReplyId?: string | ObjectId) => [
+const postRepliesAggregationPipeline = (postId: string | ObjectId, userId?: string | ObjectId, lastReplyId?: string | ObjectId): Array<PipelineStage> => [
 	{
 		$match: {
 			replyTo: new ObjectId(postId)

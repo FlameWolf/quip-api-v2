@@ -1,9 +1,10 @@
 "use strict";
 
 import { ObjectId } from "bson";
+import { PipelineStage } from "mongoose";
 import interactionsAggregationPipeline from "./interactions";
 
-const authorLookupAndUnwind = [
+const authorLookupAndUnwind: Array<PipelineStage> = [
 	{
 		$lookup: {
 			from: "users",
@@ -25,12 +26,12 @@ const authorLookupAndUnwind = [
 		$unwind: "$author"
 	}
 ];
-const postAggregationPipeline = (userId?: string | ObjectId): Array<any> => {
+const postAggregationPipeline = (userId?: string | ObjectId): Array<PipelineStage> => {
 	return [
 		{
 			$unset: "score"
 		},
-		...authorLookupAndUnwind,
+		...(authorLookupAndUnwind as Array<any>),
 		{
 			$lookup: {
 				from: "posts",

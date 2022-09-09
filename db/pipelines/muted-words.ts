@@ -1,8 +1,9 @@
 "use strict";
 
 import { ObjectId } from "bson";
+import { PipelineStage } from "mongoose";
 
-const mutedWordsAggregationPipeline = (userId: string | ObjectId, lastMuteId?: string | ObjectId): Array<any> => [
+const mutedWordsAggregationPipeline = (userId: string | ObjectId, lastMuteId?: string | ObjectId): Array<PipelineStage> => [
 	{
 		$match: {
 			mutedBy: new ObjectId(userId)
@@ -14,7 +15,7 @@ const mutedWordsAggregationPipeline = (userId: string | ObjectId, lastMuteId?: s
 		}
 	},
 	{
-		project: {
+		$project: {
 			word: 1,
 			match: 1
 		}

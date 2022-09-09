@@ -1,8 +1,9 @@
 "use strict";
 
 import { ObjectId } from "bson";
+import { PipelineStage } from "mongoose";
 
-const followersAggregationPipeline = (userId: string | ObjectId, lastFollowId?: string | ObjectId): Array<any> => [
+const followersAggregationPipeline = (userId: string | ObjectId, lastFollowId?: string | ObjectId): Array<PipelineStage> => [
 	{
 		$match: {
 			user: new ObjectId(userId)

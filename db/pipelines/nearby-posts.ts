@@ -1,10 +1,11 @@
 "use strict";
 
 import { ObjectId } from "bson";
+import { FilterQuery, PipelineStage } from "mongoose";
 import postAggregationPipeline from "./post";
 
-const getPageConditions = (lastDistance?: number, lastPostId?: string | ObjectId) => {
-	const pageConditions: Dictionary = {};
+const getPageConditions = (lastDistance?: number, lastPostId?: string | ObjectId): FilterQuery<any> => {
+	const pageConditions: FilterQuery<any> = {};
 	if (lastDistance && lastPostId) {
 		pageConditions.$expr = {
 			$or: [
@@ -26,7 +27,7 @@ const getPageConditions = (lastDistance?: number, lastPostId?: string | ObjectId
 	}
 	return pageConditions;
 };
-const nearbyPostsAggregationPipeline = ([longitude, latitude]: Array<number>, maxDistance: number = 5000, userId?: string | ObjectId, lastDistance?: number, lastPostId?: string | ObjectId) => [
+const nearbyPostsAggregationPipeline = ([longitude, latitude]: Array<number>, maxDistance: number = 5000, userId?: string | ObjectId, lastDistance?: number, lastPostId?: string | ObjectId): Array<PipelineStage> => [
 	{
 		$geoNear: {
 			near: {

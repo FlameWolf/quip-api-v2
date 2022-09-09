@@ -1,9 +1,10 @@
 "use strict";
 
 import { ObjectId } from "bson";
+import { PipelineStage } from "mongoose";
 import postAggregationPipeline from "./post";
 
-const favouritesAggregationPipeline = (userId: string | ObjectId, lastFavouriteId?: string | ObjectId): Array<any> => [
+const favouritesAggregationPipeline = (userId: string | ObjectId, lastFavouriteId?: string | ObjectId): Array<PipelineStage> => [
 	{
 		$match: {
 			_id: new ObjectId(userId)
@@ -39,7 +40,7 @@ const favouritesAggregationPipeline = (userId: string | ObjectId, lastFavouriteI
 						from: "posts",
 						localField: "post",
 						foreignField: "_id",
-						pipeline: postAggregationPipeline(userId),
+						pipeline: postAggregationPipeline(userId) as Array<any>,
 						as: "post"
 					}
 				},
@@ -59,7 +60,9 @@ const favouritesAggregationPipeline = (userId: string | ObjectId, lastFavouriteI
 		$unwind: "$favourites"
 	},
 	{
-		$replaceWith: "$favourites"
+		$replaceRoot: {
+			newRoot: "$favourites"
+		}
 	}
 ];
 

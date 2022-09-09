@@ -1,10 +1,11 @@
 "use strict";
 
 import { ObjectId } from "bson";
+import { PipelineStage } from "mongoose";
 import filtersAggregationPipeline from "./filters";
 import postAggregationPipeline from "./post";
 
-const listPostsAggregationPipeline = (listName: string, ownerId: string | ObjectId, includeRepeats: boolean = true, includeReplies: boolean = true, lastPostId?: string | ObjectId): Array<any> => {
+const listPostsAggregationPipeline = (listName: string, ownerId: string | ObjectId, includeRepeats: boolean = true, includeReplies: boolean = true, lastPostId?: string | ObjectId): Array<PipelineStage> => {
 	const matchConditions = {
 		...(!includeRepeats && {
 			repeatPost: {
@@ -125,13 +126,15 @@ const listPostsAggregationPipeline = (listName: string, ownerId: string | Object
 									}
 								},
 								{
-									$replaceWith: {
-										$ifNull: ["$repeatedPost", "$$ROOT"]
+									$replaceRoot: {
+										newRoot: {
+											$ifNull: ["$repeatedPost", "$$ROOT"]
+										}
 									}
 								}
 						  ]
 						: []),
-					...filtersAggregationPipeline(ownerId),
+					...(filtersAggregationPipeline(ownerId) as Array<any>),
 					{
 						$match: lastPostId
 							? {
@@ -182,7 +185,9 @@ const listPostsAggregationPipeline = (listName: string, ownerId: string | Object
 			$unwind: "$posts"
 		},
 		{
-			$replaceWith: "$posts"
+			$replaceRoot: {
+				newRoot: "$posts"
+			}
 		}
 	];
 };

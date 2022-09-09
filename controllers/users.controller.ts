@@ -114,7 +114,7 @@ export const getUserTopmost: RouteHandlerMethod = async (request, reply) => {
 				from: "posts",
 				localField: "_id",
 				foreignField: "author",
-				pipeline: topmostAggregationPipeline((request.userInfo as UserInfo)?.userId, period, lastScore, lastPostId),
+				pipeline: topmostAggregationPipeline((request.userInfo as UserInfo)?.userId, period, lastScore, lastPostId) as Array<any>,
 				as: "posts"
 			}
 		},

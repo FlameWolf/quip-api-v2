@@ -1,8 +1,9 @@
 "use strict";
 
 import { ObjectId } from "bson";
+import { PipelineStage } from "mongoose";
 
-const blocksAggregationPipeline = (userId: string | ObjectId, lastBlockId?: string | ObjectId): Array<any> => [
+const blocksAggregationPipeline = (userId: string | ObjectId, lastBlockId?: string | ObjectId): Array<PipelineStage> => [
 	{
 		$match: {
 			blockedBy: new ObjectId(userId)

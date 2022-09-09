@@ -1,9 +1,10 @@
 "use strict";
 
 import { ObjectId } from "bson";
+import { FilterQuery, PipelineStage } from "mongoose";
 import postAggregationPipeline from "./post";
 
-const getPageConditions = (sortByDate: boolean, lastScore?: number, lastPostId?: string | ObjectId) => {
+const getPageConditions = (sortByDate: boolean, lastScore?: number, lastPostId?: string | ObjectId): FilterQuery<any> | undefined => {
 	if (lastPostId) {
 		const lastPostObjectId = new ObjectId(lastPostId);
 		if (sortByDate) {
@@ -35,7 +36,7 @@ const getPageConditions = (sortByDate: boolean, lastScore?: number, lastPostId?:
 		}
 	}
 };
-const hashtagAggregationPipeline = (hashtag: string, userId?: string | ObjectId, sortBy: string = "date", lastScore?: number, lastPostId?: string | ObjectId): Array<any> => {
+const hashtagAggregationPipeline = (hashtag: string, userId?: string | ObjectId, sortBy: string = "date", lastScore?: number, lastPostId?: string | ObjectId): Array<PipelineStage> => {
 	const sortByDate = sortBy !== "popular";
 	return [
 		{
@@ -55,7 +56,7 @@ const hashtagAggregationPipeline = (hashtag: string, userId?: string | ObjectId,
 				  }
 		},
 		{
-			$match: getPageConditions(sortByDate, lastScore, lastPostId)
+			$match: getPageConditions(sortByDate, lastScore, lastPostId) as FilterQuery<any>
 		},
 		{
 			$limit: 20

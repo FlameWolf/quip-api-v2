@@ -1,9 +1,10 @@
 "use strict";
 
 import { ObjectId } from "bson";
+import { PipelineStage } from "mongoose";
 import postAggregationPipeline from "./post";
 
-const votesAggregationPipeline = (userId: string | ObjectId, lastVoteId?: string | ObjectId) => [
+const votesAggregationPipeline = (userId: string | ObjectId, lastVoteId?: string | ObjectId): Array<PipelineStage> => [
 	{
 		$match: {
 			_id: new ObjectId(userId)
@@ -53,7 +54,9 @@ const votesAggregationPipeline = (userId: string | ObjectId, lastVoteId?: string
 		$unwind: "$votes"
 	},
 	{
-		$replaceWith: "$votes.post"
+		$replaceRoot: {
+			newRoot: "$votes.post"
+		}
 	},
 	...postAggregationPipeline(userId)
 ];

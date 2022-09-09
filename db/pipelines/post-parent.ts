@@ -1,9 +1,10 @@
 "use strict";
 
 import { ObjectId } from "bson";
+import { PipelineStage } from "mongoose";
 import postAggregationPipeline from "./post";
 
-const postParentAggregationPipeline = (postId: string | ObjectId, userId?: string | ObjectId) => [
+const postParentAggregationPipeline = (postId: string | ObjectId, userId?: string | ObjectId): Array<PipelineStage> => [
 	{
 		$match: {
 			_id: new ObjectId(postId)
@@ -21,7 +22,9 @@ const postParentAggregationPipeline = (postId: string | ObjectId, userId?: strin
 		$unwind: "$parent"
 	},
 	{
-		$replaceWith: "$parent"
+		$replaceRoot: {
+			newRoot: "$parent"
+		}
 	},
 	...postAggregationPipeline(userId)
 ];
