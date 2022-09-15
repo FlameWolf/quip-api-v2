@@ -1,7 +1,9 @@
 "use strict";
 
+import mongoose from "mongoose";
 import * as usersController from "./users.controller";
 import Block from "../models/block.model";
+import User from "../models/user.model";
 import FollowRequest from "../models/follow-request.model";
 import Follow from "../models/follow.model";
 import { RouteHandlerMethod } from "fastify";
@@ -25,23 +27,34 @@ export const followUser: RouteHandlerMethod = async (request, reply) => {
 		return;
 	}
 	if (await Block.countDocuments({ user: followeeUserId, blockedBy: followerUserId })) {
-		reply.status(403).send("Unblock this user to start following them");
+		reply.status(403).send("Unblock this user before trying to follow them");
 		return;
 	}
-	const isFolloweeProtected = followee.protected;
-	const model = isFolloweeProtected
-		? new FollowRequest({
-				user: followeeUserId,
-				requestedBy: followerUserId
-		  })
-		: new Follow({
+	if (followee.protected) {
+		const requested = await new FollowRequest({
+			user: followeeUserId,
+			requestedBy: followerUserId
+		}).save();
+		reply.status(200).send({ requested });
+		return;
+	}
+	const session = await mongoose.startSession();
+	try {
+		await session.withTransaction(async () => {
+			const followed = await new Follow({
 				user: followeeUserId,
 				followedBy: followerUserId
-		  });
-	const result = await model.save();
-	reply.status(200).send({
-		[isFolloweeProtected ? "requested" : "followed"]: result
-	});
+			}).save({ session });
+			await User.findByIdAndUpdate(followerUserId, {
+				$addToSet: {
+					follows: followeeUserId
+				}
+			}).session(session);
+			reply.status(200).send({ followed });
+		});
+	} finally {
+		await session.endSession();
+	}
 };
 export const unfollowUser: RouteHandlerMethod = async (request, reply) => {
 	const { handle: unfolloweeHandle } = request.params as UserInteractParams;
@@ -55,6 +68,21 @@ export const unfollowUser: RouteHandlerMethod = async (request, reply) => {
 		reply.status(404).send("User not found");
 		return;
 	}
-	const unfollowed = await Follow.findOneAndDelete({ user: unfollowee._id, followedBy: unfollowerUserId });
-	reply.status(200).send({ unfollowed });
+	const session = await mongoose.startSession();
+	try {
+		await session.withTransaction(async () => {
+			const unfolloweeUserId = unfollowee._id;
+			const unfollowed = await Follow.findOneAndDelete({ user: unfolloweeUserId, followedBy: unfollowerUserId }).session(session);
+			if (unfollowed) {
+				await User.findByIdAndUpdate(unfollowerUserId, {
+					$pull: {
+						follows: unfolloweeUserId
+					}
+				}).session(session);
+			}
+			reply.status(200).send({ unfollowed });
+		});
+	} finally {
+		await session.endSession();
+	}
 };

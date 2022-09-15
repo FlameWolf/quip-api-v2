@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import { favouriteScore } from "../library";
 import * as postsController from "./posts.controller";
 import Post from "../models/post.model";
+import User from "../models/user.model";
 import Favourite from "../models/favourite.model";
 import { RouteHandlerMethod } from "fastify";
 import { PostInteractParams } from "../requestDefinitions/posts.requests";
@@ -29,6 +30,11 @@ export const addFavourite: RouteHandlerMethod = async (request, reply) => {
 					score: favouriteScore
 				}
 			}).session(session);
+			await User.findByIdAndUpdate(userId, {
+				$addToSet: {
+					favourites: postId
+				}
+			}).session(session);
 			reply.status(200).send({ favourited });
 		});
 	} finally {
@@ -49,6 +55,11 @@ export const removeFavourite: RouteHandlerMethod = async (request, reply) => {
 				await Post.findByIdAndUpdate(postId, {
 					$inc: {
 						score: -favouriteScore
+					}
+				}).session(session);
+				await User.findByIdAndUpdate(userId, {
+					$pull: {
+						favourites: postId
 					}
 				}).session(session);
 			}
