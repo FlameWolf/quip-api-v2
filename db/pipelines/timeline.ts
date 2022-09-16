@@ -32,54 +32,10 @@ const timelineAggregationPipeline = (userId: string | ObjectId, includeRepeats: 
 		},
 		{
 			$lookup: {
-				from: "follows",
-				localField: "_id",
-				foreignField: "followedBy",
-				pipeline: [
-					{
-						$lookup: {
-							from: "users",
-							localField: "user",
-							foreignField: "_id",
-							pipeline: [
-								{
-									$match: {
-										deactivated: false,
-										deleted: false
-									}
-								}
-							],
-							as: "activeUser"
-						}
-					},
-					{
-						$unwind: "$activeUser"
-					},
-					{
-						$group: {
-							_id: undefined,
-							result: {
-								$addToSet: "$user"
-							}
-						}
-					}
-				],
-				as: "following"
-			}
-		},
-		{
-			$lookup: {
 				from: "posts",
 				let: {
 					userId: "$_id",
-					following: {
-						$ifNull: [
-							{
-								$arrayElemAt: ["$following.result", 0]
-							},
-							[]
-						]
-					}
+					following: "$follows"
 				},
 				pipeline: [
 					{
