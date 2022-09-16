@@ -2,6 +2,7 @@
 
 import { ObjectId } from "bson";
 import { PipelineStage } from "mongoose";
+import { maxRowsPerFetch } from "../../library";
 import postAggregationPipeline from "./post";
 
 const mentionsAggregationPipeline = (userId: string | ObjectId, selfId?: string | ObjectId, lastPostId?: string | ObjectId): Array<PipelineStage> => [
@@ -78,7 +79,7 @@ const mentionsAggregationPipeline = (userId: string | ObjectId, selfId?: string 
 			  }
 	},
 	{
-		$limit: 20
+		$limit: maxRowsPerFetch
 	},
 	...postAggregationPipeline(userId)
 ];

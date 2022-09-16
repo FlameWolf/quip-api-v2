@@ -2,6 +2,7 @@
 
 import { ObjectId } from "bson";
 import { PipelineStage } from "mongoose";
+import { maxRowsPerFetch } from "../../library";
 import filtersAggregationPipeline from "./filters";
 import postAggregationPipeline from "./post";
 
@@ -29,7 +30,7 @@ const postRepliesAggregationPipeline = (postId: string | ObjectId, userId?: stri
 			  }
 	},
 	{
-		$limit: 20
+		$limit: maxRowsPerFetch
 	},
 	...postAggregationPipeline(userId)
 ];

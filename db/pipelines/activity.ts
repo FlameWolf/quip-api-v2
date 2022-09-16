@@ -2,6 +2,7 @@
 
 import { ObjectId } from "bson";
 import { PipelineStage } from "mongoose";
+import { maxRowsPerFetch } from "../../library";
 import filtersAggregationPipeline from "./filters";
 import postAggregationPipeline from "./post";
 
@@ -353,7 +354,7 @@ const activityAggregationPipeline = (userId: string | ObjectId, period: string =
 				  }
 		},
 		{
-			$limit: 20
+			$limit: maxRowsPerFetch
 		},
 		{
 			$lookup: {

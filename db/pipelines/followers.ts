@@ -2,6 +2,7 @@
 
 import { ObjectId } from "bson";
 import { PipelineStage } from "mongoose";
+import { maxRowsPerFetch } from "../../library";
 
 const followersAggregationPipeline = (userId: string | ObjectId, lastFollowId?: string | ObjectId): Array<PipelineStage> => [
 	{
@@ -26,7 +27,7 @@ const followersAggregationPipeline = (userId: string | ObjectId, lastFollowId?: 
 			  }
 	},
 	{
-		$limit: 20
+		$limit: maxRowsPerFetch
 	},
 	{
 		$lookup: {

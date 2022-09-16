@@ -12,6 +12,18 @@ import { PostInteractParams } from "../requestDefinitions/posts.requests";
 import { WordMuteBody } from "../requestDefinitions/settings.requests";
 import { UserInteractParams } from "../requestDefinitions/users.requests";
 
+const getMutedWordRegExp = (word: string, match: string) => {
+	switch (match) {
+		case "startsWith":
+			return `\\b${word}.*?\\b`;
+		case "endsWith":
+			return `\\b\\w*?${word}\\b`;
+		case "exact":
+			return `\\b${word}\\b`;
+		default:
+			return word;
+	}
+};
 export const muteUser: RouteHandlerMethod = async (request, reply) => {
 	const { handle: muteeHandle } = request.params as UserInteractParams;
 	const { handle: muterHandle, userId: muterUserId } = request.userInfo as UserInfo;
@@ -122,7 +134,7 @@ export const muteWord: RouteHandlerMethod = async (request, reply) => {
 			const muted = await new MutedWord({ word, match, mutedBy: userId }).save({ session });
 			await User.findByIdAndUpdate(userId, {
 				$addToSet: {
-					mutedWords: { word, match }
+					mutedWords: getMutedWordRegExp(word, match)
 				}
 			}).session(session);
 			reply.status(200).send({ muted });
@@ -141,7 +153,7 @@ export const unmuteWord: RouteHandlerMethod = async (request, reply) => {
 			if (unmuted) {
 				await User.findByIdAndUpdate(userId, {
 					$pull: {
-						mutedWords: { word, match }
+						mutedWords: getMutedWordRegExp(word, match)
 					}
 				}).session(session);
 			}

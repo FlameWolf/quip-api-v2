@@ -2,6 +2,7 @@
 
 import { ObjectId } from "bson";
 import { PipelineStage } from "mongoose";
+import { maxCacheSize, maxRowsPerFetch } from "../../library";
 import filtersAggregationPipeline from "./filters";
 import postAggregationPipeline from "./post";
 
@@ -104,7 +105,7 @@ const timelineAggregationPipeline = (userId: string | ObjectId, includeRepeats: 
 						}
 					},
 					{
-						$limit: 10000
+						$limit: maxCacheSize
 					},
 					...(includeRepeats
 						? [
@@ -154,7 +155,7 @@ const timelineAggregationPipeline = (userId: string | ObjectId, includeRepeats: 
 							  }
 					},
 					{
-						$limit: 20
+						$limit: maxRowsPerFetch
 					},
 					{
 						$lookup: {

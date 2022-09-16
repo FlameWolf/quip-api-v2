@@ -51,18 +51,10 @@ const userSchema = new Schema(
 		deactivated: { type: Boolean, default: false },
 		deleted: { type: Boolean, default: false },
 		follows: { type: [ObjectId], select: false },
-		blocks: { type: [ObjectId], select: false },
+		blockedUsers: { type: [ObjectId], select: false },
 		mutedUsers: { type: [ObjectId], select: false },
 		mutedPosts: { type: [ObjectId], select: false },
-		mutedWords: {
-			type: [
-				{
-					word: { type: String },
-					match: { type: String }
-				}
-			],
-			select: false
-		},
+		mutedWords: { type: [String], select: false },
 		favourites: { type: [ObjectId], select: false },
 		bookmarks: { type: [ObjectId], select: false }
 	},

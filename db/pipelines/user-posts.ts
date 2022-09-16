@@ -2,6 +2,7 @@
 
 import { ObjectId } from "bson";
 import { PipelineStage } from "mongoose";
+import { maxRowsPerFetch } from "../../library";
 import postAggregationPipeline from "./post";
 
 const userPostsAggregationPipeline = (userId: string | ObjectId, includeRepeats: boolean = false, includeReplies: boolean = false, lastPostId?: string | ObjectId): Array<PipelineStage> => {
@@ -79,7 +80,7 @@ const userPostsAggregationPipeline = (userId: string | ObjectId, includeRepeats:
 						}
 					},
 					{
-						$limit: 20
+						$limit: maxRowsPerFetch
 					},
 					...(postAggregationPipeline(userId) as Array<any>)
 				],

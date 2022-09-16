@@ -2,6 +2,7 @@
 
 import { ObjectId } from "bson";
 import { PipelineStage } from "mongoose";
+import { maxRowsPerFetch } from "../../library";
 
 const followRequestsReceivedAggregationPipeline = (userId: string | ObjectId, lastFollowRequestId?: string | ObjectId): Array<PipelineStage> => [
 	{
@@ -26,7 +27,7 @@ const followRequestsReceivedAggregationPipeline = (userId: string | ObjectId, la
 			  }
 	},
 	{
-		$limit: 20
+		$limit: maxRowsPerFetch
 	},
 	{
 		$lookup: {

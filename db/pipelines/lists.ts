@@ -2,6 +2,7 @@
 
 import { ObjectId } from "bson";
 import { PipelineStage } from "mongoose";
+import { maxRowsPerFetch } from "../../library";
 
 const listsAggregationPipeline = (userId: string | ObjectId, memberId?: string | ObjectId, lastListId?: string | ObjectId): Array<PipelineStage> => [
 	{
@@ -57,7 +58,7 @@ const listsAggregationPipeline = (userId: string | ObjectId, memberId?: string |
 			  }
 	},
 	{
-		$limit: 20
+		$limit: maxRowsPerFetch
 	}
 ];
 

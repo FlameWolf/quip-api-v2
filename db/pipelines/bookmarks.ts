@@ -2,6 +2,7 @@
 
 import { ObjectId } from "bson";
 import { PipelineStage } from "mongoose";
+import { maxRowsPerFetch } from "../../library";
 import postAggregationPipeline from "./post";
 
 const bookmarksAggregationPipeline = (userId: string | ObjectId, lastBookmarkId?: string | ObjectId): Array<PipelineStage> => [
@@ -36,7 +37,7 @@ const bookmarksAggregationPipeline = (userId: string | ObjectId, lastBookmarkId?
 						  }
 				},
 				{
-					$limit: 20
+					$limit: maxRowsPerFetch
 				},
 				{
 					$lookup: {

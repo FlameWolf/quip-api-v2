@@ -2,6 +2,7 @@
 
 import { ObjectId } from "bson";
 import { FilterQuery, PipelineStage } from "mongoose";
+import { maxCacheSize, maxRowsPerFetch } from "../../library";
 import filtersAggregationPipeline from "./filters";
 import postAggregationPipeline from "./post";
 
@@ -57,14 +58,14 @@ const topmostAggregationPipeline = (userId?: string | ObjectId, period: string =
 			}
 		},
 		{
-			$limit: 10000
+			$limit: maxCacheSize
 		},
 		...filtersAggregationPipeline(userId),
 		{
 			$match: pageConditions
 		},
 		{
-			$limit: 20
+			$limit: maxRowsPerFetch
 		},
 		...postAggregationPipeline(userId)
 	];

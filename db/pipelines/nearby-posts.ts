@@ -2,6 +2,7 @@
 
 import { ObjectId } from "bson";
 import { FilterQuery, PipelineStage } from "mongoose";
+import { maxRowsPerFetch } from "../../library";
 import postAggregationPipeline from "./post";
 
 const getPageConditions = (lastDistance?: number, lastPostId?: string | ObjectId): FilterQuery<any> => {
@@ -48,7 +49,7 @@ const nearbyPostsAggregationPipeline = ([longitude, latitude]: Array<number>, ma
 		$match: getPageConditions(lastDistance, lastPostId)
 	},
 	{
-		$limit: 20
+		$limit: maxRowsPerFetch
 	},
 	...postAggregationPipeline(userId)
 ];

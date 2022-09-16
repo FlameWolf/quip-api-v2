@@ -3,7 +3,7 @@
 import * as bcrypt from "bcrypt";
 import { ObjectId } from "bson";
 import { RouteHandlerMethod } from "fastify";
-import mongoose, { HydratedDocument, ObjectExpressionOperator, InferSchemaType } from "mongoose";
+import mongoose, { HydratedDocument, InferSchemaType } from "mongoose";
 import blocksAggregationPipeline from "../db/pipelines/blocks";
 import bookmarksAggregationPipeline from "../db/pipelines/bookmarks";
 import favouritesAggregationPipeline from "../db/pipelines/favourites";
@@ -122,7 +122,9 @@ export const getUserTopmost: RouteHandlerMethod = async (request, reply) => {
 			$unwind: "$posts"
 		},
 		{
-			$replaceWith: "$posts" as unknown as ObjectExpressionOperator
+			$replaceRoot: {
+				newRoot: "$posts"
+			}
 		}
 	]);
 	reply.status(200).send({ posts });

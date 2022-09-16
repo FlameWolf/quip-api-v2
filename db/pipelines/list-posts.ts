@@ -2,6 +2,7 @@
 
 import { ObjectId } from "bson";
 import { PipelineStage } from "mongoose";
+import { maxCacheSize, maxRowsPerFetch } from "../../library";
 import filtersAggregationPipeline from "./filters";
 import postAggregationPipeline from "./post";
 
@@ -97,7 +98,7 @@ const listPostsAggregationPipeline = (listName: string, ownerId: string | Object
 						}
 					},
 					{
-						$limit: 10000
+						$limit: maxCacheSize
 					},
 					...(includeRepeats
 						? [
@@ -147,7 +148,7 @@ const listPostsAggregationPipeline = (listName: string, ownerId: string | Object
 							  }
 					},
 					{
-						$limit: 20
+						$limit: maxRowsPerFetch
 					},
 					{
 						$lookup: {

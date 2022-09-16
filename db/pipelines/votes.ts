@@ -2,6 +2,7 @@
 
 import { ObjectId } from "bson";
 import { PipelineStage } from "mongoose";
+import { maxRowsPerFetch } from "../../library";
 import postAggregationPipeline from "./post";
 
 const votesAggregationPipeline = (userId: string | ObjectId, lastVoteId?: string | ObjectId): Array<PipelineStage> => [
@@ -44,7 +45,7 @@ const votesAggregationPipeline = (userId: string | ObjectId, lastVoteId?: string
 					$unwind: "$post"
 				},
 				{
-					$limit: 20
+					$limit: maxRowsPerFetch
 				}
 			],
 			as: "votes"

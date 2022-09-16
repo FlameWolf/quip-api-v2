@@ -2,6 +2,7 @@
 
 import { ObjectId } from "bson";
 import { FilterQuery, PipelineStage, Expression } from "mongoose";
+import { maxRowsPerFetch } from "../../library";
 import userAggregationPipeline from "./user";
 
 const getMatchExpression = (match: string, searchText: string) => {
@@ -39,7 +40,7 @@ const searchUsersAggregationPipeline = (searchText: string, match: string = "sta
 			$match: pageConditions
 		},
 		{
-			$limit: 20
+			$limit: maxRowsPerFetch
 		},
 		...userAggregationPipeline(selfId)
 	];

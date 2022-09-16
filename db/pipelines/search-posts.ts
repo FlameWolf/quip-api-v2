@@ -2,6 +2,7 @@
 
 import { ObjectId } from "bson";
 import { FilterQuery, PipelineStage } from "mongoose";
+import { maxRowsPerFetch } from "../../library";
 import postAggregationPipeline from "./post";
 
 const getMatchConditions = (searchText: string, searchOptions: { from?: string; since?: string; until?: string; hasMedia?: boolean; notFrom?: string; replies?: string; languages?: string; includeLanguages?: string; mediaDescription?: string }): FilterQuery<any> => {
@@ -130,7 +131,7 @@ const searchPostsAggregationPipeline = (searchText: string = "", searchOptions: 
 			$match: getPageConditions(sortByDate, idCompare, lastScore, lastPostId)
 		},
 		{
-			$limit: 20
+			$limit: maxRowsPerFetch
 		},
 		...postAggregationPipeline(userId)
 	];

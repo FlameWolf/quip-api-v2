@@ -60,7 +60,7 @@ export const blockUser: RouteHandlerMethod = async (request, reply) => {
 				}).session(session),
 				User.findByIdAndUpdate(blockerUserId, {
 					$addToSet: {
-						blocks: blockeeUserId
+						blockedUsers: blockeeUserId
 					}
 				}).session(session)
 			]);
@@ -90,7 +90,7 @@ export const unblockUser: RouteHandlerMethod = async (request, reply) => {
 			if (unblocked) {
 				await User.findByIdAndUpdate(unblockerUserId, {
 					$pull: {
-						blocks: unblockeeUserId
+						blockedUsers: unblockeeUserId
 					}
 				}).session(session);
 			}
