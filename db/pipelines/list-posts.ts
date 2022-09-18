@@ -33,53 +33,9 @@ const listPostsAggregationPipeline = (listName: string, ownerId: string | Object
 		},
 		{
 			$lookup: {
-				from: "listmembers",
-				localField: "_id",
-				foreignField: "list",
-				pipeline: [
-					{
-						$lookup: {
-							from: "users",
-							localField: "user",
-							foreignField: "_id",
-							pipeline: [
-								{
-									$match: {
-										deactivated: false,
-										deleted: false
-									}
-								}
-							],
-							as: "activeUser"
-						}
-					},
-					{
-						$unwind: "$activeUser"
-					},
-					{
-						$group: {
-							_id: undefined,
-							result: {
-								$addToSet: "$user"
-							}
-						}
-					}
-				],
-				as: "members"
-			}
-		},
-		{
-			$lookup: {
 				from: "posts",
 				let: {
-					members: {
-						$ifNull: [
-							{
-								$arrayElemAt: ["$members.result", 0]
-							},
-							[]
-						]
-					}
+					members: "$members"
 				},
 				pipeline: [
 					{
