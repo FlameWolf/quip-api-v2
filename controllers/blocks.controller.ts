@@ -65,7 +65,23 @@ export const blockUser: RouteHandlerMethod = async (request, reply) => {
 					$addToSet: {
 						blockedUsers: blockeeUserId
 					}
-				}).session(session)
+				}).session(session),
+				List.updateMany(
+					{ owner: blockerUserId },
+					{
+						$pull: {
+							members: blockeeUserId
+						}
+					}
+				).session(session),
+				List.updateMany(
+					{ owner: blockeeUserId },
+					{
+						$pull: {
+							members: blockerUserId
+						}
+					}
+				).session(session)
 			]);
 			reply.status(200).send({ blocked });
 		});
