@@ -59,6 +59,9 @@ export const blockUser: RouteHandlerMethod = async (request, reply) => {
 					user: blockerUserId
 				}).session(session),
 				User.findByIdAndUpdate(blockerUserId, {
+					$pull: {
+						follows: blockeeUserId
+					},
 					$addToSet: {
 						blockedUsers: blockeeUserId
 					}

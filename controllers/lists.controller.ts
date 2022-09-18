@@ -61,8 +61,24 @@ export const addMember: RouteHandlerMethod = async (request, reply) => {
 		reply.status(403).send("Unblock this user to add them to lists");
 		return;
 	}
-	const added = await new ListMember({ list: list._id, user: memberId }).save();
-	reply.status(200).send({ added });
+	const session = await mongoose.startSession();
+	try {
+		const listId = list._id;
+		await session.withTransaction(async () => {
+			const added = await new ListMember({
+				list: listId,
+				user: memberId
+			}).save({ session });
+			await List.findByIdAndUpdate(listId, {
+				$addToSet: {
+					members: memberId
+				}
+			}).session(session);
+			reply.status(200).send({ added });
+		});
+	} finally {
+		await session.endSession();
+	}
 };
 export const removeMember: RouteHandlerMethod = async (request, reply) => {
 	const { name, handle } = request.body as ListMemberBody;
@@ -77,9 +93,25 @@ export const removeMember: RouteHandlerMethod = async (request, reply) => {
 		reply.status(404).send("User not found");
 		return;
 	}
-	const memberId = member._id;
-	const removed = await ListMember.findOneAndDelete({ list: list._id, user: memberId });
-	reply.status(200).send({ removed });
+	const session = await mongoose.startSession();
+	try {
+		const listId = list._id;
+		const memberId = member._id;
+		await session.withTransaction(async () => {
+			const removed = await ListMember.findOneAndDelete({
+				list: listId,
+				user: memberId
+			}).session(session);
+			await List.findByIdAndUpdate(listId, {
+				$pull: {
+					members: memberId
+				}
+			}).session(session);
+			reply.status(200).send({ removed });
+		});
+	} finally {
+		await session.endSession();
+	}
 };
 export const getPosts: RouteHandlerMethod = async (request, reply) => {
 	const { name } = request.params as ListInteractParams;

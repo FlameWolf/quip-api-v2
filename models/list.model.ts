@@ -18,7 +18,8 @@ const listSchema = new Schema(
 		},
 		owner: { type: ObjectId, ref: "User", required: true },
 		includeRepeats: { type: Boolean, default: true },
-		includeReplies: { type: Boolean, default: true }
+		includeReplies: { type: Boolean, default: true },
+		members: { type: [ObjectId], select: false }
 	},
 	{
 		timestamps: {
