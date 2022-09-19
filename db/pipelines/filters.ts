@@ -15,7 +15,9 @@ const filtersAggregationPipeline = (userId?: string | ObjectId): Array<PipelineS
 					{
 						$match: {
 							_id: new ObjectId(userId)
-						},
+						}
+					},
+					{
 						$project: {
 							blockedUsers: 1,
 							mutedUsers: 1,
