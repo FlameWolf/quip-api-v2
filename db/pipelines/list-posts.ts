@@ -3,6 +3,7 @@
 import { ObjectId } from "bson";
 import { PipelineStage } from "mongoose";
 import { maxCacheSize, maxRowsPerFetch } from "../../library";
+import filterRepeatsAggregationPipeline from "./filter-repeats";
 import filtersAggregationPipeline from "./filters";
 import postAggregationPipeline from "./post";
 
@@ -56,41 +57,7 @@ const listPostsAggregationPipeline = (listName: string, ownerId: string | Object
 					{
 						$limit: maxCacheSize
 					},
-					...(includeRepeats
-						? [
-								{
-									$lookup: {
-										from: "posts",
-										localField: "repeatPost",
-										foreignField: "_id",
-										let: {
-											repeatedBy: "$author"
-										},
-										pipeline: [
-											{
-												$addFields: {
-													repeatedBy: "$$repeatedBy"
-												}
-											}
-										],
-										as: "repeatedPost"
-									}
-								},
-								{
-									$unwind: {
-										path: "$repeatedPost",
-										preserveNullAndEmptyArrays: true
-									}
-								},
-								{
-									$replaceRoot: {
-										newRoot: {
-											$ifNull: ["$repeatedPost", "$$ROOT"]
-										}
-									}
-								}
-						  ]
-						: []),
+					...filterRepeatsAggregationPipeline(includeRepeats),
 					...(filtersAggregationPipeline(ownerId) as Array<any>),
 					{
 						$match: lastPostId

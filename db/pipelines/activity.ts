@@ -327,7 +327,7 @@ const activityAggregationPipeline = (userId: string | ObjectId, period: string =
 				from: "posts",
 				localField: "entry.post._id",
 				foreignField: "_id",
-				pipeline: [...(filtersAggregationPipeline(userId) as Array<any>), ...(postAggregationPipeline(userId) as Array<any>)],
+				pipeline: [...filtersAggregationPipeline(userId), ...postAggregationPipeline(userId)] as Array<any>,
 				as: "entry.post"
 			}
 		},

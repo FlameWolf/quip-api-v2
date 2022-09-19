@@ -3,6 +3,7 @@
 import { ObjectId } from "bson";
 import { PipelineStage } from "mongoose";
 import { maxRowsPerFetch } from "../../library";
+import filterRepeatsAggregationPipeline from "./filter-repeats";
 import postAggregationPipeline from "./post";
 
 const userPostsAggregationPipeline = (userId: string | ObjectId, includeRepeats: boolean = false, includeReplies: boolean = false, lastPostId?: string | ObjectId): Array<PipelineStage> => {
@@ -43,35 +44,7 @@ const userPostsAggregationPipeline = (userId: string | ObjectId, includeRepeats:
 							createdAt: -1
 						}
 					},
-					...(includeRepeats
-						? [
-								{
-									$lookup: {
-										from: "posts",
-										localField: "repeatPost",
-										foreignField: "_id",
-										let: {
-											repeatedBy: "$author"
-										},
-										pipeline: [
-											{
-												$addFields: {
-													repeatedBy: "$$repeatedBy",
-													repeated: true
-												}
-											}
-										],
-										as: "repeatedPost"
-									}
-								},
-								{
-									$unwind: {
-										path: "$repeatedPost",
-										preserveNullAndEmptyArrays: true
-									}
-								}
-						  ]
-						: []),
+					...filterRepeatsAggregationPipeline(includeRepeats),
 					{
 						$replaceRoot: {
 							newRoot: {
