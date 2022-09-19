@@ -14,7 +14,8 @@ const getPageConditions = (sortByDate: boolean, lastScore?: number, lastPostId?:
 					$lt: lastPostObjectId
 				}
 			};
-		} else if (lastScore) {
+		}
+		if (lastScore) {
 			return {
 				$expr: {
 					$or: [
@@ -36,6 +37,7 @@ const getPageConditions = (sortByDate: boolean, lastScore?: number, lastPostId?:
 			};
 		}
 	}
+	return {};
 };
 const hashtagAggregationPipeline = (hashtag: string, userId?: string | ObjectId, sortBy: string = "date", lastScore?: number, lastPostId?: string | ObjectId): Array<PipelineStage> => {
 	const sortByDate = sortBy !== "popular";
