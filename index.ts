@@ -24,10 +24,11 @@ require("cloudinary").v2.config({
 	api_secret: process.env.CLOUD_API_SECRET
 });
 
+const allowedOrigins = (process.env.ALLOW_ORIGINS as string).split(";");
 const server = fastify();
 server.register(require("@fastify/helmet"));
 server.addHook("onRequest", async (request, reply) => {
-	reply.header("Access-Control-Allow-Origin", process.env.ALLOW_ORIGIN);
+	reply.header("Access-Control-Allow-Origin", allowedOrigins.filter(x => x === request.headers.origin).pop() || "");
 	reply.header("Access-Control-Allow-Credentials", true);
 	reply.header("Access-Control-Allow-Headers", "Authorization, Origin, X-Requested-With, Content-Type, Accept, X-Slug, X-UID");
 	reply.header("Access-Control-Allow-Methods", "OPTIONS, POST, PUT, PATCH, GET, DELETE");
