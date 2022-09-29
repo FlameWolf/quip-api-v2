@@ -28,6 +28,7 @@ const allowedOrigins = process.env.ALLOW_ORIGINS || "";
 const server = fastify();
 server.register(require("@fastify/helmet"));
 server.addHook("onRequest", async (request, reply) => {
+	const origin = request.headers.origin || "";
 	reply.header("Access-Control-Allow-Origin", (allowedOrigins.indexOf(`${origin};`) > -1 && origin) || "*");
 	reply.header("Access-Control-Allow-Credentials", true);
 	reply.header("Access-Control-Allow-Headers", "Authorization, Origin, X-Requested-With, Content-Type, Accept, X-Slug, X-UID");
@@ -75,6 +76,7 @@ server.register(require("./routes/posts.router"), { prefix: "/posts" });
 server.register(require("./routes/search.router"), { prefix: "/search" });
 server.register(require("./routes/settings.router"), { prefix: "/settings" });
 server.setErrorHandler(async (error, request, reply) => {
+	console.log(error);
 	reply.send(error);
 });
 server.listen(
