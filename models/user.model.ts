@@ -43,7 +43,7 @@ const userSchema = new Schema(
 						$ne: null
 					}
 				}
-			},
+			} as any,
 			select: false
 		},
 		pinnedPost: { type: ObjectId, ref: "Post" },
