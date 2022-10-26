@@ -40,8 +40,6 @@ server.addHook("onRequest", async (request, reply) => {
 server.register(require("fastify-multer").contentParser);
 if (!isProdEnv) {
 	server.register(require("@fastify/swagger"), {
-		routePrefix: "/swagger",
-		exposeRoute: true,
 		openapi: {
 			version: "3.0.0",
 			components: {
@@ -60,6 +58,9 @@ if (!isProdEnv) {
 				}
 			]
 		}
+	});
+	server.register(require("@fastify/swagger-ui"), {
+		routePrefix: "/swagger"
 	});
 }
 server.addHook("onRequest", async (request, reply) => {
