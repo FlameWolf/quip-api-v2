@@ -24,7 +24,7 @@ const postSchema = new Schema(
 				collation: {
 					locale: "simple"
 				}
-			} as any
+			}
 		},
 		author: { type: ObjectId, ref: "User", required: true, index: true },
 		repeatPost: { type: ObjectId, ref: "Post", index: true },
