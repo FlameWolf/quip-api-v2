@@ -1,7 +1,7 @@
 "use strict";
 
 import { ObjectId } from "bson";
-import { Schema, model } from "mongoose";
+import { Schema, model, Document, Model, InferSchemaType } from "mongoose";
 import * as uniqueValidator from "mongoose-unique-validator";
 
 const followSchema = new Schema(
@@ -23,4 +23,4 @@ const followSchema = new Schema(
 followSchema.index({ followedBy: 1, user: 1 }, { unique: true });
 followSchema.plugin(uniqueValidator);
 
-export default model("Follow", followSchema);
+export default model<Document, Model<InferSchemaType<typeof followSchema>>>("Follow", followSchema);

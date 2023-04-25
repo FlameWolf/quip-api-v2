@@ -1,7 +1,7 @@
 "use strict";
 
 import { ObjectId } from "bson";
-import { Schema, model } from "mongoose";
+import { Schema, model, Document, Model, InferSchemaType } from "mongoose";
 import * as uniqueValidator from "mongoose-unique-validator";
 
 const listMemberSchema = new Schema(
@@ -23,4 +23,4 @@ const listMemberSchema = new Schema(
 listMemberSchema.index({ user: 1, list: 1 }, { unique: true });
 listMemberSchema.plugin(uniqueValidator);
 
-export default model("ListMember", listMemberSchema);
+export default model<Document, Model<InferSchemaType<typeof listMemberSchema>>>("ListMember", listMemberSchema);

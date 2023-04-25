@@ -1,7 +1,7 @@
 "use strict";
 
 import { ObjectId } from "bson";
-import { Schema, model } from "mongoose";
+import { Schema, model, Document, Model, InferSchemaType } from "mongoose";
 import { emailRegExp } from "../library";
 
 const emailVerificationSchema = new Schema(
@@ -31,4 +31,4 @@ const emailVerificationSchema = new Schema(
 );
 emailVerificationSchema.index({ createdAt: 1 }, { expireAfterSeconds: 60 * 60 * 24 * 7 });
 
-export default model("EmailVerification", emailVerificationSchema);
+export default model<Document, Model<InferSchemaType<typeof emailVerificationSchema>>>("EmailVerification", emailVerificationSchema);

@@ -1,7 +1,7 @@
 "use strict";
 
 import { ObjectId } from "bson";
-import { Schema, model } from "mongoose";
+import { Schema, model, Document, Model, InferSchemaType } from "mongoose";
 import * as uniqueValidator from "mongoose-unique-validator";
 
 const favouriteSchema = new Schema(
@@ -23,4 +23,4 @@ const favouriteSchema = new Schema(
 favouriteSchema.index({ favouritedBy: 1, post: 1 }, { unique: true });
 favouriteSchema.plugin(uniqueValidator);
 
-export default model("Favourite", favouriteSchema);
+export default model<Document, Model<InferSchemaType<typeof favouriteSchema>>>("Favourite", favouriteSchema);

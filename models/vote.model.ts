@@ -1,7 +1,7 @@
 "use strict";
 
 import { ObjectId } from "bson";
-import { Schema, model } from "mongoose";
+import { Schema, model, Document, Model, InferSchemaType } from "mongoose";
 import * as uniqueValidator from "mongoose-unique-validator";
 
 const voteSchema = new Schema(
@@ -28,4 +28,4 @@ const voteSchema = new Schema(
 voteSchema.index({ user: 1, poll: 1 }, { unique: true });
 voteSchema.plugin(uniqueValidator);
 
-export default model("Vote", voteSchema);
+export default model<Document, Model<InferSchemaType<typeof voteSchema>>>("Vote", voteSchema);

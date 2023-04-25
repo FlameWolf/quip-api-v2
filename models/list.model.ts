@@ -1,7 +1,7 @@
 "use strict";
 
 import { ObjectId } from "bson";
-import { Schema, model } from "mongoose";
+import { Schema, model, Document, Model, InferSchemaType } from "mongoose";
 import { handleRegExp } from "../library";
 import * as uniqueValidator from "mongoose-unique-validator";
 
@@ -35,4 +35,4 @@ const listSchema = new Schema(
 listSchema.index({ owner: 1, name: 1 }, { unique: true });
 listSchema.plugin(uniqueValidator);
 
-export default model("List", listSchema);
+export default model<Document, Model<InferSchemaType<typeof listSchema>>>("List", listSchema);

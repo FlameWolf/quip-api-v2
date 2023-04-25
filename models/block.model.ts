@@ -1,7 +1,7 @@
 "use strict";
 
 import { ObjectId } from "bson";
-import { model, Schema } from "mongoose";
+import { Schema, model, Document, Model, InferSchemaType } from "mongoose";
 import * as uniqueValidator from "mongoose-unique-validator";
 import { maxContentLength, getUnicodeClusterCount } from "../library";
 
@@ -32,4 +32,4 @@ const blockSchema = new Schema(
 blockSchema.index({ blockedBy: 1, user: 1 }, { unique: true });
 blockSchema.plugin(uniqueValidator);
 
-export default model("Block", blockSchema);
+export default model<Document, Model<InferSchemaType<typeof blockSchema>>>("Block", blockSchema);

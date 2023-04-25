@@ -1,7 +1,7 @@
 "use strict";
 
 import { ObjectId } from "bson";
-import { Schema, model } from "mongoose";
+import { Schema, model, Document, Model, InferSchemaType } from "mongoose";
 import * as uniqueValidator from "mongoose-unique-validator";
 
 const mutedUserSchema = new Schema(
@@ -23,4 +23,4 @@ const mutedUserSchema = new Schema(
 mutedUserSchema.index({ mutedBy: 1, user: 1 }, { unique: true });
 mutedUserSchema.plugin(uniqueValidator);
 
-export default model("MutedUser", mutedUserSchema);
+export default model<Document, Model<InferSchemaType<typeof mutedUserSchema>>>("MutedUser", mutedUserSchema);

@@ -1,7 +1,7 @@
 "use strict";
 
 import { ObjectId } from "bson";
-import { Schema, SchemaTypes, model, ValidateOpts } from "mongoose";
+import { Schema, SchemaTypes, model, ValidateOpts, InferSchemaType, Model } from "mongoose";
 import { maxContentLength, maxPollOptionLength, minPollDuration, maxPollDuration, getUnicodeClusterCount } from "../library";
 
 const { Url, Point } = SchemaTypes;
@@ -127,4 +127,4 @@ const postSchema = new Schema(
 );
 postSchema.index({ createdAt: 1 });
 
-export default model("Post", postSchema);
+export default model<Document, Model<InferSchemaType<typeof postSchema>>>("Post", postSchema);

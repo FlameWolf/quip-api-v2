@@ -1,7 +1,7 @@
 "use strict";
 
 import { ObjectId } from "bson";
-import { Schema, model } from "mongoose";
+import { Schema, model, Document, Model, InferSchemaType } from "mongoose";
 
 const refreshTokenSchema = new Schema(
 	{
@@ -19,4 +19,4 @@ const refreshTokenSchema = new Schema(
 refreshTokenSchema.index({ token: 1, user: 1 });
 refreshTokenSchema.index({ lastUsed: 1 }, { expireAfterSeconds: 60 * 60 * 24 * 180 });
 
-export default model("RefreshToken", refreshTokenSchema);
+export default model<Document, Model<InferSchemaType<typeof refreshTokenSchema>>>("RefreshToken", refreshTokenSchema);

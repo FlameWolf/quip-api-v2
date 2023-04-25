@@ -1,7 +1,7 @@
 "use strict";
 
 import { ObjectId } from "bson";
-import { Schema, model } from "mongoose";
+import { Schema, model, Document, Model, InferSchemaType } from "mongoose";
 import { handleRegExp, passwordRegExp, emailRegExp } from "../library";
 import * as uniqueValidator from "mongoose-unique-validator";
 
@@ -66,4 +66,4 @@ const userSchema = new Schema(
 );
 userSchema.plugin(uniqueValidator);
 
-export default model("User", userSchema);
+export default model<Document, Model<InferSchemaType<typeof userSchema>>>("User", userSchema);

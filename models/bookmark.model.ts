@@ -1,7 +1,7 @@
 "use strict";
 
 import { ObjectId } from "bson";
-import { Schema, model } from "mongoose";
+import { Schema, model, Document, Model, InferSchemaType } from "mongoose";
 import * as uniqueValidator from "mongoose-unique-validator";
 
 const bookmarkSchema = new Schema(
@@ -23,4 +23,4 @@ const bookmarkSchema = new Schema(
 bookmarkSchema.index({ bookmarkedBy: 1, post: 1 }, { unique: true });
 bookmarkSchema.plugin(uniqueValidator);
 
-export default model("Bookmark", bookmarkSchema);
+export default model<Document, Model<InferSchemaType<typeof bookmarkSchema>>>("Bookmark", bookmarkSchema);
