@@ -148,6 +148,16 @@ const deletePostWithCascade = async (post: HydratedDocument<PostModel>) => {
 		await Promise.all([
 			User.findOneAndUpdate(
 				{
+					_id: post.author
+				},
+				{
+					$pull: {
+						posts: postId
+					}
+				}
+			).session(session),
+			User.findOneAndUpdate(
+				{
 					pinnedPost: postId
 				},
 				{
@@ -195,8 +205,22 @@ export const createPost: RouteHandlerMethod = async (request, reply) => {
 		})
 	};
 	await Promise.all([updateLanguages(model), content.trim() && updateMentionsAndHashtags(content, model)]);
-	const post = await new Post(model).save();
-	reply.status(201).send({ post });
+	const session = await mongoose.startSession();
+	await session.withTransaction(async () => {
+		const post = await new Post(model).save({ session });
+		await User.findOneAndUpdate(
+			{
+				_id: userId
+			},
+			{
+				$addToSet: {
+					posts: post._id
+				}
+			}
+		).session(session);
+		reply.status(201).send({ post });
+	});
+	await session.endSession();
 };
 export const updatePost: RouteHandlerMethod = async (request, reply) => {
 	const { postId } = request.params as PostInteractParams;
@@ -370,6 +394,16 @@ export const quotePost: RouteHandlerMethod = async (request, reply) => {
 			};
 			await Promise.all([updateLanguages(model), content.trim() && updateMentionsAndHashtags(content, model)]);
 			const quote = await new Post(model).save({ session });
+			await User.findOneAndUpdate(
+				{
+					_id: userId
+				},
+				{
+					$addToSet: {
+						posts: quote._id
+					}
+				}
+			).session(session);
 			await Post.findByIdAndUpdate(originalPostId, {
 				$inc: {
 					score: quoteScore
@@ -397,9 +431,29 @@ export const repeatPost: RouteHandlerMethod = async (request, reply) => {
 			repeatPost: originalPostId
 		};
 		await session.withTransaction(async () => {
-			const result = await Post.deleteOne(payload).session(session);
+			const postToDelete = await Post.findOne(payload);
+			if (postToDelete) {
+				await Post.findByIdAndDelete(postToDelete._id).session(session);
+			}
 			const repeated = await new Post(payload).save({ session });
-			if (result.deletedCount === 0) {
+			await User.findOneAndUpdate(
+				{
+					_id: userId
+				},
+				{
+					...(postToDelete
+						? {
+								$pull: {
+									posts: null
+								}
+						  }
+						: {}),
+					$addToSet: {
+						posts: repeated._id
+					}
+				}
+			).session(session);
+			if (!postToDelete) {
 				await Post.findByIdAndUpdate(originalPostId, {
 					$inc: {
 						score: repeatScore
@@ -423,6 +477,16 @@ export const unrepeatPost: RouteHandlerMethod = async (request, reply) => {
 				repeatPost: postId
 			}).session(session);
 			if (unrepeated) {
+				await User.findOneAndUpdate(
+					{
+						_id: userId
+					},
+					{
+						$pull: {
+							posts: unrepeated._id
+						}
+					}
+				).session(session);
 				await Post.findByIdAndUpdate(postId, {
 					$inc: {
 						score: -repeatScore
@@ -479,6 +543,16 @@ export const replyToPost: RouteHandlerMethod = async (request, reply) => {
 			};
 			await Promise.all([updateLanguages(model), content.trim() && updateMentionsAndHashtags(content, model)]);
 			const replyPost = await new Post(model).save({ session });
+			await User.findOneAndUpdate(
+				{
+					_id: userId
+				},
+				{
+					$addToSet: {
+						posts: replyPost._id
+					}
+				}
+			).session(session);
 			await Post.findByIdAndUpdate(originalPostId, {
 				$inc: {
 					score: replyScore

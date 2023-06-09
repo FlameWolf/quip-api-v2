@@ -46,6 +46,7 @@ const userSchema = new Schema(
 			},
 			select: false
 		},
+		posts: [{ type: ObjectId, ref: "Post" }],
 		pinnedPost: { type: ObjectId, ref: "Post" },
 		protected: { type: Boolean, default: false },
 		deactivated: { type: Boolean, default: false },

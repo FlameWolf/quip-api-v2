@@ -296,6 +296,9 @@ const userAggregationPipeline = (selfId?: string | ObjectId): Array<PipelineStag
 		{
 			$project: {
 				handle: 1,
+				postsCount: {
+					$size: "posts"
+				},
 				pinnedPost: 1,
 				protected: 1,
 				deactivated: 1
