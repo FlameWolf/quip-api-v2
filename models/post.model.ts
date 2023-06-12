@@ -17,13 +17,6 @@ const postSchema = new Schema(
 			validate: {
 				validator: (value: string) => getUnicodeClusterCount(value) <= maxContentLength,
 				message: "Content length exceeds the maximum allowed limit"
-			},
-			index: {
-				text: true,
-				default_language: "none",
-				collation: {
-					locale: "simple"
-				}
 			}
 		},
 		author: { type: ObjectId, ref: "User", required: true, index: true },
@@ -125,6 +118,17 @@ const postSchema = new Schema(
 		}
 	}
 );
-postSchema.index({ createdAt: 1 });
+postSchema.index(
+	{
+		content: "text"
+	},
+	{
+		default_language: "none",
+		collation: {
+			locale: "simple"
+		}
+	}
+);
+postSchema.index({ createdAt: -1 });
 
 export default model<Document, Model<InferSchemaType<typeof postSchema>>>("Post", postSchema);
