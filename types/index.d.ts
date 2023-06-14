@@ -10,6 +10,6 @@ declare global {
 	type InferArrayElementType<T> = T extends readonly (infer ElementType)[] ? ElementType : never;
 	type UserInfo = {
 		handle: string;
-		userId: string | ObjectId;
+		userId: string;
 	};
 }
