@@ -51,7 +51,7 @@ type UserModel = InferSchemaType<typeof User.schema>;
 export const findActiveUserByHandle = async (handle: string) => (await User.findOne({ handle, deactivated: false, deleted: false })) as HydratedDocument<UserModel>;
 export const findUserById = async (userId: string | ObjectId) => (await User.findOne({ _id: userId, deleted: false })) as HydratedDocument<UserModel>;
 export const findUserByHandle = async (handle: string) => (await User.findOne({ handle, deleted: false })) as HydratedDocument<UserModel>;
-export const findPostsByUserId = async (userId: ObjectId, includeRepeats?: boolean, includeReplies?: boolean, lastPostId?: string | ObjectId) => await User.aggregate(userPostsAggregationPipeline(userId, includeRepeats, includeReplies, lastPostId));
+export const findPostsByUserId = async (userId: ObjectId, includeRepeats?: boolean, includeReplies?: boolean, visitorId?: string | ObjectId, lastPostId?: string | ObjectId) => await User.aggregate(userPostsAggregationPipeline(userId, includeRepeats, includeReplies, visitorId, lastPostId));
 export const findFavouritesByUserId = async (userId: string | ObjectId, lastFavouriteId?: string | ObjectId) => await User.aggregate(favouritesAggregationPipeline(userId, lastFavouriteId));
 export const findVotesByUserId = async (userId: string | ObjectId, lastVoteId?: string | ObjectId) => await User.aggregate(votesAggregationPipeline(userId, lastVoteId));
 export const findBookmarksByUserId = async (userId: string | ObjectId, lastBookmarkId?: string | ObjectId) => await User.aggregate(bookmarksAggregationPipeline(userId, lastBookmarkId));
@@ -89,12 +89,13 @@ export const getUser: RouteHandlerMethod = async (request, reply) => {
 export const getUserPosts: RouteHandlerMethod = async (request, reply) => {
 	const { handle } = request.params as UserInteractParams;
 	const { includeRepeats, includeReplies, lastPostId } = request.query as UserPostsQueryString;
+	const visitorId = (request.userInfo as UserInfo).userId;
 	const user = await findActiveUserByHandle(handle);
 	if (!user) {
 		reply.status(404).send("User not found");
 		return;
 	}
-	const posts = await findPostsByUserId(user._id, includeRepeats, includeReplies, lastPostId);
+	const posts = await findPostsByUserId(user._id, includeRepeats, includeReplies, visitorId, lastPostId);
 	reply.status(200).send({ posts });
 };
 export const getUserTopmost: RouteHandlerMethod = async (request, reply) => {

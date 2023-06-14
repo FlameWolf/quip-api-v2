@@ -6,7 +6,7 @@ import { maxRowsPerFetch } from "../../library";
 import filterRepeatsAggregationPipeline from "./filter-repeats";
 import postAggregationPipeline from "./post";
 
-const userPostsAggregationPipeline = (userId: string | ObjectId, includeRepeats: boolean = false, includeReplies: boolean = false, lastPostId?: string | ObjectId): Array<PipelineStage> => {
+const userPostsAggregationPipeline = (userId: string | ObjectId, includeRepeats: boolean = false, includeReplies: boolean = false, visitorId?: string | ObjectId, lastPostId?: string | ObjectId): Array<PipelineStage> => {
 	const matchConditions = {
 		...(!includeRepeats && {
 			repeatPost: {
@@ -55,7 +55,7 @@ const userPostsAggregationPipeline = (userId: string | ObjectId, includeRepeats:
 					{
 						$limit: maxRowsPerFetch
 					},
-					...(postAggregationPipeline(userId) as Array<any>)
+					...(postAggregationPipeline(visitorId) as Array<any>)
 				],
 				as: "posts"
 			}
