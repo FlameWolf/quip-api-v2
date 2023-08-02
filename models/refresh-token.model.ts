@@ -10,6 +10,10 @@ const refreshTokenSchema = new Schema(
 		lastUsed: { type: Date, default: new Date() }
 	},
 	{
+		timestamps: {
+			createdAt: true,
+			updatedAt: false
+		},
 		collation: {
 			locale: "en",
 			strength: 2

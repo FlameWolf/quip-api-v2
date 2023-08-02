@@ -46,6 +46,10 @@ const settingsSchema = new Schema(
 		})
 	},
 	{
+		timestamps: {
+			createdAt: false,
+			updatedAt: true
+		},
 		collation: {
 			locale: "en",
 			strength: 2
