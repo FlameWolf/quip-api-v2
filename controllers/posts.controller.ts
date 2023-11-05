@@ -21,7 +21,7 @@ import { PostCreateBody, PostInteractParams, PostQuotesQueryString, PostRepliesQ
 
 type PostModel = InferSchemaType<typeof Post.schema>;
 type AttachmentsModel = Required<PostModel>["attachments"];
-type PollModel = AttachmentsModel["poll"];
+type PollModel = (AttachmentsModel & Dictionary)["poll"];
 type LanguageEntry = InferArrayElementType<PostModel["languages"]>;
 type MentionEntry = InferArrayElementType<PostModel["mentions"]>;
 type HashtagEntry = InferArrayElementType<PostModel["hashtags"]>;
@@ -245,7 +245,7 @@ export const updatePost: RouteHandlerMethod = async (request, reply) => {
 			reply.status(422).send("Post was edited once and cannot be edited again");
 			return;
 		}
-		const { poll, mediaFile, post: quotedPostId } = post.attachments as AttachmentsModel;
+		const { poll, mediaFile, post: quotedPostId } = post.attachments as AttachmentsModel & Dictionary;
 		if (poll) {
 			reply.status(422).send("Cannot edit a post that includes a poll");
 			return;
