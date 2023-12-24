@@ -14,31 +14,31 @@
 	"dependencies": {
 		"@fastify/helmet": "^11.1.1",
 		"@fastify/static": "^6.12.0",
-		"@fastify/swagger-ui": "^1.10.1",
+		"@fastify/swagger-ui": "^2.0.1",
 		"bcrypt": "^5.1.1",
 		"cld": "^2.9.1",
-		"cloudinary": "^1.41.0",
-		"fastify": "^4.24.3",
+		"cloudinary": "^1.41.1",
+		"fastify": "^4.25.1",
 		"fastify-multer": "^2.0.3",
 		"jsonwebtoken": "^9.0.2",
 		"mongodb": "^6.3.0",
-		"mongoose": "8.0.1",
+		"mongoose": "8.0.3",
 		"mongoose-unique-validator": "^4.0.0",
 		"nodemailer": "^6.9.7"
 	},
 	"devDependencies": {
-		"@fastify/swagger": "^8.12.0",
-		"@types/babel__core": "^7.20.4",
+		"@fastify/swagger": "^8.12.1",
+		"@types/babel__core": "^7.20.5",
 		"@types/bcrypt": "^5.0.2",
 		"@types/jsonwebtoken": "^9.0.5",
 		"@types/mongoose-unique-validator": "^1.0.9",
-		"@types/node": "^20.9.1",
+		"@types/node": "^20.10.5",
 		"@types/nodemailer": "^6.4.14",
-		"@types/nodemon": "^1.19.5",
+		"@types/nodemon": "^1.19.6",
 		"dotenv": "^16.3.1",
-		"json-schema-to-ts": "^2.9.2",
-		"nodemon": "^3.0.1",
-		"ts-node": "^10.9.1",
-		"typescript": "^5.2.2"
+		"json-schema-to-ts": "^3.0.0",
+		"nodemon": "^3.0.2",
+		"ts-node": "^10.9.2",
+		"typescript": "^5.3.3"
 	}
 }
