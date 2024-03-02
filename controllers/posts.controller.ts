@@ -22,6 +22,7 @@ import { PostCreateBody, PostInteractParams, PostQuotesQueryString, PostRepliesQ
 type PostModel = InferSchemaType<typeof Post.schema>;
 type AttachmentsModel = Required<PostModel>["attachments"];
 type PollModel = (AttachmentsModel & Dictionary)["poll"];
+type MediaFileModel = (AttachmentsModel & Dictionary)["mediaFile"];
 type LanguageEntry = InferArrayElementType<PostModel["languages"]>;
 type MentionEntry = InferArrayElementType<PostModel["mentions"]>;
 type HashtagEntry = InferArrayElementType<PostModel["hashtags"]>;
@@ -59,11 +60,11 @@ const updateLanguages = async (post: Partial<PostModel> | DeepPartial<PostModel>
 	if (attachments) {
 		const { poll, mediaFile } = attachments;
 		if (poll) {
-			const { first, second, third, fourth } = poll;
+			const { first, second, third, fourth } = poll as PollModel;
 			promises.push(first && (await detectLanguages(first as string)), second && (await detectLanguages(second as string)), third && (await detectLanguages(third as string)), fourth && (await detectLanguages(fourth as string)));
 		}
 		if (mediaFile) {
-			const mediaDescription = mediaFile.description;
+			const mediaDescription = (mediaFile as MediaFileModel).description;
 			promises.push(mediaDescription && (await detectLanguages(mediaDescription as string)));
 		}
 	}
