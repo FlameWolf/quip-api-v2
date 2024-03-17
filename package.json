@@ -17,14 +17,14 @@
 		"@fastify/swagger-ui": "^3.0.0",
 		"bcrypt": "^5.1.1",
 		"cld": "^2.9.1",
-		"cloudinary": "^2.0.2",
-		"fastify": "^4.26.1",
+		"cloudinary": "^2.0.3",
+		"fastify": "^4.26.2",
 		"fastify-multer": "^2.0.3",
 		"jsonwebtoken": "^9.0.2",
-		"mongodb": "^6.4.0",
-		"mongoose": "8.2.0",
+		"mongodb": "^6.5.0",
+		"mongoose": "8.2.2",
 		"mongoose-unique-validator": "^5.0.0",
-		"nodemailer": "^6.9.11"
+		"nodemailer": "^6.9.12"
 	},
 	"devDependencies": {
 		"@fastify/swagger": "^8.14.0",
@@ -32,13 +32,13 @@
 		"@types/bcrypt": "^5.0.2",
 		"@types/jsonwebtoken": "^9.0.6",
 		"@types/mongoose-unique-validator": "^1.0.9",
-		"@types/node": "^20.11.24",
+		"@types/node": "^20.11.28",
 		"@types/nodemailer": "^6.4.14",
 		"@types/nodemon": "^1.19.6",
 		"dotenv": "^16.4.5",
-		"json-schema-to-ts": "^3.0.0",
+		"json-schema-to-ts": "^3.0.1",
 		"nodemon": "^3.1.0",
 		"ts-node": "^10.9.2",
-		"typescript": "^5.3.3"
+		"typescript": "^5.4.2"
 	}
 }
