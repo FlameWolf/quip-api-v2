@@ -4,6 +4,7 @@
 	"description": "",
 	"main": "index.ts",
 	"scripts": {
+		"postinstall": "patch-package",
 		"dev": "nodemon --exec ts-node index.ts",
 		"build": "tsc",
 		"prettify": "prettier --write .",
@@ -30,14 +31,16 @@
 		"@fastify/swagger": "^8.15.0",
 		"@types/babel__core": "^7.20.5",
 		"@types/bcrypt": "^5.0.2",
-		"@types/jsonwebtoken": "^9.0.6",
+		"@types/jsonwebtoken": "^9.0.7",
 		"@types/mongoose-unique-validator": "^1.0.9",
 		"@types/node": "^22.4.1",
 		"@types/nodemailer": "^6.4.15",
 		"@types/nodemon": "^1.19.6",
 		"dotenv": "^16.4.5",
-		"json-schema-to-ts": "^3.1.0",
-		"nodemon": "^3.1.4",
+		"json-schema-to-ts": "^3.1.1",
+		"nodemon": "^3.1.7",
+		"patch-package": "^8.0.0",
+		"postinstall-postinstall": "^2.1.0",
 		"ts-node": "^10.9.2",
 		"typescript": "^5.5.4"
 	}

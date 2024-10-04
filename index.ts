@@ -63,7 +63,7 @@ if (!isProdEnv) {
 		routePrefix: "/swagger"
 	});
 }
-server.decorateRequest("userInfo", null);
+server.decorateRequest("userInfo", null as unknown as UserInfo);
 server.addHook("onRequest", async (request, reply) => {
 	try {
 		const authToken = request.headers.authorization?.replace(/^bearer\s+/i, "");

@@ -5,7 +5,7 @@ import { Schema, SchemaTypes, model, ValidateOpts, InferSchemaType, Model } from
 import { maxContentLength, maxPollOptionLength, minPollDuration, maxPollDuration, getUnicodeClusterCount } from "../library";
 
 const { Url, Point } = SchemaTypes;
-const validatePollOption: ValidateOpts<string, any> = {
+const validatePollOption: ValidateOpts<string, Dictionary> = {
 	validator: (value: string) => getUnicodeClusterCount(value) <= maxPollOptionLength,
 	message: "Poll option length exceeds the maximum allowed limit"
 };

@@ -1,0 +1,26 @@
+diff --git a/node_modules/mongoose/types/index.d.ts b/node_modules/mongoose/types/index.d.ts
+index 3ec72ac..108fabd 100644
+--- a/node_modules/mongoose/types/index.d.ts
++++ b/node_modules/mongoose/types/index.d.ts
+@@ -140,7 +140,7 @@ declare module 'mongoose' {
+
+   export type Default__v<T> = T extends { __v?: infer U }
+     ? T
+-    : T & { __v?: number };
++    : T & { __v?: number | any };
+
+   /** Helper type for getting the hydrated document type from the raw document type. The hydrated document type is what `new MyModel()` returns. */
+   export type HydratedDocument<
+diff --git a/node_modules/mongoose/types/query.d.ts b/node_modules/mongoose/types/query.d.ts
+index cb447f2..1aab332 100644
+--- a/node_modules/mongoose/types/query.d.ts
++++ b/node_modules/mongoose/types/query.d.ts
+@@ -116,7 +116,7 @@ declare module 'mongoose' {
+     $where?: string | Function;
+     /** @see https://www.mongodb.com/docs/manual/reference/operator/query/comment/#op._S_comment */
+     $comment?: string;
+-    $expr?: Record<string, any>;
++    $expr?: Record<string, any> | Dictionary | boolean | any;
+     // this will mark all unrecognized properties as any (including nested queries)
+     [key: string]: any;
+   };
