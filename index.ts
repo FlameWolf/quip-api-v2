@@ -1,9 +1,12 @@
 "use strict";
 
 import fastify from "fastify";
+import { megaByte, validMimeTypes, sanitiseFileName } from "./library";
+import { DiscStorage } from "formzilla/DiscStorage";
 import * as jwt from "jsonwebtoken";
 import "./schemaTypes/point";
 import "./schemaTypes/url";
+import * as path from "path";
 
 const isProdEnv = process.env.NODE_ENV === "production";
 if (!isProdEnv) {
@@ -37,7 +40,22 @@ server.addHook("onRequest", async (request, reply) => {
 		reply.status(200).send();
 	}
 });
-server.register(require("fastify-multer").contentParser);
+server.register(require("formzilla"), {
+	limits: {
+		fileSize: megaByte * 5
+	},
+	storage: new DiscStorage(file => {
+		const [type, subtype] = file.mimeType.split("/");
+		const isValid = validMimeTypes.some(mimeType => mimeType === type);
+		if (!isValid) {
+			throw new Error("Invalid file type");
+		}
+		return {
+			directory: path.join(__dirname, "public"),
+			fileName: `${sanitiseFileName(file.originalName.replace(new RegExp(`\.${subtype}$`), ""), 16)}_${Date.now().valueOf()}`
+		};
+	})
+});
 if (!isProdEnv) {
 	server.register(require("@fastify/swagger"), {
 		openapi: {
@@ -78,7 +96,6 @@ server.register(require("./routes/posts.router"), { prefix: "/posts" });
 server.register(require("./routes/search.router"), { prefix: "/search" });
 server.register(require("./routes/settings.router"), { prefix: "/settings" });
 server.setErrorHandler(async (error, request, reply) => {
-	console.log(error);
 	reply.send(error);
 });
 server.listen(
