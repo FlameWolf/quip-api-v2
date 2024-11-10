@@ -45,14 +45,14 @@ server.register(require("formzilla"), {
 		fileSize: megaByte * 5
 	},
 	storage: new DiscStorage(file => {
-		const [type, subtype] = file.mimeType.split("/");
+		const [type, subType] = file.mimeType.split("/");
 		const isValid = validMimeTypes.some(mimeType => mimeType === type);
 		if (!isValid) {
 			throw new Error("Invalid file type");
 		}
 		return {
 			directory: path.join(__dirname, "public"),
-			fileName: `${sanitiseFileName(file.originalName.replace(new RegExp(`\.${subtype}$`), ""), 16)}_${Date.now().valueOf()}`
+			fileName: `${sanitiseFileName(file.originalName.replace(new RegExp(`\.${subType}$`), ""), 16)}_${Date.now().valueOf()}`
 		};
 	})
 });

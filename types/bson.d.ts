@@ -1,3 +1,5 @@
+"use strict";
+
 declare module "bson" {
 	declare class ObjectId {
 		_id: this;

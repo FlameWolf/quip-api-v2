@@ -102,8 +102,9 @@ const updateMentionsAndHashtags = async (content: string, post: Partial<PostMode
 	post.mentions = postMentions.size > 0 ? [...postMentions].map(mention => new ObjectId(mention) as MentionEntry) : undefined;
 	post.hashtags = postHashtags.size > 0 ? [...postHashtags] : undefined;
 };
-const uploadFile = async (file: FormzillaFile, fileType: string) => {
+const uploadFile = async (file: FormzillaFile) => {
 	const filePath = file.path as string;
+	const fileType = file.type;
 	const response = await cloudinary.uploader.upload(filePath, {
 		resource_type: fileType as any,
 		folder: `${fileType}s/`,
@@ -180,7 +181,6 @@ const deletePostWithCascade = async (post: HydratedDocument<PostModel>) => {
 export const createPost: RouteHandlerMethod = async (request, reply) => {
 	const { content = "", poll, "media-description": mediaDescription, location } = request.body as PostCreateBody;
 	const media = (request.body as Dictionary).media as FormzillaFile;
-	const fileType = media?.mimeType;
 	const userId = (request.userInfo as UserInfo).userId;
 	try {
 		validateContent(content, poll, media);
@@ -196,8 +196,8 @@ export const createPost: RouteHandlerMethod = async (request, reply) => {
 				...(poll && { poll }),
 				...(media && {
 					mediaFile: {
-						fileType: fileType as any,
-						src: (await uploadFile(media, fileType as string)).secure_url as any,
+						fileType: media.type,
+						src: (await uploadFile(media)).secure_url as any,
 						previewSrc: undefined,
 						description: mediaDescription
 					}
@@ -359,7 +359,6 @@ export const quotePost: RouteHandlerMethod = async (request, reply) => {
 	const { postId } = request.params as PostInteractParams;
 	const { content = "", poll, "media-description": mediaDescription, location } = request.body as PostCreateBody;
 	const media = (request.body as Dictionary).media as FormzillaFile;
-	const fileType = media?.mimeType;
 	const userId = (request.userInfo as UserInfo).userId;
 	try {
 		validateContent(content, poll, media, postId);
@@ -383,8 +382,8 @@ export const quotePost: RouteHandlerMethod = async (request, reply) => {
 					...(poll && { poll }),
 					...(media && {
 						mediaFile: {
-							fileType: fileType as any,
-							src: (await uploadFile(media, fileType as string)).secure_url as any,
+							fileType: media.type,
+							src: (await uploadFile(media)).secure_url as any,
 							previewSrc: undefined,
 							description: mediaDescription
 						}
@@ -508,7 +507,6 @@ export const replyToPost: RouteHandlerMethod = async (request, reply) => {
 	const { postId } = request.params as PostInteractParams;
 	const { content = "", poll, "media-description": mediaDescription, location } = request.body as PostCreateBody;
 	const media = (request.body as Dictionary).media as FormzillaFile;
-	const fileType = media?.mimeType;
 	const userId = (request.userInfo as UserInfo).userId;
 	try {
 		validateContent(content, poll, media);
@@ -534,8 +532,8 @@ export const replyToPost: RouteHandlerMethod = async (request, reply) => {
 						...(poll && { poll }),
 						...(media && {
 							mediaFile: {
-								fileType: fileType as any,
-								src: (await uploadFile(media, fileType as string)).secure_url as any,
+								fileType: media.type,
+								src: (await uploadFile(media)).secure_url as any,
 								previewSrc: undefined,
 								description: mediaDescription
 							}
