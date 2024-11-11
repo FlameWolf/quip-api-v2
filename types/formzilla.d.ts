@@ -6,6 +6,5 @@ declare module "formzilla" {
 	interface File {
 		type: string;
 		subType: string;
-		bareName: string;
 	}
 }

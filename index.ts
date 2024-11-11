@@ -52,7 +52,7 @@ server.register(require("formzilla"), {
 		}
 		return {
 			directory: path.join(__dirname, "public"),
-			fileName: `${standardiseFileName(file.originalName, subType)}`
+			fileName: standardiseFileName(file.originalName, subType)
 		};
 	})
 });

@@ -107,7 +107,7 @@ const uploadFile = async (file: FormzillaFile) => {
 	const response = await cloudinary.uploader.upload(filePath, {
 		resource_type: fileType as any,
 		folder: `${fileType}s/`,
-		public_id: file.bareName
+		use_filename: true
 	});
 	return response;
 };

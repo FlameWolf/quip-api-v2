@@ -5,6 +5,7 @@ export const handleRegExp = /^[A-Za-z][\w]{3,31}$/;
 export const passwordRegExp = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
 export const urlRegExp = /^(\w+[~@#$\-_+]?\w+:\/\/)((\w)+[\-\._~:\/\?#\[\]@!$&'\(\)\*+,;=%]?)+$/;
 export const emailRegExp = /^[\w\.-]+@[\w\.-]+\.\w+$/;
+export const fileExtensionRegExp = /\.[^\.]*$/;
 export const rounds = 10;
 export const authTokenLife = 1000 * 60 * 5;
 export const maxContentLength = 256;
@@ -65,4 +66,4 @@ export const sanitiseFileName = (value: string, maxLength?: number) =>
 		.trim()
 		.substring(0, maxLength)
 		.replace(/[^\p{L}\p{M}\d]/gu, "_");
-export const standardiseFileName = (name: string, subType: string) => `${sanitiseFileName(name.replace(/\.[^\.]*$/, ""), 16)}_${Date.now().valueOf()}.${subType}`;
+export const standardiseFileName = (name: string, subType: string) => `${sanitiseFileName(name.replace(fileExtensionRegExp, ""), 16)}_${Date.now().valueOf()}${name.match(fileExtensionRegExp)?.[0] || subType}`;
