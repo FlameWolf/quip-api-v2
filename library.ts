@@ -65,3 +65,4 @@ export const sanitiseFileName = (value: string, maxLength?: number) =>
 		.trim()
 		.substring(0, maxLength)
 		.replace(/[^\p{L}\p{M}\d]/gu, "_");
+export const standardiseFileName = (name: string, subType: string) => `${sanitiseFileName(name.replace(/\.[^\.]*$/, ""), 16)}_${Date.now().valueOf()}.${subType}`;

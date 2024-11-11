@@ -1,7 +1,7 @@
 "use strict";
 
 import fastify from "fastify";
-import { megaByte, validMimeTypes, sanitiseFileName } from "./library";
+import { megaByte, validMimeTypes, standardiseFileName } from "./library";
 import { DiscStorage } from "formzilla/DiscStorage";
 import * as jwt from "jsonwebtoken";
 import "./schemaTypes/point";
@@ -52,7 +52,7 @@ server.register(require("formzilla"), {
 		}
 		return {
 			directory: path.join(__dirname, "public"),
-			fileName: `${sanitiseFileName(file.originalName.replace(new RegExp(`\.${subType}$`), ""), 16)}_${Date.now().valueOf()}`
+			fileName: `${standardiseFileName(file.originalName, subType)}`
 		};
 	})
 });

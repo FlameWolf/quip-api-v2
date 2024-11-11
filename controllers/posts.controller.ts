@@ -6,7 +6,6 @@ import mongoose, { HydratedDocument, InferSchemaType } from "mongoose";
 import * as cld from "cld";
 import { File as FormzillaFile } from "formzilla";
 import { v2 as cloudinary } from "cloudinary";
-import * as path from "path";
 import { maxContentLength, nullId, quoteScore, repeatScore, replyScore, voteScore, getUnicodeClusterCount } from "../library";
 import postAggregationPipeline from "../db/pipelines/post";
 import postParentAggregationPipeline from "../db/pipelines/post-parent";
@@ -108,7 +107,7 @@ const uploadFile = async (file: FormzillaFile) => {
 	const response = await cloudinary.uploader.upload(filePath, {
 		resource_type: fileType as any,
 		folder: `${fileType}s/`,
-		public_id: path.basename(filePath)
+		public_id: file.bareName
 	});
 	return response;
 };
