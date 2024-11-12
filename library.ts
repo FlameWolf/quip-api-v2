@@ -66,4 +66,4 @@ export const sanitiseFileName = (value: string, maxLength?: number) =>
 		.trim()
 		.substring(0, maxLength)
 		.replace(/[^\p{L}\p{M}\d]/gu, "_");
-export const standardiseFileName = (name: string, subType: string) => `${sanitiseFileName(name.replace(fileExtensionRegExp, ""), 16)}_${Date.now().valueOf()}${name.match(fileExtensionRegExp)?.[0] || subType}`;
+export const standardiseFileName = (name: string) => `${sanitiseFileName(name.replace(fileExtensionRegExp, ""), 16)}_${Date.now().valueOf()}${name.match(fileExtensionRegExp)?.[0]}`;
