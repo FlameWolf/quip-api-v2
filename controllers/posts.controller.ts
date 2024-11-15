@@ -248,7 +248,7 @@ export const updatePost: RouteHandlerMethod = async (request, reply) => {
 			reply.status(422).send("Post was edited once and cannot be edited again");
 			return;
 		}
-		const { poll, mediaFile, post: quotedPostId } = post.attachments as AttachmentsModel & Dictionary;
+		const { poll = undefined, mediaFile = undefined, post: quotedPostId } = post.attachments || ({} as AttachmentsModel & Dictionary);
 		if (poll) {
 			reply.status(422).send("Cannot edit a post that includes a poll");
 			return;
@@ -270,10 +270,10 @@ export const updatePost: RouteHandlerMethod = async (request, reply) => {
 			}
 			const model = {
 				content,
-				...(mediaFile && {
+				...((mediaFile as MediaFileModel) && {
 					attachments: {
 						mediaFile: {
-							description: mediaFile.description
+							description: (mediaFile as MediaFileModel).description
 						}
 					}
 				}),
