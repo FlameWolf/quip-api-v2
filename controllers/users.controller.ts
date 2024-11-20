@@ -276,7 +276,7 @@ export const pinPost: RouteHandlerMethod = async (request, reply) => {
 		reply.status(404).send("Post not found");
 		return;
 	}
-	if (post.author !== userId) {
+	if (post.author.toString() !== userId) {
 		reply.status(403).send("User can pin only their own post");
 		return;
 	}
