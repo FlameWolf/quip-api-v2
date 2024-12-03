@@ -259,6 +259,11 @@ export const updatePost: RouteHandlerMethod = async (request, reply) => {
 		}
 		await session.withTransaction(async () => {
 			const originalPostId = post._id;
+			const authorFilter = {
+				author: {
+					$nin: [userId]
+				}
+			};
 			const postFilter = { post: originalPostId };
 			const repliedPostId = post.replyTo;
 			const mentions: Array<string | ObjectId> = [];
@@ -285,8 +290,24 @@ export const updatePost: RouteHandlerMethod = async (request, reply) => {
 			delete model.attachments;
 			const updated = await Post.findByIdAndUpdate(originalPostId, model, { new: true }).session(session);
 			await Promise.all([
-				Post.updateMany({ "attachments.post": originalPostId }, { "attachments.post": nullId }).session(session),
-				Post.updateMany({ replyTo: originalPostId }, { replyTo: nullId }).session(session),
+				Post.updateMany(
+					{
+						"attachments.post": originalPostId,
+						...authorFilter
+					},
+					{
+						"attachments.post": nullId
+					}
+				).session(session),
+				Post.updateMany(
+					{
+						replyTo: originalPostId,
+						...authorFilter
+					},
+					{
+						replyTo: nullId
+					}
+				).session(session),
 				Post.deleteMany({
 					repeatPost: originalPostId
 				}).session(session),
