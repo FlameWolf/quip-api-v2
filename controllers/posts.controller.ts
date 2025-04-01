@@ -4,7 +4,7 @@ import { ObjectId } from "bson";
 import { RouteHandlerMethod } from "fastify";
 import mongoose, { HydratedDocument, InferSchemaType } from "mongoose";
 import * as cld from "cld";
-import { File as FormzillaFile } from "formzilla";
+import { MultipartFile } from "@fastify/multipart";
 import { v2 as cloudinary } from "cloudinary";
 import { maxContentLength, nullId, quoteScore, repeatScore, replyScore, voteScore, getUnicodeClusterCount } from "../library";
 import postAggregationPipeline from "../db/pipelines/post";
@@ -32,7 +32,7 @@ export const findPostById = async (postId: string | ObjectId): Promise<HydratedD
 	const repeatPost = post?.repeatPost as ObjectId;
 	return repeatPost ? await findPostById(repeatPost) : (post as HydratedDocument<PostModel>);
 };
-const validateContent = (content: string, poll?: Dictionary, media?: FormzillaFile, postId?: string | ObjectId) => {
+const validateContent = (content: string, poll?: Dictionary, media?: MultipartFile, postId?: string | ObjectId) => {
 	if (!content.trim()) {
 		if (poll || !(media || postId)) {
 			throw new Error("No content");
@@ -101,15 +101,12 @@ const updateMentionsAndHashtags = async (content: string, post: Partial<PostMode
 	post.mentions = postMentions.size > 0 ? [...postMentions].map(mention => new ObjectId(mention) as MentionEntry) : undefined;
 	post.hashtags = postHashtags.size > 0 ? [...postHashtags] : undefined;
 };
-const uploadFile = async (file: FormzillaFile) => {
-	const filePath = file.path as string;
-	const fileType = file.type;
-	const response = await cloudinary.uploader.upload(filePath, {
-		resource_type: fileType as any,
-		folder: `${fileType}s/`,
-		use_filename: true
-	});
-	return response;
+const uploadFile = async (file: MultipartFile) => {
+	const fileType = file.mediaType;
+	console.log(file);
+	return {
+		secure_url: "test"
+	};
 };
 const deletePostWithCascade = async (post: HydratedDocument<PostModel>) => {
 	const session = await mongoose.startSession();
@@ -179,7 +176,7 @@ const deletePostWithCascade = async (post: HydratedDocument<PostModel>) => {
 };
 export const createPost: RouteHandlerMethod = async (request, reply) => {
 	const { content = "", poll, "media-description": mediaDescription, location } = request.body as PostCreateBody;
-	const media = (request.body as Dictionary).media as FormzillaFile;
+	const media = (request.body as Dictionary).media as MultipartFile;
 	const userId = (request.userInfo as UserInfo).userId;
 	try {
 		validateContent(content, poll, media);
@@ -378,7 +375,7 @@ export const getPostParent: RouteHandlerMethod = async (request, reply) => {
 export const quotePost: RouteHandlerMethod = async (request, reply) => {
 	const { postId } = request.params as PostInteractParams;
 	const { content = "", poll, "media-description": mediaDescription, location } = request.body as PostCreateBody;
-	const media = (request.body as Dictionary).media as FormzillaFile;
+	const media = (request.body as Dictionary).media as MultipartFile;
 	const userId = (request.userInfo as UserInfo).userId;
 	try {
 		validateContent(content, poll, media, postId);
@@ -526,7 +523,7 @@ export const unrepeatPost: RouteHandlerMethod = async (request, reply) => {
 export const replyToPost: RouteHandlerMethod = async (request, reply) => {
 	const { postId } = request.params as PostInteractParams;
 	const { content = "", poll, "media-description": mediaDescription, location } = request.body as PostCreateBody;
-	const media = (request.body as Dictionary).media as FormzillaFile;
+	const media = (request.body as Dictionary).media as MultipartFile;
 	const userId = (request.userInfo as UserInfo).userId;
 	try {
 		validateContent(content, poll, media);

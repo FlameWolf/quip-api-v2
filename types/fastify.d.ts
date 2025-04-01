@@ -15,3 +15,11 @@ declare module "fastify" {
 		produces?: readonly string[];
 	}
 }
+
+declare module "@fastify/multipart" {
+	interface MultipartFile {
+		mediaType: string;
+		mediaSubType: string;
+		path: string;
+	}
+}

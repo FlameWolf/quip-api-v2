@@ -2,7 +2,8 @@
 
 import fastify from "fastify";
 import { megaByte, validMimeTypes, standardiseFileName } from "./library";
-import { DiscStorage } from "formzilla/DiscStorage";
+import { MultipartFile } from "@fastify/multipart";
+import * as fs from "fs/promises";
 import * as jwt from "jsonwebtoken";
 import "./schemaTypes/point";
 import "./schemaTypes/url";
@@ -40,21 +41,20 @@ server.addHook("onRequest", async (request, reply) => {
 		reply.status(200).send();
 	}
 });
-server.register(require("formzilla"), {
+const saveLocatoin = path.join(__dirname, "public");
+server.register(require("@fastify/multipart"), {
 	limits: {
 		fileSize: megaByte * 5
 	},
-	storage: new DiscStorage(file => {
-		[file.type, file.subType] = file.mimeType.split("/");
-		const isValid = validMimeTypes.some(mimeType => mimeType === file.type);
-		if (!isValid) {
+	attachFieldsToBody: true,
+	onFile: async (part: MultipartFile) => {
+		[part.mediaType, part.mediaSubType] = part.mimetype.split("/");
+		if (!validMimeTypes.some(mimeType => mimeType === part.mediaType)) {
 			throw new Error("Invalid file type");
 		}
-		return {
-			directory: path.join(__dirname, "public"),
-			fileName: standardiseFileName(file.originalName)
-		};
-	})
+		part.path = path.join(saveLocatoin, standardiseFileName(part.filename));
+		await fs.writeFile(part.path, part.file);
+	}
 });
 if (!isProdEnv) {
 	server.register(require("@fastify/swagger"), {

@@ -9,7 +9,13 @@ import * as bookmarksController from "../controllers/bookmarks.controller";
 import * as mutesController from "../controllers/mutes.controller";
 
 const postsRouter: FastifyPluginAsync = async (instance, options) => {
-	instance.post("/create", { onRequest: requireAuthentication, schema: postCreateSchema }, postsController.createPost);
+	instance.post("/create", { preValidation: (request, reply, done) => {
+		const body = request.body as Dictionary;
+		console.log(body);
+		body["poll"] = undefined;
+		body["location"] = undefined;
+		done();
+	}, onRequest: requireAuthentication, schema: postCreateSchema }, postsController.createPost);
 	instance.post("/update/:postId", { onRequest: requireAuthentication, schema: postUpdateSchema }, postsController.updatePost);
 	instance.get("/favourite/:postId", { onRequest: requireAuthentication, schema: postInteractSchema }, favouritesController.addFavourite);
 	instance.get("/unfavourite/:postId", { onRequest: requireAuthentication, schema: postInteractSchema }, favouritesController.removeFavourite);
