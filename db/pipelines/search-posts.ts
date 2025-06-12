@@ -17,9 +17,9 @@ const getMatchConditions = (searchText: string, searchOptions: { from?: string; 
 	const { from, since, until, hasMedia, notFrom, replies, languages, includeLanguages, mediaDescription } = searchOptions;
 	if (from) {
 		if (from.indexOf(separator) > -1) {
-			matchConditions.$expr.$in = ["$author.handle", from.split(separator).map((x: string) => x.replace(atSign, ""))];
+			matchConditions.$expr!.$in = ["$author.handle", from.split(separator).map((x: string) => x.replace(atSign, ""))];
 		} else {
-			matchConditions.$expr.$eq = ["$author.handle", from.replace(atSign, "")];
+			matchConditions.$expr!.$eq = ["$author.handle", from.replace(atSign, "")];
 		}
 	}
 	if (since) {
@@ -29,13 +29,13 @@ const getMatchConditions = (searchText: string, searchOptions: { from?: string; 
 		matchConditions.createdAt = { $lte: new Date(until) };
 	}
 	if (hasMedia) {
-		matchConditions.$expr.$gt = ["$attachments.mediaFile", null];
+		matchConditions.$expr!.$gt = ["$attachments.mediaFile", null];
 	}
 	if (notFrom) {
 		if (notFrom.indexOf(separator) > -1) {
-			matchConditions.$expr.$not = { $in: ["$author.handle", notFrom.split(separator).map((x: string) => x.replace(atSign, ""))] };
+			matchConditions.$expr!.$not = { $in: ["$author.handle", notFrom.split(separator).map((x: string) => x.replace(atSign, ""))] };
 		} else {
-			matchConditions.$expr.$not = { $eq: ["$author.handle", notFrom.replace(atSign, "")] };
+			matchConditions.$expr!.$not = { $eq: ["$author.handle", notFrom.replace(atSign, "")] };
 		}
 	}
 	switch (replies) {
@@ -52,7 +52,7 @@ const getMatchConditions = (searchText: string, searchOptions: { from?: string; 
 		if (languages.indexOf(separator) > -1) {
 			const languageArray = languages.split(separator);
 			matchConditions.languages = { $exists: true };
-			matchConditions.$expr.$setIsSubset = includeLanguages === "all" ? [languageArray, "$languages"] : ["$languages", languageArray];
+			matchConditions.$expr!.$setIsSubset = includeLanguages === "all" ? [languageArray, "$languages"] : ["$languages", languageArray];
 		} else {
 			matchConditions.languages = languages;
 		}
@@ -97,7 +97,7 @@ const getPageConditions = (sortByDate: boolean, idCompare: string, lastScore?: n
 		if (sortByDate) {
 			pageConditions._id[idCompare] = lastPostObjectId;
 		} else if (lastScore) {
-			pageConditions.$expr.$or = [
+			pageConditions.$expr!.$or = [
 				{
 					$and: [
 						{

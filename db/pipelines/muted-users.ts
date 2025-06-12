@@ -21,10 +21,12 @@ const mutedUsersAggregationPipeline = (userId: string | ObjectId, lastMuteId?: s
 					_id: {
 						$lt: new ObjectId(lastMuteId)
 					}
-			  }
+				}
 			: {
-					$expr: true
-			  }
+					$expr: {
+						$eq: true
+					}
+				}
 	},
 	{
 		$limit: maxRowsPerFetch

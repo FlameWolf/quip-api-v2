@@ -21,10 +21,12 @@ const listMembersAggregationPipeline = (listId: string | ObjectId, lastMemberId?
 					_id: {
 						$lt: new ObjectId(lastMemberId)
 					}
-			  }
+				}
 			: {
-					$expr: true
-			  }
+					$expr: {
+						$eq: true
+					}
+				}
 	},
 	{
 		$limit: maxRowsPerFetch

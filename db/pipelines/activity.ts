@@ -348,10 +348,12 @@ const activityAggregationPipeline = (userId: string | ObjectId, period: string =
 						"entry._id": {
 							$lt: new ObjectId(lastEntryId)
 						}
-				  }
+					}
 				: {
-						$expr: true
-				  }
+						$expr: {
+							$eq: true
+						}
+					}
 		},
 		{
 			$limit: maxRowsPerFetch

@@ -31,10 +31,12 @@ const bookmarksAggregationPipeline = (userId: string | ObjectId, lastBookmarkId?
 								_id: {
 									$lt: new ObjectId(lastBookmarkId)
 								}
-						  }
+							}
 						: {
-								$expr: true
-						  }
+								$expr: {
+									$eq: true
+								}
+							}
 				},
 				{
 					$limit: maxRowsPerFetch

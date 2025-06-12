@@ -469,7 +469,7 @@ export const repeatPost: RouteHandlerMethod = async (request, reply) => {
 								$pull: {
 									posts: null
 								}
-						  }
+							}
 						: {}),
 					$addToSet: {
 						posts: repeated._id

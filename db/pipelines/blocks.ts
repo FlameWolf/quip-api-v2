@@ -21,10 +21,12 @@ const blocksAggregationPipeline = (userId: string | ObjectId, lastBlockId?: stri
 					_id: {
 						$lt: new ObjectId(lastBlockId)
 					}
-			  }
+				}
 			: {
-					$expr: true
-			  }
+					$expr: {
+						$eq: true
+					}
+				}
 	},
 	{
 		$limit: maxRowsPerFetch

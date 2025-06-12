@@ -37,7 +37,13 @@ const userPostsAggregationPipeline = (userId: string | ObjectId, includeRepeats:
 				foreignField: "author",
 				pipeline: [
 					{
-						$match: Object.keys(matchConditions).length ? matchConditions : { $expr: true }
+						$match: Object.keys(matchConditions).length
+							? matchConditions
+							: {
+									$expr: {
+										$eq: true
+									}
+								}
 					},
 					{
 						$sort: {

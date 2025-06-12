@@ -54,7 +54,13 @@ const timelineAggregationPipeline = (userId: string | ObjectId, includeRepeats: 
 						}
 					},
 					{
-						$match: Object.keys(matchConditions).length ? matchConditions : { $expr: true }
+						$match: Object.keys(matchConditions).length
+							? matchConditions
+							: {
+									$expr: {
+										$eq: true
+									}
+								}
 					},
 					{
 						$sort: {
@@ -72,10 +78,12 @@ const timelineAggregationPipeline = (userId: string | ObjectId, includeRepeats: 
 									_id: {
 										$lt: new ObjectId(lastPostId)
 									}
-							  }
+								}
 							: {
-									$expr: true
-							  }
+									$expr: {
+										$eq: true
+									}
+								}
 					},
 					{
 						$limit: maxRowsPerFetch
