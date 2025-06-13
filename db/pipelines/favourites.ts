@@ -29,11 +29,7 @@ const favouritesAggregationPipeline = (userId: string | ObjectId, lastFavouriteI
 									$lt: new ObjectId(lastFavouriteId)
 								}
 							}
-						: {
-								$expr: {
-									$eq: true
-								}
-							}
+						: ({ $expr: true } as any)
 				},
 				{
 					$limit: maxRowsPerFetch

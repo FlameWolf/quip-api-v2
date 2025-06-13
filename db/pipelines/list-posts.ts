@@ -47,13 +47,7 @@ const listPostsAggregationPipeline = (listName: string, ownerId: string | Object
 						}
 					},
 					{
-						$match: Object.keys(matchConditions).length
-							? matchConditions
-							: {
-									$expr: {
-										$eq: true
-									}
-								}
+						$match: Object.keys(matchConditions).length ? matchConditions : ({ $expr: true } as any)
 					},
 					{
 						$sort: {
@@ -72,11 +66,7 @@ const listPostsAggregationPipeline = (listName: string, ownerId: string | Object
 										$lt: new ObjectId(lastPostId)
 									}
 								}
-							: {
-									$expr: {
-										$eq: true
-									}
-								}
+							: ({ $expr: true } as any)
 					},
 					{
 						$limit: maxRowsPerFetch

@@ -25,11 +25,7 @@ const postRepliesAggregationPipeline = (postId: string | ObjectId, userId?: stri
 						$lt: new ObjectId(lastReplyId)
 					}
 				}
-			: {
-					$expr: {
-						$eq: true
-					}
-				}
+			: ({ $expr: true } as any)
 	},
 	{
 		$limit: maxRowsPerFetch

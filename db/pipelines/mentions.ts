@@ -78,11 +78,7 @@ const mentionsAggregationPipeline = (userId: string | ObjectId, selfId?: string 
 						$lt: new ObjectId(lastPostId)
 					}
 				}
-			: {
-					$expr: {
-						$eq: true
-					}
-				}
+			: ({ $expr: true } as any)
 	},
 	{
 		$limit: maxRowsPerFetch

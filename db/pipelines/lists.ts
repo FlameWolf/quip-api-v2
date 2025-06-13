@@ -57,11 +57,7 @@ const listsAggregationPipeline = (userId: string | ObjectId, memberId?: string |
 						$lt: new ObjectId(lastListId)
 					}
 				}
-			: {
-					$expr: {
-						$eq: true
-					}
-				}
+			: ({ $expr: true } as any)
 	},
 	{
 		$limit: maxRowsPerFetch

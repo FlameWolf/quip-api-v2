@@ -29,11 +29,7 @@ const votesAggregationPipeline = (userId: string | ObjectId, lastVoteId?: string
 									$lt: new ObjectId(lastVoteId)
 								}
 							}
-						: {
-								$expr: {
-									$eq: true
-								}
-							}
+						: ({ $expr: true } as any)
 				},
 				{
 					$lookup: {

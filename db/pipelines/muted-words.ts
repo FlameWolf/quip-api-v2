@@ -28,11 +28,7 @@ const mutedWordsAggregationPipeline = (userId: string | ObjectId, lastMuteId?: s
 						$lt: new ObjectId(lastMuteId)
 					}
 				}
-			: {
-					$expr: {
-						$eq: true
-					}
-				}
+			: ({ $expr: true } as any)
 	},
 	{
 		$limit: maxRowsPerFetch

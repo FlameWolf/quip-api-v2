@@ -23,11 +23,7 @@ const postQuotesAggregationPipeline = (postId: string | ObjectId, userId?: strin
 						$lt: new ObjectId(lastQuoteId)
 					}
 				}
-			: {
-					$expr: {
-						$eq: true
-					}
-				}
+			: ({ $expr: true } as any)
 	},
 	{
 		$limit: maxRowsPerFetch

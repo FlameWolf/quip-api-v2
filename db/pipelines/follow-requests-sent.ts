@@ -22,11 +22,7 @@ const followRequestsSentAggregationPipeline = (userId: string | ObjectId, lastFo
 						$lt: new ObjectId(lastFollowRequestId)
 					}
 				}
-			: {
-					$expr: {
-						$eq: true
-					}
-				}
+			: ({ $expr: true } as any)
 	},
 	{
 		$limit: maxRowsPerFetch
