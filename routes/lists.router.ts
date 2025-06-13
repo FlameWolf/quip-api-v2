@@ -13,7 +13,7 @@ const listsRouter: FastifyPluginAsync = async (instance, options) => {
 	instance.post("/update", { schema: listUpdateSchema }, listsController.updateList);
 	instance.post("/add-member", { schema: listMemberSchema }, listsController.addMember);
 	instance.post("/remove-member", { schema: listMemberSchema }, listsController.removeMember);
-	instance.post("/delete/:name", { schema: listInteractSchema }, listsController.deleteList);
+	instance.delete("/delete/:name", { schema: listInteractSchema }, listsController.deleteList);
 	instance.get("/:name/members", { schema: listMembersSchema }, userController.getListMembers);
 	instance.get("/:name/posts", { schema: listPostsSchema }, listsController.getPosts);
 };
