@@ -1,12 +1,13 @@
 "use strict";
 
 import { ObjectId } from "bson";
-import { FilterQuery, PipelineStage } from "mongoose";
+import { PipelineStage } from "mongoose";
+import { Filter } from "mongodb";
 import { maxRowsPerFetch } from "../../library";
 import postAggregationPipeline from "./post";
 
-const getPageConditions = (lastDistance?: number, lastPostId?: string | ObjectId): FilterQuery<any> => {
-	const pageConditions: FilterQuery<any> = {};
+const getPageConditions = (lastDistance?: number, lastPostId?: string | ObjectId): Filter<any> => {
+	const pageConditions: Filter<any> = {};
 	if (lastDistance && lastPostId) {
 		pageConditions.$expr = {
 			$or: [

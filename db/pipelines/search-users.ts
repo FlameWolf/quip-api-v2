@@ -1,7 +1,8 @@
 "use strict";
 
 import { ObjectId } from "bson";
-import { FilterQuery, PipelineStage, Expression } from "mongoose";
+import { PipelineStage } from "mongoose";
+import { Filter } from "mongodb";
 import { maxRowsPerFetch } from "../../library";
 import userAggregationPipeline from "./user";
 
@@ -20,7 +21,7 @@ const getMatchExpression = (match: string, searchText: string) => {
 };
 const searchUsersAggregationPipeline = (searchText: string, match: string = "startsWith", dateOrder: string = "desc", selfId?: string | ObjectId, lastUserId?: string | ObjectId): Array<PipelineStage> => {
 	const sortConditions: Record<string, any> = {};
-	const pageConditions: FilterQuery<any> = {};
+	const pageConditions: Filter<any> = {};
 	const [dateSort, idCompare] = dateOrder === "asc" ? [1, "$gt"] : [-1, "$lt"];
 	sortConditions.createdAt = dateSort;
 	if (lastUserId) {

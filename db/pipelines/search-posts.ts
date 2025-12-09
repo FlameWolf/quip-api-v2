@@ -1,14 +1,15 @@
 "use strict";
 
 import { ObjectId } from "bson";
-import { FilterQuery, PipelineStage } from "mongoose";
+import { PipelineStage } from "mongoose";
+import { Filter } from "mongodb";
 import { maxRowsPerFetch } from "../../library";
 import postAggregationPipeline from "./post";
 
-const getMatchConditions = (searchText: string, searchOptions: { from?: string; since?: string; until?: string; hasMedia?: boolean; notFrom?: string; replies?: string; languages?: string; includeLanguages?: string; mediaDescription?: string }): FilterQuery<any> => {
+const getMatchConditions = (searchText: string, searchOptions: { from?: string; since?: string; until?: string; hasMedia?: boolean; notFrom?: string; replies?: string; languages?: string; includeLanguages?: string; mediaDescription?: string }): Filter<any> => {
 	const separator = "|";
 	const atSign = "@";
-	const matchConditions: FilterQuery<any> = {
+	const matchConditions: Filter<any> = {
 		$expr: {}
 	};
 	if (searchText) {
@@ -90,8 +91,8 @@ const getSortConditions = (sortByDate: boolean, dateSort: number): Record<string
 				score: -1,
 				createdAt: dateSort
 			};
-const getPageConditions = (sortByDate: boolean, idCompare: string, lastScore?: number, lastPostId?: string | ObjectId): FilterQuery<any> => {
-	const pageConditions: FilterQuery<any> = {};
+const getPageConditions = (sortByDate: boolean, idCompare: string, lastScore?: number, lastPostId?: string | ObjectId): Filter<any> => {
+	const pageConditions: Filter<any> = {};
 	if (lastPostId) {
 		const lastPostObjectId = new ObjectId(lastPostId);
 		if (sortByDate) {

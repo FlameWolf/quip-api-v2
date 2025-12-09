@@ -1,7 +1,8 @@
 "use strict";
 
 import { ObjectId } from "bson";
-import mongoose, { FilterQuery } from "mongoose";
+import mongoose from "mongoose";
+import { Filter } from "mongodb";
 import * as bcrypt from "bcrypt";
 import { noReplyEmail, emailTemplates, passwordRegExp, rounds } from "../library";
 import timelineAggregationPipeline from "../db/pipelines/timeline";
@@ -53,7 +54,7 @@ export const rejectEmail: RouteHandlerMethod = async (request, reply) => {
 		await session.withTransaction(async () => {
 			const previousEmail = emailVerification.previousEmail;
 			const user = await User.findByIdAndUpdate(emailVerification.user, { email: emailVerification.previousEmail }).session(session);
-			await EmailVerification.deleteOne(emailVerification?.toJSON() as FilterQuery<any>).session(session);
+			await EmailVerification.deleteOne(emailVerification?.toJSON() as Filter<any>).session(session);
 			reply.status(200).send();
 			if (previousEmail) {
 				emailController.sendEmail(noReplyEmail, previousEmail, "Email address change rejected", emailTemplates.notifications.emailRejected(user?.handle as string, emailVerification.email as string));
@@ -110,7 +111,7 @@ export const resetPassword: RouteHandlerMethod = async (request, reply) => {
 		await session.withTransaction(async () => {
 			const passwordHash = await bcrypt.hash(password, rounds);
 			const user = await User.findByIdAndUpdate(passwordReset.user, { password: passwordHash }).select("+email").session(session);
-			await PasswordReset.deleteOne(passwordReset?.toJSON() as FilterQuery<any>).session(session);
+			await PasswordReset.deleteOne(passwordReset?.toJSON() as Filter<any>).session(session);
 			reply.status(200).send();
 			emailController.sendEmail(noReplyEmail, user?.email as string, "Password reset", emailTemplates.notifications.passwordReset(user?.handle as string));
 		});

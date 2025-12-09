@@ -1,14 +1,15 @@
 "use strict";
 
 import { ObjectId } from "bson";
-import { FilterQuery, PipelineStage } from "mongoose";
+import { PipelineStage } from "mongoose";
+import { Filter } from "mongodb";
 import { maxCacheSize, maxRowsPerFetch } from "../../library";
 import filtersAggregationPipeline from "./filters";
 import postAggregationPipeline from "./post";
 
 const topmostAggregationPipeline = (userId?: string | ObjectId, period: string = "", lastScore?: number, lastPostId?: string | ObjectId): Array<PipelineStage> => {
-	const matchConditions: FilterQuery<any> = {};
-	const pageConditions: FilterQuery<any> = {};
+	const matchConditions: Filter<any> = {};
+	const pageConditions: Filter<any> = {};
 	if (period !== "all") {
 		const maxDate = new Date();
 		switch (period.toLowerCase()) {
