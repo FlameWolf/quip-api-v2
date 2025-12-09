@@ -1,7 +1,7 @@
 "use strict";
 
 import * as bcrypt from "bcrypt";
-import { ObjectId } from "bson";
+import { ObjectId } from "mongodb";
 import { RouteHandlerMethod } from "fastify";
 import mongoose, { HydratedDocument, InferSchemaType } from "mongoose";
 import blocksAggregationPipeline from "../db/pipelines/blocks";

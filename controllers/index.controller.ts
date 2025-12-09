@@ -1,6 +1,6 @@
 "use strict";
 
-import { ObjectId } from "bson";
+import { ObjectId } from "mongodb";
 import mongoose from "mongoose";
 import { Filter } from "mongodb";
 import * as bcrypt from "bcrypt";

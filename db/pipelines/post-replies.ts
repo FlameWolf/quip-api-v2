@@ -1,6 +1,6 @@
 "use strict";
 
-import { ObjectId } from "bson";
+import { ObjectId } from "mongodb";
 import { PipelineStage } from "mongoose";
 import { maxRowsPerFetch } from "../../library";
 import filtersAggregationPipeline from "./filters";

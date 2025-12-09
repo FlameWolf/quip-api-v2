@@ -1,6 +1,6 @@
 "use strict";
 
-import { ObjectId } from "bson";
+import { ObjectId } from "mongodb";
 import { PipelineStage } from "mongoose";
 
 const userAggregationPipeline = (selfId?: string | ObjectId): Array<PipelineStage> => {

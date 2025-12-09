@@ -1,6 +1,6 @@
 "use strict";
 
-import { ObjectId } from "bson";
+import { ObjectId } from "mongodb";
 import mongoose from "mongoose";
 import listPostsAggregationPipeline from "../db/pipelines/list-posts";
 import * as usersController from "./users.controller";

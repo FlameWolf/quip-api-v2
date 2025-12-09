@@ -1,6 +1,6 @@
 "use strict";
 
-import { ObjectId } from "bson";
+import { ObjectId } from "mongodb";
 import { Schema, model, Document, Model, InferSchemaType } from "mongoose";
 import { maxMutedWordLength, escapeRegExp, getUnicodeClusterCount } from "../library";
 import uniqueValidator from "mongoose-unique-validator";

@@ -1,6 +1,6 @@
 "use strict";
 
-import { ObjectId } from "bson";
+import { ObjectId } from "mongodb";
 import { RouteHandlerMethod } from "fastify";
 import { setProperty, getProperty } from "../library";
 import Settings from "../models/settings.model";
