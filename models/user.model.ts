@@ -3,7 +3,7 @@
 import { ObjectId } from "bson";
 import { Schema, model, Document, Model, InferSchemaType } from "mongoose";
 import { handleRegExp, passwordRegExp, emailRegExp } from "../library";
-import * as uniqueValidator from "mongoose-unique-validator";
+import uniqueValidator from "mongoose-unique-validator";
 
 const userSchema = new Schema(
 	{

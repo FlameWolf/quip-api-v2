@@ -3,7 +3,7 @@
 import { ObjectId } from "bson";
 import { Schema, model, Document, Model, InferSchemaType } from "mongoose";
 import { maxMutedWordLength, escapeRegExp, getUnicodeClusterCount } from "../library";
-import * as uniqueValidator from "mongoose-unique-validator";
+import uniqueValidator from "mongoose-unique-validator";
 
 const mutedWordSchema = new Schema(
 	{

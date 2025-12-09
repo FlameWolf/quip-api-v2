@@ -2,7 +2,7 @@
 
 import { ObjectId } from "bson";
 import { Schema, model, Document, Model, InferSchemaType } from "mongoose";
-import * as uniqueValidator from "mongoose-unique-validator";
+import uniqueValidator from "mongoose-unique-validator";
 import { maxContentLength, getUnicodeClusterCount } from "../library";
 
 const blockSchema = new Schema(
