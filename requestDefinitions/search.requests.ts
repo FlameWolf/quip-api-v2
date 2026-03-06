@@ -30,7 +30,10 @@ export const searchSchema = {
 				enum: ["any", "all"]
 			},
 			"media-desc": { type: "string" },
-			lastScore: { type: "integer" },
+			lastScore: {
+				type: "number",
+				format: "float"
+			},
 			lastPostId: { type: "string" }
 		}
 	}

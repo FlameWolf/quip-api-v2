@@ -28,9 +28,6 @@ const authorLookupAndUnwind: Array<PipelineStage> = [
 ];
 const postAggregationPipeline = (userId?: string | ObjectId): Array<PipelineStage> => {
 	return [
-		{
-			$unset: "score"
-		},
 		...(authorLookupAndUnwind as Array<any>),
 		{
 			$lookup: {
