@@ -432,6 +432,10 @@ export const quotePost: RouteHandlerMethod = async (request, reply) => {
 					score: quoteScore
 				}
 			}).session(session);
+			const attachments = quote.attachments;
+			if (attachments) {
+				attachments.post = originalPost;
+			}
 			reply.status(201).send({ quote });
 		});
 	} finally {
@@ -469,7 +473,7 @@ export const repeatPost: RouteHandlerMethod = async (request, reply) => {
 								$pull: {
 									posts: null
 								}
-							}
+						  }
 						: {}),
 					$addToSet: {
 						posts: repeated._id
