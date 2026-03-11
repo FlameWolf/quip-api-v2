@@ -96,7 +96,7 @@ server.register(require("./routes/posts.router"), { prefix: "/posts" });
 server.register(require("./routes/search.router"), { prefix: "/search" });
 server.register(require("./routes/settings.router"), { prefix: "/settings" });
 server.setErrorHandler(async (error, request, reply) => {
-	reply.send(error);
+	reply.status(500).send(error);
 });
 server.listen(
 	{

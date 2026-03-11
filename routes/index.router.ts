@@ -21,6 +21,9 @@ const indexRouter: FastifyPluginAsync = async (instance, options) => {
 			reply.status(404).send();
 		}
 	);
+	instance.get("/health", async (request, reply) => {
+		reply.status(200).send("OK");
+	});
 	instance.get("/timeline", { onRequest: requireAuthentication, schema: timelineSchema }, indexController.timeline);
 	instance.get("/activity/:period?", { onRequest: requireAuthentication, schema: activitySchema }, indexController.activity);
 	instance.get("/topmost/:period?", { schema: topmostSchema }, indexController.topmost);
