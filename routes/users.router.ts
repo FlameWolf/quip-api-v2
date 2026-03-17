@@ -2,7 +2,7 @@
 
 import { FastifyPluginAsync } from "fastify";
 import requireAuthentication from "../hooks/requireAuthentication";
-import { blockUserSchema, userBookmarksSchema, userFavouritesSchema, userFollowsSchema, userMentionsSchema, userPostsSchema, userTopmostSchema, userVotesSchema, userInteractSchema } from "../requestDefinitions/users.requests";
+import { blockMuteUserSchema, userBookmarksSchema, userFavouritesSchema, userFollowsSchema, userMentionsSchema, userPostsSchema, userTopmostSchema, userVotesSchema, userInteractSchema } from "../requestDefinitions/users.requests";
 import * as usersController from "../controllers/users.controller";
 import * as followsController from "../controllers/follows.controller";
 import * as followRequestsController from "../controllers/follow-requests.controller";
@@ -13,9 +13,9 @@ const usersRouter: FastifyPluginAsync = async (instance, options) => {
 	instance.get("/follow/:handle", { onRequest: requireAuthentication, schema: userInteractSchema }, followsController.followUser);
 	instance.get("/cancel-req/:handle", { onRequest: requireAuthentication, schema: userInteractSchema }, followRequestsController.cancelFollowRequest);
 	instance.get("/unfollow/:handle", { onRequest: requireAuthentication, schema: userInteractSchema }, followsController.unfollowUser);
-	instance.get("/mute/:handle", { onRequest: requireAuthentication, schema: userInteractSchema }, mutesController.muteUser);
+	instance.get("/mute/:handle", { onRequest: requireAuthentication, schema: blockMuteUserSchema }, mutesController.muteUser);
 	instance.get("/unmute/:handle", { onRequest: requireAuthentication, schema: userInteractSchema }, mutesController.unmuteUser);
-	instance.get("/block/:handle", { onRequest: requireAuthentication, schema: blockUserSchema }, blocksController.blockUser);
+	instance.get("/block/:handle", { onRequest: requireAuthentication, schema: blockMuteUserSchema }, blocksController.blockUser);
 	instance.get("/unblock/:handle", { onRequest: requireAuthentication, schema: userInteractSchema }, blocksController.unblockUser);
 	instance.get("/:handle", { schema: userInteractSchema }, usersController.getUser);
 	instance.get("/:handle/posts", { schema: userPostsSchema }, usersController.getUserPosts);

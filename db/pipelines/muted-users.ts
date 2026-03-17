@@ -47,7 +47,8 @@ const mutedUsersAggregationPipeline = (userId: string | ObjectId, lastMuteId?: s
 	},
 	{
 		$project: {
-			user: 1
+			user: 1,
+			reason: 1
 		}
 	}
 ];

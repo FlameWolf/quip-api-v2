@@ -11,14 +11,17 @@ export const userInteractSchema = {
 		required: ["handle"]
 	}
 } as const;
-export const blockUserSchema = {
-	...userInteractSchema,
+export const actionReasonSchema = {
 	querystring: {
 		type: "object",
 		properties: {
 			reason: { type: "string" }
 		}
 	}
+} as const;
+export const blockMuteUserSchema = {
+	...userInteractSchema,
+	...actionReasonSchema
 } as const;
 export const userPostsSchema = {
 	...userInteractSchema,
@@ -106,7 +109,7 @@ export const userMentionsSchema = {
 } as const;
 
 export type UserInteractParams = FromSchema<typeof userInteractSchema.params>;
-export type BlockUserQueryString = FromSchema<typeof blockUserSchema.querystring>;
+export type ActionReasonQueryString = FromSchema<typeof actionReasonSchema.querystring>;
 export type UserPostsQueryString = FromSchema<typeof userPostsSchema.querystring>;
 export type UserTopmostParams = FromSchema<typeof userTopmostSchema.params>;
 export type UserTopmostQueryString = FromSchema<typeof userTopmostSchema.querystring>;

@@ -2,12 +2,21 @@
 
 import { ObjectId } from "mongodb";
 import { Schema, model, Document, Model, InferSchemaType } from "mongoose";
+import { getUnicodeClusterCount, maxContentLength } from "../library";
 import uniqueValidator from "mongoose-unique-validator";
 
 const mutedUserSchema = new Schema(
 	{
 		user: { type: ObjectId, ref: "User", required: true, index: true },
-		mutedBy: { type: ObjectId, ref: "User", required: true }
+		mutedBy: { type: ObjectId, ref: "User", required: true },
+		reason: {
+			type: String,
+			trim: true,
+			validate: {
+				validator: (value: string) => getUnicodeClusterCount(value) <= maxContentLength,
+				message: "Reason length exceeds the maximum allowed limit"
+			}
+		}
 	},
 	{
 		timestamps: {

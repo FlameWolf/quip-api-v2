@@ -254,6 +254,100 @@ const userAggregationPipeline = (selfId?: string | ObjectId): Array<PipelineStag
 			},
 			{
 				$lookup: {
+					from: "follows",
+					let: {
+						userId: "$_id"
+					},
+					pipeline: [
+						{
+							$match: {
+								$expr: { $eq: ["$$userId", "$followedBy"] }
+							}
+						},
+						{
+							$group: {
+								_id: null,
+								count: {
+									$sum: 1
+								}
+							}
+						}
+					],
+					as: "following"
+				}
+			},
+			{
+				$addFields: {
+					following: {
+						$cond: [
+							{
+								$eq: ["$self", true]
+							},
+							{
+								$cond: [
+									{
+										$eq: ["$following", []]
+									},
+									0,
+									{
+										$arrayElemAt: ["$following.count", 0]
+									}
+								]
+							},
+							"$$REMOVE"
+						]
+					}
+				}
+			},
+			{
+				$lookup: {
+					from: "follows",
+					let: {
+						userId: "$_id"
+					},
+					pipeline: [
+						{
+							$match: {
+								$expr: { $eq: ["$$userId", "$user"] }
+							}
+						},
+						{
+							$group: {
+								_id: null,
+								count: {
+									$sum: 1
+								}
+							}
+						}
+					],
+					as: "followers"
+				}
+			},
+			{
+				$addFields: {
+					followers: {
+						$cond: [
+							{
+								$eq: ["$self", true]
+							},
+							{
+								$cond: [
+									{
+										$eq: ["$followers", []]
+									},
+									0,
+									{
+										$arrayElemAt: ["$followers.count", 0]
+									}
+								]
+							},
+							"$$REMOVE"
+						]
+					}
+				}
+			},
+			{
+				$lookup: {
 					from: "mutedusers",
 					let: {
 						userId: "$_id"
@@ -287,6 +381,9 @@ const userAggregationPipeline = (selfId?: string | ObjectId): Array<PipelineStag
 							},
 							true
 						]
+					},
+					mutedReason: {
+						$arrayElemAt: ["$mutedByMe.reason", 0]
 					}
 				}
 			}
@@ -301,7 +398,9 @@ const userAggregationPipeline = (selfId?: string | ObjectId): Array<PipelineStag
 				},
 				pinnedPost: 1,
 				protected: 1,
-				deactivated: 1
+				deactivated: 1,
+				following: 1,
+				followers: 1
 			}
 		},
 		...lookupStages

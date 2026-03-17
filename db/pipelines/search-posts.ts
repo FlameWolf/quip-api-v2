@@ -86,11 +86,11 @@ const getSortConditions = (sortByDate: boolean, dateSort: number): Record<string
 		? {
 				createdAt: dateSort,
 				score: -1
-		  }
+			}
 		: {
 				score: -1,
 				createdAt: dateSort
-		  };
+			};
 const getPageConditions = (sortByDate: boolean, idCompare: string, lastScore?: number, lastPostId?: string | ObjectId): Filter<any> => {
 	const pageConditions: Filter<any> = {};
 	if (lastPostId) {

@@ -9,11 +9,11 @@ import ListMember from "../models/list-member.model";
 import User from "../models/user.model";
 import Block from "../models/block.model";
 import { RouteHandlerMethod } from "fastify";
-import { BlockUserQueryString, UserInteractParams } from "../requestDefinitions/users.requests";
+import { UserInteractParams, ActionReasonQueryString } from "../requestDefinitions/users.requests";
 
 export const blockUser: RouteHandlerMethod = async (request, reply) => {
 	const { handle: blockeeHandle } = request.params as UserInteractParams;
-	const { reason: blockReason } = request.query as BlockUserQueryString;
+	const { reason: blockReason } = request.query as ActionReasonQueryString;
 	const { handle: blockerHandle, userId: blockerUserId } = request.userInfo as UserInfo;
 	if (blockeeHandle === blockerHandle) {
 		reply.status(422).send("User cannot block themselves");

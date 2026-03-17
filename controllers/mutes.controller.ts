@@ -10,7 +10,7 @@ import MutedWord from "../models/muted.word.model";
 import { RouteHandlerMethod } from "fastify";
 import { PostInteractParams } from "../requestDefinitions/posts.requests";
 import { WordMuteBody } from "../requestDefinitions/settings.requests";
-import { UserInteractParams } from "../requestDefinitions/users.requests";
+import { UserInteractParams, ActionReasonQueryString } from "../requestDefinitions/users.requests";
 
 const getMutedWordRegExp = (word: string, match: string) => {
 	switch (match) {
@@ -26,6 +26,7 @@ const getMutedWordRegExp = (word: string, match: string) => {
 };
 export const muteUser: RouteHandlerMethod = async (request, reply) => {
 	const { handle: muteeHandle } = request.params as UserInteractParams;
+	const { reason: muteReason } = request.query as ActionReasonQueryString;
 	const { handle: muterHandle, userId: muterUserId } = request.userInfo as UserInfo;
 	if (muteeHandle === muterHandle) {
 		reply.status(422).send("User cannot mute themselves");
@@ -40,7 +41,11 @@ export const muteUser: RouteHandlerMethod = async (request, reply) => {
 	try {
 		await session.withTransaction(async () => {
 			const muteeUserId = mutee._id;
-			const muted = await new MutedUser({ user: muteeUserId, mutedBy: muterUserId }).save({ session });
+			const muted = await new MutedUser({
+				user: muteeUserId,
+				mutedBy: muterUserId,
+				reason: muteReason
+			}).save({ session });
 			await User.findByIdAndUpdate(muterUserId, {
 				$addToSet: {
 					mutedUsers: muteeUserId
