@@ -3,6 +3,7 @@
 import { ObjectId } from "mongodb";
 import { PipelineStage } from "mongoose";
 import { maxRowsPerFetch } from "../../library";
+import userAggregationPipeline from "./user";
 
 const followingAggregationPipeline = (userId: string | ObjectId, lastFollowId?: string | ObjectId): Array<PipelineStage> => [
 	{
@@ -21,7 +22,7 @@ const followingAggregationPipeline = (userId: string | ObjectId, lastFollowId?: 
 					_id: {
 						$lt: new ObjectId(lastFollowId)
 					}
-				}
+			  }
 			: ({ $expr: true } as any)
 	},
 	{
@@ -32,13 +33,7 @@ const followingAggregationPipeline = (userId: string | ObjectId, lastFollowId?: 
 			from: "users",
 			localField: "user",
 			foreignField: "_id",
-			pipeline: [
-				{
-					$project: {
-						handle: 1
-					}
-				}
-			],
+			pipeline: userAggregationPipeline(userId) as Array<Exclude<PipelineStage, PipelineStage.Merge | PipelineStage.Out>>,
 			as: "user"
 		}
 	},
