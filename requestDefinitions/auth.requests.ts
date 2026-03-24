@@ -39,13 +39,6 @@ export const revokeTokenSchema = {
 	}
 } as const;
 
-export type AuthPayload = {
-	userId: string;
-	authToken: string;
-	refreshToken?: string;
-	createdAt: number;
-	expiresIn: number;
-};
 export type CredentialsBody = FromSchema<typeof credentialsSchema.body>;
 export type RefreshTokenHeaders = FromSchema<typeof refreshTokenSchema.headers>;
 export type RefreshTokenBody = FromSchema<typeof refreshTokenSchema.body>;
