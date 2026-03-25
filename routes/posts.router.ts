@@ -10,7 +10,7 @@ import * as mutesController from "../controllers/mutes.controller";
 
 const postsRouter: FastifyPluginAsync = async (instance, options) => {
 	instance.post("/create", { onRequest: requireAuthentication, schema: postCreateSchema }, postsController.createPost);
-	instance.post("/update/:postId", { onRequest: requireAuthentication, schema: postUpdateSchema }, postsController.updatePost);
+	instance.patch("/update/:postId", { onRequest: requireAuthentication, schema: postUpdateSchema }, postsController.updatePost);
 	instance.get("/favourite/:postId", { onRequest: requireAuthentication, schema: postInteractSchema }, favouritesController.addFavourite);
 	instance.get("/unfavourite/:postId", { onRequest: requireAuthentication, schema: postInteractSchema }, favouritesController.removeFavourite);
 	instance.get("/bookmark/:postId", { onRequest: requireAuthentication, schema: postInteractSchema }, bookmarksController.addBookmark);
