@@ -1,5 +1,6 @@
 "use strict";
 
+export const emptyString = "";
 export const invalidHandles = ["auth", "home", "search", "user", "users", "post", "posts", "quip", "quips", "favourite", "favourites", "unfavourite", "repeat", "repeats", "unrepeat", "reply", "replies", "profile", "profiles", "setting", "settings", "follow", "followed", "follows", "following", "follower", "followers", "unfollow", "mute", "muted", "unmute", "block", "blocked", "unblock", "filter", "filters", "list", "lists", "bookmark", "bookmarks", "unbookmark", "hashtag", "hashtags", "notification", "notifications", "message", "messages", "account", "accounts", "security", "privacy", "admin"];
 export const handleRegExp = /^[A-Za-z][\w]{3,31}$/;
 export const passwordRegExp = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
@@ -66,4 +67,4 @@ export const sanitiseFileName = (value: string, maxLength?: number) =>
 		.trim()
 		.substring(0, maxLength)
 		.replace(/[^\p{L}\p{M}\d]/gu, "_");
-export const standardiseFileName = (name: string) => `${sanitiseFileName(name.replace(fileExtensionRegExp, ""), 16)}_${Date.now().valueOf()}${name.match(fileExtensionRegExp)?.[0]}`;
+export const standardiseFileName = (name: string) => `${sanitiseFileName(name.replace(fileExtensionRegExp, emptyString), 16)}_${Date.now().valueOf()}${name.match(fileExtensionRegExp)?.[0]}`;

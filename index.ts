@@ -1,7 +1,7 @@
 "use strict";
 
 import fastify from "fastify";
-import { megaByte, validMimeTypes, standardiseFileName } from "./library";
+import { emptyString, megaByte, standardiseFileName, validMimeTypes } from "./library";
 import { DiscStorage } from "formzilla/DiscStorage";
 import * as jwt from "jsonwebtoken";
 import "./schemaTypes/point";
@@ -27,11 +27,11 @@ require("cloudinary").v2.config({
 	api_secret: process.env.CLOUD_API_SECRET
 });
 
-const allowedOrigins = process.env.ALLOW_ORIGINS || "";
+const allowedOrigins = process.env.ALLOW_ORIGINS || emptyString;
 const server = fastify();
 server.register(require("@fastify/helmet"));
 server.addHook("onRequest", async (request, reply) => {
-	const origin = request.headers.origin || "";
+	const origin = request.headers.origin || emptyString;
 	reply.header("Access-Control-Allow-Origin", (allowedOrigins.indexOf(`${origin};`) > -1 && origin) || "*");
 	reply.header("Access-Control-Allow-Credentials", true);
 	reply.header("Access-Control-Allow-Headers", "Authorization, Origin, X-Requested-With, Content-Type, Accept, X-Slug, X-UID");
@@ -84,9 +84,9 @@ if (!isProdEnv) {
 server.decorateRequest("userInfo", null as unknown as UserInfo);
 server.addHook("onRequest", async (request, reply) => {
 	try {
-		const authToken = request.headers.authorization?.replace(/^bearer\s+/i, "");
+		const authToken = request.headers.authorization?.replace(/^bearer\s+/i, emptyString);
 		request.userInfo = authToken && (jwt.verify(authToken, process.env.JWT_AUTH_SECRET as string) as UserInfo);
-	} catch (err) {}
+	} catch {}
 });
 server.register(require("./routes/index.router"));
 server.register(require("./routes/auth.router"), { prefix: "/auth" });

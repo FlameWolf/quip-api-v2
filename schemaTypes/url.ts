@@ -1,7 +1,7 @@
 "use strict";
 
 import { AnyObject, Error, SchemaType, SchemaTypes } from "mongoose";
-import { urlRegExp } from "../library";
+import { emptyString, urlRegExp } from "../library";
 
 SchemaTypes.Url = class Url extends SchemaType {
 	constructor(key: string, options: AnyObject | undefined) {
@@ -10,7 +10,7 @@ SchemaTypes.Url = class Url extends SchemaType {
 
 	cast(value: string) {
 		if (!urlRegExp.test(value)) {
-			throw new Error.CastError(this.constructor.name, value, "");
+			throw new Error.CastError(this.constructor.name, value, emptyString);
 		}
 		return value;
 	}

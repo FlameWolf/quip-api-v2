@@ -3,11 +3,11 @@
 import { ObjectId } from "mongodb";
 import { PipelineStage } from "mongoose";
 import { Filter } from "mongodb";
-import { maxCacheSize, maxRowsPerFetch } from "../../library";
+import { emptyString, maxCacheSize, maxRowsPerFetch } from "../../library";
 import filtersAggregationPipeline from "./filters";
 import postAggregationPipeline from "./post";
 
-const topmostAggregationPipeline = (userId?: string | ObjectId, period: string = "", lastScore?: number, lastPostId?: string | ObjectId): Array<PipelineStage> => {
+const topmostAggregationPipeline = (userId?: string | ObjectId, period: string = emptyString, lastScore?: number, lastPostId?: string | ObjectId): Array<PipelineStage> => {
 	const matchConditions: Filter<any> = {};
 	const pageConditions: Filter<any> = {};
 	if (period !== "all") {

@@ -2,11 +2,11 @@
 
 import { ObjectId } from "mongodb";
 import { PipelineStage } from "mongoose";
-import { maxRowsPerFetch } from "../../library";
+import { emptyString, maxRowsPerFetch } from "../../library";
 import filtersAggregationPipeline from "./filters";
 import postAggregationPipeline from "./post";
 
-const activityAggregationPipeline = (userId: string | ObjectId, period: string = "", lastEntryId?: string | ObjectId): Array<PipelineStage> => {
+const activityAggregationPipeline = (userId: string | ObjectId, period: string = emptyString, lastEntryId?: string | ObjectId): Array<PipelineStage> => {
 	const maxDate = new Date();
 	switch (period.toLowerCase()) {
 		case "month":

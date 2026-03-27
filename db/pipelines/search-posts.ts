@@ -3,7 +3,7 @@
 import { ObjectId } from "mongodb";
 import { PipelineStage } from "mongoose";
 import { Filter } from "mongodb";
-import { maxRowsPerFetch } from "../../library";
+import { emptyString, maxRowsPerFetch } from "../../library";
 import postAggregationPipeline from "./post";
 
 const getMatchConditions = (searchText: string, searchOptions: { from?: string; since?: string; until?: string; hasMedia?: boolean; notFrom?: string; replies?: string; languages?: string; includeLanguages?: string; mediaDescription?: string }): Filter<any> => {
@@ -18,9 +18,9 @@ const getMatchConditions = (searchText: string, searchOptions: { from?: string; 
 	const { from, since, until, hasMedia, notFrom, replies, languages, includeLanguages, mediaDescription } = searchOptions;
 	if (from) {
 		if (from.indexOf(separator) > -1) {
-			matchConditions.$expr!.$in = ["$author.handle", from.split(separator).map((x: string) => x.replace(atSign, ""))];
+			matchConditions.$expr!.$in = ["$author.handle", from.split(separator).map((x: string) => x.replace(atSign, emptyString))];
 		} else {
-			matchConditions.$expr!.$eq = ["$author.handle", from.replace(atSign, "")];
+			matchConditions.$expr!.$eq = ["$author.handle", from.replace(atSign, emptyString)];
 		}
 	}
 	if (since) {
@@ -34,9 +34,9 @@ const getMatchConditions = (searchText: string, searchOptions: { from?: string; 
 	}
 	if (notFrom) {
 		if (notFrom.indexOf(separator) > -1) {
-			matchConditions.$expr!.$not = { $in: ["$author.handle", notFrom.split(separator).map((x: string) => x.replace(atSign, ""))] };
+			matchConditions.$expr!.$not = { $in: ["$author.handle", notFrom.split(separator).map((x: string) => x.replace(atSign, emptyString))] };
 		} else {
-			matchConditions.$expr!.$not = { $eq: ["$author.handle", notFrom.replace(atSign, "")] };
+			matchConditions.$expr!.$not = { $eq: ["$author.handle", notFrom.replace(atSign, emptyString)] };
 		}
 	}
 	switch (replies) {
@@ -119,7 +119,7 @@ const getPageConditions = (sortByDate: boolean, idCompare: string, lastScore?: n
 	}
 	return pageConditions;
 };
-const searchPostsAggregationPipeline = (searchText: string = "", searchOptions: Dictionary = {}, sortBy: string = "match", dateOrder: string = "desc", userId?: string | ObjectId, lastScore?: number, lastPostId?: string | ObjectId): Array<PipelineStage> => {
+const searchPostsAggregationPipeline = (searchText: string = emptyString, searchOptions: Dictionary = {}, sortBy: string = "match", dateOrder: string = "desc", userId?: string | ObjectId, lastScore?: number, lastPostId?: string | ObjectId): Array<PipelineStage> => {
 	const sortByDate = sortBy === "date";
 	const [dateSort, idCompare] = dateOrder === "asc" ? [1, "$gt"] : [-1, "$lt"];
 	return [

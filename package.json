@@ -1,7 +1,6 @@
 {
 	"name": "quip-api-v2",
 	"version": "1.0.0",
-	"description": "",
 	"main": "index.ts",
 	"scripts": {
 		"dev": "nodemon --exec ts-node index.ts",
@@ -9,7 +8,6 @@
 		"prettify": "prettier --write .",
 		"start": "node --use-strict ./dist/index.js"
 	},
-	"author": "",
 	"license": "ISC",
 	"dependencies": {
 		"@fastify/helmet": "^13.0.2",

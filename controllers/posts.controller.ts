@@ -6,7 +6,7 @@ import mongoose, { HydratedDocument, InferSchemaType } from "mongoose";
 import * as cld from "cld";
 import { File as FormzillaFile } from "formzilla";
 import { v2 as cloudinary } from "cloudinary";
-import { maxContentLength, nullId, quoteScore, repeatScore, replyScore, voteScore, getUnicodeClusterCount } from "../library";
+import { emptyString, getUnicodeClusterCount, maxContentLength, nullId, quoteScore, repeatScore, replyScore, voteScore } from "../library";
 import postAggregationPipeline from "../db/pipelines/post";
 import postParentAggregationPipeline from "../db/pipelines/post-parent";
 import postQuotesAggregationPipeline from "../db/pipelines/post-quotes";
@@ -177,7 +177,7 @@ const deletePostWithCascade = async (post: HydratedDocument<PostModel>) => {
 	await session.endSession();
 };
 export const createPost: RouteHandlerMethod = async (request, reply) => {
-	const { content = "", poll, "media-description": mediaDescription, location } = request.body as PostCreateBody;
+	const { content = emptyString, poll, "media-description": mediaDescription, location } = request.body as PostCreateBody;
 	const media = (request.body as Dictionary).media as FormzillaFile;
 	const userId = (request.userInfo as UserInfo).userId;
 	try {
@@ -226,7 +226,7 @@ export const createPost: RouteHandlerMethod = async (request, reply) => {
 };
 export const updatePost: RouteHandlerMethod = async (request, reply) => {
 	const { postId } = request.params as PostInteractParams;
-	const { content = "" } = request.body as PostUpdateBody;
+	const { content = emptyString } = request.body as PostUpdateBody;
 	const userId = (request.userInfo as UserInfo).userId;
 	const session = await mongoose.startSession();
 	try {
@@ -376,7 +376,7 @@ export const getPostParent: RouteHandlerMethod = async (request, reply) => {
 };
 export const quotePost: RouteHandlerMethod = async (request, reply) => {
 	const { postId } = request.params as PostInteractParams;
-	const { content = "", poll, "media-description": mediaDescription, location } = request.body as PostCreateBody;
+	const { content = emptyString, poll, "media-description": mediaDescription, location } = request.body as PostCreateBody;
 	const media = (request.body as Dictionary).media as FormzillaFile;
 	const userId = (request.userInfo as UserInfo).userId;
 	try {
@@ -473,7 +473,7 @@ export const repeatPost: RouteHandlerMethod = async (request, reply) => {
 								$pull: {
 									posts: null
 								}
-							}
+						  }
 						: {}),
 					$addToSet: {
 						posts: repeated._id
@@ -528,7 +528,7 @@ export const unrepeatPost: RouteHandlerMethod = async (request, reply) => {
 };
 export const replyToPost: RouteHandlerMethod = async (request, reply) => {
 	const { postId } = request.params as PostInteractParams;
-	const { content = "", poll, "media-description": mediaDescription, location } = request.body as PostCreateBody;
+	const { content = emptyString, poll, "media-description": mediaDescription, location } = request.body as PostCreateBody;
 	const media = (request.body as Dictionary).media as FormzillaFile;
 	const userId = (request.userInfo as UserInfo).userId;
 	try {
