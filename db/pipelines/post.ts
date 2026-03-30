@@ -24,6 +24,29 @@ const authorLookupAndUnwind: Array<PipelineStage> = [
 	},
 	{
 		$unwind: "$author"
+	},
+	{
+		$lookup: {
+			from: "users",
+			localField: "repeatedBy",
+			foreignField: "_id",
+			pipeline: [
+				{
+					$project: {
+						handle: {
+							$cond: ["$deleted", "[deleted]", "$handle"]
+						}
+					}
+				}
+			],
+			as: "repeatedBy"
+		}
+	},
+	{
+		$unwind: {
+			path: "$repeatedBy",
+			preserveNullAndEmptyArrays: true
+		}
 	}
 ];
 const postAggregationPipeline = (userId?: string | ObjectId): Array<PipelineStage> => {
