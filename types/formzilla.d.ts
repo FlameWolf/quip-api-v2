@@ -1,10 +1,10 @@
 "use strict";
 
-import { File } from "formzilla";
+import type { FormzillaFile } from "formzilla";
 
 declare module "formzilla" {
-	interface File {
-		type: string;
-		subType: string;
+	interface FormzillaFile {
+		type?: string;
+		subType?: string;
 	}
 }

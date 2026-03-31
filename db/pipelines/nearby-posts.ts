@@ -1,10 +1,10 @@
 "use strict";
 
 import { ObjectId } from "mongodb";
-import { PipelineStage } from "mongoose";
-import { Filter } from "mongodb";
-import { maxRowsPerFetch } from "../../library";
-import postAggregationPipeline from "./post";
+import { maxRowsPerFetch } from "../../library.ts";
+import postAggregationPipeline from "./post.ts";
+import type { PipelineStage } from "mongoose";
+import type { Filter } from "mongodb";
 
 const getPageConditions = (lastDistance?: number, lastPostId?: string | ObjectId): Filter<any> => {
 	const pageConditions: Filter<any> = {};

@@ -1,9 +1,9 @@
 {
 	"name": "quip-api-v2",
-	"version": "1.0.0",
+	"type": "module",
 	"main": "index.ts",
 	"scripts": {
-		"dev": "nodemon --exec ts-node index.ts",
+		"dev": "tsx watch index.ts",
 		"build": "tsc",
 		"prettify": "prettier --write .",
 		"start": "node --use-strict ./dist/index.js"
@@ -17,7 +17,7 @@
 		"cld": "^2.10.1",
 		"cloudinary": "^2.9.0",
 		"fastify": "^5.7.4",
-		"formzilla": "^3.5.9",
+		"formzilla": "^4.0.5",
 		"jsonwebtoken": "^9.0.3",
 		"mongodb": "^7.1.0",
 		"mongoose": "9.2.4",
@@ -34,9 +34,9 @@
 		"@types/nodemailer": "^7.0.11",
 		"dotenv": "^17.3.1",
 		"json-schema-to-ts": "^3.1.1",
-		"nodemon": "^3.1.14",
 		"postinstall-postinstall": "^2.1.0",
 		"ts-node": "^10.9.2",
+		"tsx": "^4.21.0",
 		"typescript": "^5.9.3"
 	}
 }

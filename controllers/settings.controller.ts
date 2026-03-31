@@ -1,10 +1,10 @@
 "use strict";
 
 import { ObjectId } from "mongodb";
-import { RouteHandlerMethod } from "fastify";
-import { setProperty, getProperty } from "../library";
-import Settings from "../models/settings.model";
-import { GetSettingParams, UpdateSettingQueryString, SettingsBody } from "../requestDefinitions/settings.requests";
+import { setProperty, getProperty } from "../library.ts";
+import Settings from "../models/settings.model.ts";
+import type { RouteHandlerMethod } from "fastify";
+import type { GetSettingParams, UpdateSettingQueryString, SettingsBody } from "../requestDefinitions/settings.requests.ts";
 
 const getSettingsByUserId = async (userId: string | ObjectId) => {
 	const param = { user: userId };

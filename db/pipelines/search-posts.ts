@@ -1,10 +1,10 @@
 "use strict";
 
 import { ObjectId } from "mongodb";
-import { PipelineStage } from "mongoose";
-import { Filter } from "mongodb";
-import { emptyString, maxRowsPerFetch } from "../../library";
-import postAggregationPipeline from "./post";
+import { emptyString, maxRowsPerFetch } from "../../library.ts";
+import postAggregationPipeline from "./post.ts";
+import type { PipelineStage } from "mongoose";
+import type { Filter } from "mongodb";
 
 const getMatchConditions = (searchText: string, searchOptions: { from?: string; since?: string; until?: string; hasMedia?: boolean; notFrom?: string; replies?: string; languages?: string; includeLanguages?: string; mediaDescription?: string }): Filter<any> => {
 	const separator = "|";

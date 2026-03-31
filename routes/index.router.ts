@@ -1,9 +1,9 @@
 "use strict";
 
-import { FastifyPluginAsync } from "fastify";
-import requireAuthentication from "../hooks/requireAuthentication";
-import { activitySchema, emailApprovalSchema, forgotPasswordSchema, hashtagSchema, resetPasswordSchema, timelineSchema, topmostSchema } from "../requestDefinitions/index.requests";
-import * as indexController from "../controllers/index.controller";
+import requireAuthentication from "../hooks/requireAuthentication.ts";
+import { activitySchema, emailApprovalSchema, forgotPasswordSchema, hashtagSchema, resetPasswordSchema, timelineSchema, topmostSchema } from "../requestDefinitions/index.requests.ts";
+import * as indexController from "../controllers/index.controller.ts";
+import type { FastifyPluginAsync } from "fastify";
 
 const indexRouter: FastifyPluginAsync = async (instance, options) => {
 	instance.get(

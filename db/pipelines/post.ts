@@ -1,8 +1,8 @@
 "use strict";
 
 import { ObjectId } from "mongodb";
-import { PipelineStage } from "mongoose";
-import interactionsAggregationPipeline from "./interactions";
+import interactionsAggregationPipeline from "./interactions.ts";
+import type { PipelineStage } from "mongoose";
 
 const authorLookupAndUnwind: Array<PipelineStage> = [
 	{

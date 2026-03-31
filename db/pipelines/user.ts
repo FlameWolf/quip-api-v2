@@ -1,7 +1,7 @@
 "use strict";
 
 import { ObjectId } from "mongodb";
-import { PipelineStage } from "mongoose";
+import type { PipelineStage } from "mongoose";
 
 const userAggregationPipeline = (selfId?: string | ObjectId): Array<PipelineStage> => {
 	const lookupStages = [];

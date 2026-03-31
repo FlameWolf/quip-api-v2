@@ -2,6 +2,9 @@
 	"compilerOptions": {
 		"target": "ESNext",
 		"module": "NodeNext",
+		"verbatimModuleSyntax": true,
+		"allowImportingTsExtensions": true,
+		"rewriteRelativeImportExtensions": true,
 		"resolveJsonModule": true,
 		"outDir": "./dist",
 		"newLine": "lf",

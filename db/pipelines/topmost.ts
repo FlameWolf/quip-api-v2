@@ -1,11 +1,11 @@
 "use strict";
 
 import { ObjectId } from "mongodb";
-import { PipelineStage } from "mongoose";
-import { Filter } from "mongodb";
-import { emptyString, maxCacheSize, maxRowsPerFetch } from "../../library";
-import filtersAggregationPipeline from "./filters";
-import postAggregationPipeline from "./post";
+import { emptyString, maxCacheSize, maxRowsPerFetch } from "../../library.ts";
+import filtersAggregationPipeline from "./filters.ts";
+import postAggregationPipeline from "./post.ts";
+import type { PipelineStage } from "mongoose";
+import type { Filter } from "mongodb";
 
 const topmostAggregationPipeline = (userId?: string | ObjectId, period: string = emptyString, lastScore?: number, lastPostId?: string | ObjectId): Array<PipelineStage> => {
 	const matchConditions: Filter<any> = {};

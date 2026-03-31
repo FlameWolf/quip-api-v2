@@ -1,8 +1,8 @@
 "use strict";
 
-import { FastifyPluginAsync } from "fastify";
-import { credentialsSchema, refreshTokenSchema, revokeTokenSchema } from "../requestDefinitions/auth.requests";
-import * as authController from "../controllers/auth.controller";
+import { credentialsSchema, refreshTokenSchema, revokeTokenSchema } from "../requestDefinitions/auth.requests.ts";
+import * as authController from "../controllers/auth.controller.ts";
+import type { FastifyPluginAsync } from "fastify";
 
 const authRouter: FastifyPluginAsync = async (instance, options) => {
 	instance.post("/sign-up", { schema: credentialsSchema }, authController.signUp);

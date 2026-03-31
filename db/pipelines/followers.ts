@@ -1,9 +1,9 @@
 "use strict";
 
 import { ObjectId } from "mongodb";
-import { PipelineStage } from "mongoose";
-import { maxRowsPerFetch } from "../../library";
-import userAggregationPipeline from "./user";
+import { maxRowsPerFetch } from "../../library.ts";
+import userAggregationPipeline from "./user.ts";
+import type { PipelineStage } from "mongoose";
 
 const followersAggregationPipeline = (userId: string | ObjectId, lastFollowId?: string | ObjectId): Array<PipelineStage> => [
 	{
@@ -22,7 +22,7 @@ const followersAggregationPipeline = (userId: string | ObjectId, lastFollowId?: 
 					_id: {
 						$lt: new ObjectId(lastFollowId)
 					}
-			  }
+				}
 			: ({ $expr: true } as any)
 	},
 	{

@@ -1,8 +1,8 @@
 "use strict";
 
 import { ObjectId } from "mongodb";
-import { Schema, model, Document, Model, InferSchemaType } from "mongoose";
-import { emailRegExp } from "../library";
+import { Schema, model, Document, Model, type InferSchemaType } from "mongoose";
+import { emailRegExp } from "../library.ts";
 
 const emailVerificationSchema = new Schema(
 	{

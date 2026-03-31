@@ -1,8 +1,8 @@
 "use strict";
 
 import { ObjectId } from "mongodb";
-import { Schema, model, Document, Model, InferSchemaType } from "mongoose";
-import { maxMutedWordLength, escapeRegExp, getUnicodeClusterCount } from "../library";
+import { Schema, model, Document, Model, type InferSchemaType } from "mongoose";
+import { maxMutedWordLength, escapeRegExp, getUnicodeClusterCount } from "../library.ts";
 import uniqueValidator from "mongoose-unique-validator";
 
 const mutedWordSchema = new Schema(

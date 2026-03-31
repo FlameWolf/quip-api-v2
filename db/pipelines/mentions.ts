@@ -1,9 +1,9 @@
 "use strict";
 
 import { ObjectId } from "mongodb";
-import { PipelineStage } from "mongoose";
-import { maxRowsPerFetch } from "../../library";
-import postAggregationPipeline from "./post";
+import { maxRowsPerFetch } from "../../library.ts";
+import postAggregationPipeline from "./post.ts";
+import type { PipelineStage } from "mongoose";
 
 const filterBlocked = (selfId?: string | ObjectId) => {
 	if (!selfId) {

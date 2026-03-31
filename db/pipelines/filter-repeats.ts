@@ -1,6 +1,6 @@
 "use strict";
 
-import { PipelineStage } from "mongoose";
+import type { PipelineStage } from "mongoose";
 
 const filterRepeatsAggregationPipeline = (includeRepeats: boolean): Array<PipelineStage> => {
 	if (!includeRepeats) {

@@ -1,12 +1,12 @@
 "use strict";
 
-import searchPostsAggregationPipeline from "../db/pipelines/search-posts";
-import nearbyPostsAggregationPipeline from "../db/pipelines/nearby-posts";
-import searchUsersAggregationPipeline from "../db/pipelines/search-users";
-import Post from "../models/post.model";
-import User from "../models/user.model";
-import { RouteHandlerMethod } from "fastify";
-import { SearchNearbyQueryString, SearchQueryString, SearchUsersQueryString } from "../requestDefinitions/search.requests";
+import searchPostsAggregationPipeline from "../db/pipelines/search-posts.ts";
+import nearbyPostsAggregationPipeline from "../db/pipelines/nearby-posts.ts";
+import searchUsersAggregationPipeline from "../db/pipelines/search-users.ts";
+import Post from "../models/post.model.ts";
+import User from "../models/user.model.ts";
+import type { RouteHandlerMethod } from "fastify";
+import type { SearchNearbyQueryString, SearchQueryString, SearchUsersQueryString } from "../requestDefinitions/search.requests.ts";
 
 export const searchPosts: RouteHandlerMethod = async (request, reply) => {
 	const { q: searchText, from, since, until, "has-media": hasMedia, "not-from": notFrom, "sort-by": sortBy, "date-order": dateOrder, replies, langs: languages, "langs-match": includeLanguages, "media-desc": mediaDescription, lastScore, lastPostId } = request.query as SearchQueryString;

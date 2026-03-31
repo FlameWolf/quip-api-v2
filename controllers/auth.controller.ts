@@ -1,12 +1,12 @@
 "use strict";
 
-import * as bcrypt from "bcrypt";
-import * as jwt from "jsonwebtoken";
-import { invalidHandles, handleRegExp, passwordRegExp, rounds, authTokenLife } from "../library";
-import User from "../models/user.model";
-import RefreshToken from "../models/refresh-token.model";
-import { RouteHandlerMethod } from "fastify";
-import { CredentialsBody, RefreshTokenBody, RefreshTokenHeaders, RevokeTokenParams } from "../requestDefinitions/auth.requests";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import { invalidHandles, handleRegExp, passwordRegExp, rounds, authTokenLife } from "../library.ts";
+import User from "../models/user.model.ts";
+import RefreshToken from "../models/refresh-token.model.ts";
+import type { RouteHandlerMethod } from "fastify";
+import type { CredentialsBody, RefreshTokenBody, RefreshTokenHeaders, RevokeTokenParams } from "../requestDefinitions/auth.requests.ts";
 
 const generateAuthToken = (handle: string, userId: string) => {
 	return jwt.sign({ handle, userId }, process.env.JWT_AUTH_SECRET as string, { expiresIn: authTokenLife });

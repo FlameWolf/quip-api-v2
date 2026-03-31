@@ -1,10 +1,10 @@
 "use strict";
 
 import { ObjectId } from "mongodb";
-import { PipelineStage } from "mongoose";
-import { maxRowsPerFetch } from "../../library";
-import filterRepeatsAggregationPipeline from "./filter-repeats";
-import postAggregationPipeline from "./post";
+import { maxRowsPerFetch } from "../../library.ts";
+import filterRepeatsAggregationPipeline from "./filter-repeats.ts";
+import postAggregationPipeline from "./post.ts";
+import type { PipelineStage } from "mongoose";
 
 const userPostsAggregationPipeline = (userId: string | ObjectId, includeRepeats: boolean = false, includeReplies: boolean = false, visitorId?: string | ObjectId, lastPostId?: string | ObjectId): Array<PipelineStage> => {
 	const matchConditions = {

@@ -1,12 +1,12 @@
 "use strict";
 
-import mongoose, { HydratedDocument, InferSchemaType } from "mongoose";
-import * as usersController from "./users.controller";
-import FollowRequest from "../models/follow-request.model";
-import Follow from "../models/follow.model";
-import { RouteHandlerMethod } from "fastify";
-import { UserInteractParams } from "../requestDefinitions/users.requests";
-import { FollowRequestBody, RequestApprovalParams } from "../requestDefinitions/settings.requests";
+import mongoose, { type HydratedDocument, type InferSchemaType } from "mongoose";
+import FollowRequest from "../models/follow-request.model.ts";
+import Follow from "../models/follow.model.ts";
+import * as usersController from "./users.controller.ts";
+import type { RouteHandlerMethod } from "fastify";
+import type { UserInteractParams } from "../requestDefinitions/users.requests.ts";
+import type { FollowRequestBody, RequestApprovalParams } from "../requestDefinitions/settings.requests.ts";
 
 const batchSize = 65536;
 type FollowRequestModel = InferSchemaType<typeof FollowRequest.schema>;

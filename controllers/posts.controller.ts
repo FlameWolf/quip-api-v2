@@ -1,23 +1,23 @@
 "use strict";
 
 import { ObjectId } from "mongodb";
-import { RouteHandlerMethod } from "fastify";
-import mongoose, { HydratedDocument, InferSchemaType } from "mongoose";
-import * as cld from "cld";
-import { File as FormzillaFile } from "formzilla";
+import mongoose, { type HydratedDocument, type InferSchemaType } from "mongoose";
+import cld from "cld";
 import { v2 as cloudinary } from "cloudinary";
-import { emptyString, getUnicodeClusterCount, maxContentLength, nullId, quoteScore, repeatScore, replyScore, voteScore } from "../library";
-import postAggregationPipeline from "../db/pipelines/post";
-import postParentAggregationPipeline from "../db/pipelines/post-parent";
-import postQuotesAggregationPipeline from "../db/pipelines/post-quotes";
-import postRepliesAggregationPipeline from "../db/pipelines/post-replies";
-import Bookmark from "../models/bookmark.model";
-import Favourite from "../models/favourite.model";
-import MutedPost from "../models/muted.post.model";
-import Post from "../models/post.model";
-import User from "../models/user.model";
-import Vote from "../models/vote.model";
-import { PostCreateBody, PostInteractParams, PostQuotesQueryString, PostRepliesQueryString, PostUpdateBody, PostVoteQueryString } from "../requestDefinitions/posts.requests";
+import { emptyString, getUnicodeClusterCount, maxContentLength, nullId, quoteScore, repeatScore, replyScore, voteScore } from "../library.ts";
+import postAggregationPipeline from "../db/pipelines/post.ts";
+import postParentAggregationPipeline from "../db/pipelines/post-parent.ts";
+import postQuotesAggregationPipeline from "../db/pipelines/post-quotes.ts";
+import postRepliesAggregationPipeline from "../db/pipelines/post-replies.ts";
+import Bookmark from "../models/bookmark.model.ts";
+import Favourite from "../models/favourite.model.ts";
+import MutedPost from "../models/muted.post.model.ts";
+import Post from "../models/post.model.ts";
+import User from "../models/user.model.ts";
+import Vote from "../models/vote.model.ts";
+import type { RouteHandlerMethod } from "fastify";
+import type { FormzillaFile } from "formzilla";
+import type { PostCreateBody, PostInteractParams, PostQuotesQueryString, PostRepliesQueryString, PostUpdateBody, PostVoteQueryString } from "../requestDefinitions/posts.requests.ts";
 
 type PostModel = InferSchemaType<typeof Post.schema>;
 type AttachmentsModel = Required<PostModel>["attachments"];
@@ -473,7 +473,7 @@ export const repeatPost: RouteHandlerMethod = async (request, reply) => {
 								$pull: {
 									posts: null
 								}
-						  }
+							}
 						: {}),
 					$addToSet: {
 						posts: repeated._id

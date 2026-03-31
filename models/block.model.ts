@@ -1,9 +1,9 @@
 "use strict";
 
 import { ObjectId } from "mongodb";
-import { Schema, model, Document, Model, InferSchemaType } from "mongoose";
+import { Schema, model, Document, Model, type InferSchemaType } from "mongoose";
 import uniqueValidator from "mongoose-unique-validator";
-import { maxContentLength, getUnicodeClusterCount } from "../library";
+import { maxContentLength, getUnicodeClusterCount } from "../library.ts";
 
 const blockSchema = new Schema(
 	{

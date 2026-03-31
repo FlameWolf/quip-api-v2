@@ -1,16 +1,16 @@
 "use strict";
 
 import mongoose from "mongoose";
-import * as usersController from "./users.controller";
-import * as postsController from "./posts.controller";
-import User from "../models/user.model";
-import MutedUser from "../models/muted.user.model";
-import MutedPost from "../models/muted.post.model";
-import MutedWord from "../models/muted.word.model";
-import { RouteHandlerMethod } from "fastify";
-import { PostInteractParams } from "../requestDefinitions/posts.requests";
-import { WordMuteBody } from "../requestDefinitions/settings.requests";
-import { UserInteractParams, ActionReasonQueryString } from "../requestDefinitions/users.requests";
+import User from "../models/user.model.ts";
+import MutedUser from "../models/muted.user.model.ts";
+import MutedPost from "../models/muted.post.model.ts";
+import MutedWord from "../models/muted.word.model.ts";
+import * as usersController from "./users.controller.ts";
+import * as postsController from "./posts.controller.ts";
+import type { RouteHandlerMethod } from "fastify";
+import type { PostInteractParams } from "../requestDefinitions/posts.requests.ts";
+import type { WordMuteBody } from "../requestDefinitions/settings.requests.ts";
+import type { UserInteractParams, ActionReasonQueryString } from "../requestDefinitions/users.requests.ts";
 
 const getMutedWordRegExp = (word: string, match: string) => {
 	switch (match) {

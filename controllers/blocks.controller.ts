@@ -1,15 +1,15 @@
 "use strict";
 
 import mongoose from "mongoose";
-import * as usersController from "./users.controller";
-import FollowRequest from "../models/follow-request.model";
-import Follow from "../models/follow.model";
-import List from "../models/list.model";
-import ListMember from "../models/list-member.model";
-import User from "../models/user.model";
-import Block from "../models/block.model";
-import { RouteHandlerMethod } from "fastify";
-import { UserInteractParams, ActionReasonQueryString } from "../requestDefinitions/users.requests";
+import FollowRequest from "../models/follow-request.model.ts";
+import Follow from "../models/follow.model.ts";
+import List from "../models/list.model.ts";
+import ListMember from "../models/list-member.model.ts";
+import User from "../models/user.model.ts";
+import Block from "../models/block.model.ts";
+import * as usersController from "./users.controller.ts";
+import type { RouteHandlerMethod } from "fastify";
+import type { UserInteractParams, ActionReasonQueryString } from "../requestDefinitions/users.requests.ts";
 
 export const blockUser: RouteHandlerMethod = async (request, reply) => {
 	const { handle: blockeeHandle } = request.params as UserInteractParams;

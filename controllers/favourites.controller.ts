@@ -1,12 +1,12 @@
 "use strict";
 
 import mongoose from "mongoose";
-import { favouriteScore } from "../library";
-import * as postsController from "./posts.controller";
-import Post from "../models/post.model";
-import Favourite from "../models/favourite.model";
-import { RouteHandlerMethod } from "fastify";
-import { PostInteractParams } from "../requestDefinitions/posts.requests";
+import { favouriteScore } from "../library.ts";
+import Post from "../models/post.model.ts";
+import Favourite from "../models/favourite.model.ts";
+import * as postsController from "./posts.controller.ts";
+import type { RouteHandlerMethod } from "fastify";
+import type { PostInteractParams } from "../requestDefinitions/posts.requests.ts";
 
 export const addFavourite: RouteHandlerMethod = async (request, reply) => {
 	const { postId } = request.params as PostInteractParams;

@@ -1,8 +1,8 @@
 "use strict";
 
 import { ObjectId } from "mongodb";
-import { PipelineStage } from "mongoose";
-import postAggregationPipeline from "./post";
+import postAggregationPipeline from "./post.ts";
+import type { PipelineStage } from "mongoose";
 
 const postParentAggregationPipeline = (postId: string | ObjectId, userId?: string | ObjectId): Array<PipelineStage> => [
 	{

@@ -1,6 +1,6 @@
 "use strict";
 
-import { AnyObject, Error, SchemaType, SchemaTypes } from "mongoose";
+import { Error, SchemaType, SchemaTypes, type AnyObject } from "mongoose";
 
 SchemaTypes.Point = class Point extends SchemaType {
 	constructor(key: string, options: AnyObject | undefined) {

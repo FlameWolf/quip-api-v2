@@ -1,8 +1,8 @@
 "use strict";
 
 import { ObjectId } from "mongodb";
-import { PipelineStage } from "mongoose";
-import { maxRowsPerFetch } from "../../library";
+import { maxRowsPerFetch } from "../../library.ts";
+import type { PipelineStage } from "mongoose";
 
 const followRequestsReceivedAggregationPipeline = (userId: string | ObjectId, lastFollowRequestId?: string | ObjectId): Array<PipelineStage> => [
 	{

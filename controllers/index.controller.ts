@@ -1,21 +1,20 @@
 "use strict";
 
-import { ObjectId } from "mongodb";
+import { ObjectId, type Filter } from "mongodb";
 import mongoose from "mongoose";
-import { Filter } from "mongodb";
-import * as bcrypt from "bcrypt";
-import { noReplyEmail, emailTemplates, passwordRegExp, rounds } from "../library";
-import timelineAggregationPipeline from "../db/pipelines/timeline";
-import activityAggregationPipeline from "../db/pipelines/activity";
-import topmostAggregationPipeline from "../db/pipelines/topmost";
-import hashtagAggregationPipeline from "../db/pipelines/hashtag";
-import * as emailController from "./email.controller";
-import User from "../models/user.model";
-import Post from "../models/post.model";
-import EmailVerification from "../models/email-verification.model";
-import PasswordReset from "../models/password-reset.model";
-import { RouteHandlerMethod } from "fastify";
-import { ActivityParams, ActivityQueryString, EmailApprovalParams, ForgotPasswordBody, HashtagParams, HashtagQueryString, ResetPasswordBody, ResetPasswordParams, TimelineQueryString, TopmostParams, TopmostQueryString } from "../requestDefinitions/index.requests";
+import bcrypt from "bcrypt";
+import { noReplyEmail, emailTemplates, passwordRegExp, rounds } from "../library.ts";
+import timelineAggregationPipeline from "../db/pipelines/timeline.ts";
+import activityAggregationPipeline from "../db/pipelines/activity.ts";
+import topmostAggregationPipeline from "../db/pipelines/topmost.ts";
+import hashtagAggregationPipeline from "../db/pipelines/hashtag.ts";
+import User from "../models/user.model.ts";
+import Post from "../models/post.model.ts";
+import EmailVerification from "../models/email-verification.model.ts";
+import PasswordReset from "../models/password-reset.model.ts";
+import * as emailController from "./email.controller.ts";
+import type { RouteHandlerMethod } from "fastify";
+import type { ActivityParams, ActivityQueryString, EmailApprovalParams, ForgotPasswordBody, HashtagParams, HashtagQueryString, ResetPasswordBody, ResetPasswordParams, TimelineQueryString, TopmostParams, TopmostQueryString } from "../requestDefinitions/index.requests.ts";
 
 export const timeline: RouteHandlerMethod = async (request, reply) => {
 	const { includeRepeats, includeReplies, lastPostId } = request.query as TimelineQueryString;

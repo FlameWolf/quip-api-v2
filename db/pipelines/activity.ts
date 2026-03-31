@@ -1,10 +1,10 @@
 "use strict";
 
 import { ObjectId } from "mongodb";
-import { PipelineStage } from "mongoose";
-import { emptyString, maxRowsPerFetch } from "../../library";
-import filtersAggregationPipeline from "./filters";
-import postAggregationPipeline from "./post";
+import { emptyString, maxRowsPerFetch } from "../../library.ts";
+import filtersAggregationPipeline from "./filters.ts";
+import postAggregationPipeline from "./post.ts";
+import type { PipelineStage } from "mongoose";
 
 const activityAggregationPipeline = (userId: string | ObjectId, period: string = emptyString, lastEntryId?: string | ObjectId): Array<PipelineStage> => {
 	const maxDate = new Date();

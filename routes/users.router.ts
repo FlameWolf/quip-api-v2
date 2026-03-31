@@ -1,13 +1,13 @@
 "use strict";
 
-import { FastifyPluginAsync } from "fastify";
-import requireAuthentication from "../hooks/requireAuthentication";
-import { blockMuteUserSchema, userBookmarksSchema, userFavouritesSchema, userFollowsSchema, userMentionsSchema, userPostsSchema, userTopmostSchema, userVotesSchema, userInteractSchema } from "../requestDefinitions/users.requests";
-import * as usersController from "../controllers/users.controller";
-import * as followsController from "../controllers/follows.controller";
-import * as followRequestsController from "../controllers/follow-requests.controller";
-import * as mutesController from "../controllers/mutes.controller";
-import * as blocksController from "../controllers/blocks.controller";
+import requireAuthentication from "../hooks/requireAuthentication.ts";
+import { blockMuteUserSchema, userBookmarksSchema, userFavouritesSchema, userFollowsSchema, userMentionsSchema, userPostsSchema, userTopmostSchema, userVotesSchema, userInteractSchema } from "../requestDefinitions/users.requests.ts";
+import * as usersController from "../controllers/users.controller.ts";
+import * as followsController from "../controllers/follows.controller.ts";
+import * as followRequestsController from "../controllers/follow-requests.controller.ts";
+import * as mutesController from "../controllers/mutes.controller.ts";
+import * as blocksController from "../controllers/blocks.controller.ts";
+import type { FastifyPluginAsync } from "fastify";
 
 const usersRouter: FastifyPluginAsync = async (instance, options) => {
 	instance.get("/follow/:handle", { onRequest: requireAuthentication, schema: userInteractSchema }, followsController.followUser);

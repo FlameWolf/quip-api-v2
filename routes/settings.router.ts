@@ -1,13 +1,13 @@
 "use strict";
 
-import { FastifyPluginAsync } from "fastify";
-import requireAuthentication from "../hooks/requireAuthentication";
-import { wordMuteSchema, settingsSchema, requestApprovalSchema, followRequestsSchema, blockedUsersSchema, mutedItemsSchema, updateEmailSchema, updateSettingSchema, getSettingSchema } from "../requestDefinitions/settings.requests";
-import { postInteractSchema } from "../requestDefinitions/posts.requests";
-import * as settingsController from "../controllers/settings.controller";
-import * as mutesController from "../controllers/mutes.controller";
-import * as usersController from "../controllers/users.controller";
-import * as followRequestsController from "../controllers/follow-requests.controller";
+import requireAuthentication from "../hooks/requireAuthentication.ts";
+import { wordMuteSchema, settingsSchema, requestApprovalSchema, followRequestsSchema, blockedUsersSchema, mutedItemsSchema, updateEmailSchema, updateSettingSchema, getSettingSchema } from "../requestDefinitions/settings.requests.ts";
+import { postInteractSchema } from "../requestDefinitions/posts.requests.ts";
+import * as settingsController from "../controllers/settings.controller.ts";
+import * as mutesController from "../controllers/mutes.controller.ts";
+import * as usersController from "../controllers/users.controller.ts";
+import * as followRequestsController from "../controllers/follow-requests.controller.ts";
+import type { FastifyPluginAsync } from "fastify";
 
 const settingsRouter: FastifyPluginAsync = async (instance, options) => {
 	instance.addHook("onRequest", requireAuthentication);

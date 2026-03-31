@@ -1,10 +1,10 @@
 "use strict";
 
 import { ObjectId } from "mongodb";
-import { PipelineStage } from "mongoose";
-import { maxRowsPerFetch } from "../../library";
-import filtersAggregationPipeline from "./filters";
-import postAggregationPipeline from "./post";
+import { maxRowsPerFetch } from "../../library.ts";
+import filtersAggregationPipeline from "./filters.ts";
+import postAggregationPipeline from "./post.ts";
+import type { PipelineStage } from "mongoose";
 
 const postRepliesAggregationPipeline = (postId: string | ObjectId, userId?: string | ObjectId, lastReplyId?: string | ObjectId): Array<PipelineStage> => [
 	{

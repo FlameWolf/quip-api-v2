@@ -1,7 +1,7 @@
 "use strict";
 
-import { AnyObject, Error, SchemaType, SchemaTypes } from "mongoose";
-import { emptyString, urlRegExp } from "../library";
+import { Error, SchemaType, SchemaTypes, type AnyObject } from "mongoose";
+import { emptyString, urlRegExp } from "../library.ts";
 
 SchemaTypes.Url = class Url extends SchemaType {
 	constructor(key: string, options: AnyObject | undefined) {

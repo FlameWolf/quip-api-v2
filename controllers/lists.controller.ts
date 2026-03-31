@@ -2,14 +2,14 @@
 
 import { ObjectId } from "mongodb";
 import mongoose from "mongoose";
-import listPostsAggregationPipeline from "../db/pipelines/list-posts";
-import * as usersController from "./users.controller";
-import Follow from "../models/follow.model";
-import Block from "../models/block.model";
-import List from "../models/list.model";
-import ListMember from "../models/list-member.model";
-import { RouteHandlerMethod } from "fastify";
-import { ListInteractParams, ListPostsQueryString, ListCreateBody, ListMemberBody, ListUpdateBody } from "../requestDefinitions/lists.requests";
+import listPostsAggregationPipeline from "../db/pipelines/list-posts.ts";
+import Follow from "../models/follow.model.ts";
+import Block from "../models/block.model.ts";
+import List from "../models/list.model.ts";
+import ListMember from "../models/list-member.model.ts";
+import * as usersController from "./users.controller.ts";
+import type { RouteHandlerMethod } from "fastify";
+import type { ListInteractParams, ListPostsQueryString, ListCreateBody, ListMemberBody, ListUpdateBody } from "../requestDefinitions/lists.requests.ts";
 
 const findListPostsByNameAndOwnerId = async (listName: string, ownerId: string | ObjectId, includeRepeats = true, includeReplies = true, lastPostId?: string | ObjectId) => await List.aggregate(listPostsAggregationPipeline(listName, ownerId, includeRepeats, includeReplies, lastPostId));
 export const createList: RouteHandlerMethod = async (request, reply) => {

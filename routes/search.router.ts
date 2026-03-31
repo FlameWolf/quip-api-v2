@@ -1,8 +1,8 @@
 "use strict";
 
-import { FastifyPluginAsync } from "fastify";
-import { searchNearbySchema, searchSchema, searchUsersSchema } from "../requestDefinitions/search.requests";
-import * as searchController from "../controllers/search.controller";
+import { searchNearbySchema, searchSchema, searchUsersSchema } from "../requestDefinitions/search.requests.ts";
+import * as searchController from "../controllers/search.controller.ts";
+import type { FastifyPluginAsync } from "fastify";
 
 const searchRouter: FastifyPluginAsync = async (instance, options) => {
 	instance.get("/", { schema: searchSchema }, searchController.searchPosts);

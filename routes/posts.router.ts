@@ -1,12 +1,12 @@
 "use strict";
 
-import { FastifyPluginAsync } from "fastify";
-import requireAuthentication from "../hooks/requireAuthentication";
-import { postCreateSchema, postInteractAndCreateSchema, postInteractSchema, postQuotesSchema, postRepliesSchema, postUpdateSchema, postVoteSchema } from "../requestDefinitions/posts.requests";
-import * as postsController from "../controllers/posts.controller";
-import * as favouritesController from "../controllers/favourites.controller";
-import * as bookmarksController from "../controllers/bookmarks.controller";
-import * as mutesController from "../controllers/mutes.controller";
+import requireAuthentication from "../hooks/requireAuthentication.ts";
+import { postCreateSchema, postInteractAndCreateSchema, postInteractSchema, postQuotesSchema, postRepliesSchema, postUpdateSchema, postVoteSchema } from "../requestDefinitions/posts.requests.ts";
+import * as postsController from "../controllers/posts.controller.ts";
+import * as favouritesController from "../controllers/favourites.controller.ts";
+import * as bookmarksController from "../controllers/bookmarks.controller.ts";
+import * as mutesController from "../controllers/mutes.controller.ts";
+import type { FastifyPluginAsync } from "fastify";
 
 const postsRouter: FastifyPluginAsync = async (instance, options) => {
 	instance.post("/create", { onRequest: requireAuthentication, schema: postCreateSchema }, postsController.createPost);

@@ -1,19 +1,16 @@
 "use strict";
 
-import fastify from "fastify";
-import { emptyString, megaByte, standardiseFileName, validMimeTypes } from "./library";
-import { DiscStorage } from "formzilla/DiscStorage";
-import * as jwt from "jsonwebtoken";
-import "./schemaTypes/point";
-import "./schemaTypes/url";
-import * as path from "path";
+import jwt from "jsonwebtoken";
+import { emptyString, megaByte, standardiseFileName, validMimeTypes } from "./library.ts";
+import { DiscStorage, type FormDataParserPluginOptions } from "formzilla";
 
 const isProdEnv = process.env.NODE_ENV === "production";
 if (!isProdEnv) {
-	require("dotenv").config();
+	(await import("dotenv")).config();
 }
-
-require("mongoose")
+await import("./schemaTypes/point.ts");
+await import("./schemaTypes/url.ts");
+(await import("mongoose"))
 	.connect(process.env.DB_CONNECTION as string)
 	.then(() => {
 		console.log("Connected to the database");
@@ -21,15 +18,14 @@ require("mongoose")
 	.catch(() => {
 		console.log("Unable to connect to the database");
 	});
-require("cloudinary").v2.config({
+(await import("cloudinary")).v2.config({
 	cloud_name: process.env.CLOUD_BUCKET,
 	api_key: process.env.CLOUD_API_KEY,
 	api_secret: process.env.CLOUD_API_SECRET
 });
-
 const allowedOrigins = process.env.ALLOW_ORIGINS || emptyString;
-const server = fastify();
-server.register(require("@fastify/helmet"));
+const server = (await import("fastify")).fastify();
+server.register((await import("@fastify/helmet")).fastifyHelmet);
 server.addHook("onRequest", async (request, reply) => {
 	const origin = request.headers.origin || emptyString;
 	reply.header("Access-Control-Allow-Origin", (allowedOrigins.indexOf(`${origin};`) > -1 && origin) || "*");
@@ -40,26 +36,29 @@ server.addHook("onRequest", async (request, reply) => {
 		reply.status(200).send();
 	}
 });
-server.register(require("formzilla"), {
+server.register((await import("formzilla")).default, {
 	limits: {
 		fileSize: megaByte * 5
 	},
-	storage: new DiscStorage(file => {
+	storage: new DiscStorage(async file => {
 		[file.type, file.subType] = file.mimeType.split("/");
 		const isValid = validMimeTypes.some(mimeType => mimeType === file.type);
 		if (!isValid) {
 			throw new Error("Invalid file type");
 		}
 		return {
-			directory: path.join(__dirname, "public"),
+			directory: (await import("path")).default.join(__dirname, "public"),
 			fileName: standardiseFileName(file.originalName)
 		};
 	})
-});
+} as FormDataParserPluginOptions);
 if (!isProdEnv) {
-	server.register(require("@fastify/swagger"), {
+	server.register((await import("@fastify/swagger")).fastifySwagger, {
 		openapi: {
-			version: "3.0.0",
+			info: {
+				title: "Quip API",
+				version: "1.0.0"
+			},
 			components: {
 				securitySchemes: {
 					Bearer: {
@@ -77,7 +76,7 @@ if (!isProdEnv) {
 			]
 		}
 	});
-	server.register(require("@fastify/swagger-ui"), {
+	server.register((await import("@fastify/swagger-ui")).fastifySwaggerUi, {
 		routePrefix: "/swagger"
 	});
 }
@@ -88,13 +87,13 @@ server.addHook("onRequest", async (request, reply) => {
 		request.userInfo = authToken && (jwt.verify(authToken, process.env.JWT_AUTH_SECRET as string) as UserInfo);
 	} catch {}
 });
-server.register(require("./routes/index.router"));
-server.register(require("./routes/auth.router"), { prefix: "/auth" });
-server.register(require("./routes/users.router"), { prefix: "/users" });
-server.register(require("./routes/lists.router"), { prefix: "/lists" });
-server.register(require("./routes/posts.router"), { prefix: "/posts" });
-server.register(require("./routes/search.router"), { prefix: "/search" });
-server.register(require("./routes/settings.router"), { prefix: "/settings" });
+server.register((await import("./routes/index.router.ts")).default);
+server.register((await import("./routes/auth.router.ts")).default, { prefix: "/auth" });
+server.register((await import("./routes/users.router.ts")).default, { prefix: "/users" });
+server.register((await import("./routes/lists.router.ts")).default, { prefix: "/lists" });
+server.register((await import("./routes/posts.router.ts")).default, { prefix: "/posts" });
+server.register((await import("./routes/search.router.ts")).default, { prefix: "/search" });
+server.register((await import("./routes/settings.router.ts")).default, { prefix: "/settings" });
 server.setErrorHandler(async (error, request, reply) => {
 	reply.status(500).send(error);
 });

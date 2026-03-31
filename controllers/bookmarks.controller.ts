@@ -1,9 +1,9 @@
 "use strict";
 
-import * as postsController from "./posts.controller";
-import Bookmark from "../models/bookmark.model";
-import { RouteHandlerMethod } from "fastify";
-import { PostInteractParams } from "../requestDefinitions/posts.requests";
+import Bookmark from "../models/bookmark.model.ts";
+import * as postsController from "./posts.controller.ts";
+import type { RouteHandlerMethod } from "fastify";
+import type { PostInteractParams } from "../requestDefinitions/posts.requests.ts";
 
 export const addBookmark: RouteHandlerMethod = async (request, reply) => {
 	const { postId } = request.params as PostInteractParams;

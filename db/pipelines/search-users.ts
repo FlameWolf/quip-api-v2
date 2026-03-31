@@ -1,10 +1,10 @@
 "use strict";
 
 import { ObjectId } from "mongodb";
-import { PipelineStage } from "mongoose";
-import { Filter } from "mongodb";
-import { maxRowsPerFetch } from "../../library";
-import userAggregationPipeline from "./user";
+import { maxRowsPerFetch } from "../../library.ts";
+import userAggregationPipeline from "./user.ts";
+import type { PipelineStage } from "mongoose";
+import type { Filter } from "mongodb";
 
 const getMatchExpression = (match: string, searchText: string) => {
 	switch (match) {
