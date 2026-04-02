@@ -398,7 +398,7 @@ export const deleteUser: RouteHandlerMethod = async (request, reply) => {
 			]);
 			reply.status(200).send({ deleted });
 			if (email) {
-				emailController.sendEmail(noReplyEmail, email, `Goodbye, ${deleted.handle}`, emailTemplates.notifications.activated(deleted.handle));
+				emailController.sendEmail(noReplyEmail, email, `Goodbye, ${deleted.handle}`, emailTemplates.notifications.deleted(deleted.handle));
 			}
 		});
 	} finally {
