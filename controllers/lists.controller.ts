@@ -64,8 +64,8 @@ export const addMember: RouteHandlerMethod = async (request, reply) => {
 	const session = await mongoose.startSession();
 	try {
 		const listId = list._id;
-		await session.withTransaction(async () => {
-			const added = await new ListMember({
+		const added = await session.withTransaction(async () => {
+			const addedMember = await new ListMember({
 				list: listId,
 				user: memberId
 			}).save({ session });
@@ -74,8 +74,9 @@ export const addMember: RouteHandlerMethod = async (request, reply) => {
 					members: memberId
 				}
 			}).session(session);
-			reply.status(200).send({ added });
+			return addedMember;
 		});
+		reply.status(200).send({ added });
 	} finally {
 		await session.endSession();
 	}
@@ -97,8 +98,8 @@ export const removeMember: RouteHandlerMethod = async (request, reply) => {
 	try {
 		const listId = list._id;
 		const memberId = member._id;
-		await session.withTransaction(async () => {
-			const removed = await ListMember.findOneAndDelete({
+		const removed = await session.withTransaction(async () => {
+			const removedMember = await ListMember.findOneAndDelete({
 				list: listId,
 				user: memberId
 			}).session(session);
@@ -107,8 +108,9 @@ export const removeMember: RouteHandlerMethod = async (request, reply) => {
 					members: memberId
 				}
 			}).session(session);
-			reply.status(200).send({ removed });
+			return removedMember;
 		});
+		reply.status(200).send({ removed });
 	} finally {
 		await session.endSession();
 	}
@@ -125,13 +127,14 @@ export const deleteList: RouteHandlerMethod = async (request, reply) => {
 	const userId = (request.userInfo as UserInfo).userId;
 	const session = await mongoose.startSession();
 	try {
-		await session.withTransaction(async () => {
-			const deleted = await List.findOneAndDelete({ name, owner: userId }).session(session);
-			if (deleted) {
-				await ListMember.deleteMany({ list: deleted._id }).session(session);
+		const deleted = await session.withTransaction(async () => {
+			const deletedList = await List.findOneAndDelete({ name, owner: userId }).session(session);
+			if (deletedList) {
+				await ListMember.deleteMany({ list: deletedList._id }).session(session);
 			}
-			reply.status(200).send({ deleted });
+			return deletedList;
 		});
+		reply.status(200).send({ deleted });
 	} finally {
 		await session.endSession();
 	}

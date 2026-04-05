@@ -26,9 +26,9 @@ export const blockUser: RouteHandlerMethod = async (request, reply) => {
 			reply.status(404).send("User not found");
 			return;
 		}
-		await session.withTransaction(async () => {
+		const blocked = await session.withTransaction(async () => {
 			const blockeeUserId = blockee._id;
-			const blocked = await new Block({
+			const blockedUser = await new Block({
 				user: blockeeUserId,
 				blockedBy: blockerUserId,
 				reason: blockReason
@@ -83,8 +83,9 @@ export const blockUser: RouteHandlerMethod = async (request, reply) => {
 					}
 				).session(session)
 			]);
-			reply.status(200).send({ blocked });
+			return blockedUser;
 		});
+		reply.status(200).send({ blocked });
 	} finally {
 		await session.endSession();
 	}
@@ -103,18 +104,19 @@ export const unblockUser: RouteHandlerMethod = async (request, reply) => {
 	}
 	const session = await mongoose.startSession();
 	try {
-		await session.withTransaction(async () => {
+		const unblocked = await session.withTransaction(async () => {
 			const unblockeeUserId = unblockee._id;
-			const unblocked = await Block.findOneAndDelete({ user: unblockeeUserId, blockedBy: unblockerUserId }).session(session);
-			if (unblocked) {
+			const unblockedUser = await Block.findOneAndDelete({ user: unblockeeUserId, blockedBy: unblockerUserId }).session(session);
+			if (unblockedUser) {
 				await User.findByIdAndUpdate(unblockerUserId, {
 					$pull: {
 						blockedUsers: unblockeeUserId
 					}
 				}).session(session);
 			}
-			reply.status(200).send({ unblocked });
+			return unblockedUser;
 		});
+		reply.status(200).send({ unblocked });
 	} finally {
 		await session.endSession();
 	}

@@ -110,72 +110,6 @@ const uploadFile = async (file: FormzillaFile) => {
 	});
 	return response;
 };
-const deletePostWithCascade = async (post: HydratedDocument<PostModel>) => {
-	const session = await mongoose.startSession();
-	await session.withTransaction(async () => {
-		const postId = post._id;
-		const postFilter = { post: postId as ObjectId };
-		const repeatedPostId = post.repeatPost;
-		const repliedToPostId = post.replyTo;
-		const attachments = post.attachments;
-		await Post.deleteOne(post as PostModel).session(session);
-		if (repeatedPostId) {
-			await Post.findByIdAndUpdate(repeatedPostId, {
-				$inc: {
-					score: -repeatScore
-				}
-			}).session(session);
-		}
-		if (repliedToPostId) {
-			await Post.findByIdAndUpdate(repliedToPostId, {
-				$inc: {
-					score: -replyScore
-				}
-			}).session(session);
-		}
-		if (attachments) {
-			const quotedPostId = attachments.post;
-			const poll = attachments.poll as HydratedDocument<PollModel>;
-			if (quotedPostId) {
-				await Post.findByIdAndUpdate(quotedPostId, {
-					$inc: {
-						score: -quoteScore
-					}
-				}).session(session);
-			}
-			if (poll) {
-				await Vote.deleteMany({ poll: poll._id }).session(session);
-			}
-		}
-		await Promise.all([
-			User.findOneAndUpdate(
-				{
-					_id: post.author
-				},
-				{
-					$pull: {
-						posts: postId
-					}
-				}
-			).session(session),
-			User.findOneAndUpdate(
-				{
-					pinnedPost: postId
-				},
-				{
-					pinnedPost: undefined
-				}
-			).session(session),
-			Post.deleteMany({
-				repeatPost: postId
-			}).session(session),
-			Favourite.deleteMany(postFilter).session(session),
-			Bookmark.deleteMany(postFilter).session(session),
-			MutedPost.deleteMany(postFilter).session(session)
-		]);
-	});
-	await session.endSession();
-};
 export const createPost: RouteHandlerMethod = async (request, reply) => {
 	const { content = emptyString, poll, "media-description": mediaDescription, location } = request.body as PostCreateBody;
 	const media = (request.body as Dictionary).media as FormzillaFile;
@@ -208,21 +142,25 @@ export const createPost: RouteHandlerMethod = async (request, reply) => {
 	};
 	await Promise.all([updateLanguages(model), content.trim() && updateMentionsAndHashtags(content, model)]);
 	const session = await mongoose.startSession();
-	await session.withTransaction(async () => {
-		const post = await new Post(model).save({ session });
-		await User.findOneAndUpdate(
-			{
-				_id: userId
-			},
-			{
-				$addToSet: {
-					posts: post._id
+	try {
+		const post = await session.withTransaction(async () => {
+			const createdPost = await new Post(model).save({ session });
+			await User.findOneAndUpdate(
+				{
+					_id: userId
+				},
+				{
+					$addToSet: {
+						posts: createdPost._id
+					}
 				}
-			}
-		).session(session);
+			).session(session);
+			return createdPost;
+		});
 		reply.status(201).send({ post });
-	});
-	await session.endSession();
+	} finally {
+		await session.endSession();
+	}
 };
 export const updatePost: RouteHandlerMethod = async (request, reply) => {
 	const { postId } = request.params as PostInteractParams;
@@ -253,10 +191,10 @@ export const updatePost: RouteHandlerMethod = async (request, reply) => {
 			return;
 		}
 		if (post.content === content) {
-			reply.status(304).send({ post });
+			reply.status(304).send();
 			return;
 		}
-		await session.withTransaction(async () => {
+		const updated = await session.withTransaction(async () => {
 			const originalPostId = post._id;
 			const authorFilter = {
 				author: {
@@ -287,7 +225,7 @@ export const updatePost: RouteHandlerMethod = async (request, reply) => {
 			};
 			await Promise.all([updateLanguages(model), updateMentionsAndHashtags(content, model)]);
 			delete model.attachments;
-			const updated = await Post.findByIdAndUpdate(originalPostId, model, { new: true }).session(session);
+			const updatedPost = await Post.findByIdAndUpdate(originalPostId, model, { new: true }).session(session);
 			await Promise.all([
 				Post.updateMany(
 					{
@@ -313,8 +251,9 @@ export const updatePost: RouteHandlerMethod = async (request, reply) => {
 				Favourite.deleteMany(postFilter).session(session),
 				Bookmark.deleteMany(postFilter).session(session)
 			]);
-			reply.status(200).send({ updated });
+			return updatedPost;
 		});
+		reply.status(200).send({ updated });
 	} finally {
 		await session.endSession();
 	}
@@ -392,7 +331,7 @@ export const quotePost: RouteHandlerMethod = async (request, reply) => {
 			reply.status(404).send("Post not found");
 			return;
 		}
-		await session.withTransaction(async () => {
+		const quote = await session.withTransaction(async () => {
 			const originalPostId = originalPost._id;
 			const model = {
 				content,
@@ -416,14 +355,14 @@ export const quotePost: RouteHandlerMethod = async (request, reply) => {
 				mentions: [originalPost.author as any]
 			};
 			await Promise.all([updateLanguages(model), content.trim() && updateMentionsAndHashtags(content, model)]);
-			const quote = await new Post(model).save({ session });
+			const createdQuote = await new Post(model).save({ session });
 			await User.findOneAndUpdate(
 				{
 					_id: userId
 				},
 				{
 					$addToSet: {
-						posts: quote._id
+						posts: createdQuote._id
 					}
 				}
 			).session(session);
@@ -432,12 +371,13 @@ export const quotePost: RouteHandlerMethod = async (request, reply) => {
 					score: quoteScore
 				}
 			}).session(session);
-			const attachments = quote.attachments;
+			const attachments = createdQuote.attachments;
 			if (attachments) {
 				attachments.post = originalPost;
 			}
-			reply.status(201).send({ quote });
+			return createdQuote;
 		});
+		reply.status(201).send({ quote });
 	} finally {
 		await session.endSession();
 	}
@@ -457,12 +397,12 @@ export const repeatPost: RouteHandlerMethod = async (request, reply) => {
 			author: userId,
 			repeatPost: originalPostId
 		};
-		await session.withTransaction(async () => {
+		const repeated = await session.withTransaction(async () => {
 			const postToDelete = await Post.findOne(payload);
 			if (postToDelete) {
 				await Post.findByIdAndDelete(postToDelete._id).session(session);
 			}
-			const repeated = await new Post(payload).save({ session });
+			const createdRepeat = await new Post(payload).save({ session });
 			await User.findOneAndUpdate(
 				{
 					_id: userId
@@ -473,10 +413,10 @@ export const repeatPost: RouteHandlerMethod = async (request, reply) => {
 								$pull: {
 									posts: null
 								}
-							}
+						  }
 						: {}),
 					$addToSet: {
-						posts: repeated._id
+						posts: createdRepeat._id
 					}
 				}
 			).session(session);
@@ -487,8 +427,9 @@ export const repeatPost: RouteHandlerMethod = async (request, reply) => {
 					}
 				}).session(session);
 			}
-			reply.status(201).send({ repeated });
+			return createdRepeat;
 		});
+		reply.status(201).send({ repeated });
 	} finally {
 		await session.endSession();
 	}
@@ -498,19 +439,19 @@ export const unrepeatPost: RouteHandlerMethod = async (request, reply) => {
 	const userId = (request.userInfo as UserInfo).userId;
 	const session = await mongoose.startSession();
 	try {
-		await session.withTransaction(async () => {
-			const unrepeated = await Post.findOneAndDelete({
+		const unrepeated = await session.withTransaction(async () => {
+			const deletedRepeat = await Post.findOneAndDelete({
 				author: userId,
 				repeatPost: postId
 			}).session(session);
-			if (unrepeated) {
+			if (deletedRepeat) {
 				await User.findOneAndUpdate(
 					{
 						_id: userId
 					},
 					{
 						$pull: {
-							posts: unrepeated._id
+							posts: deletedRepeat._id
 						}
 					}
 				).session(session);
@@ -520,8 +461,9 @@ export const unrepeatPost: RouteHandlerMethod = async (request, reply) => {
 					}
 				}).session(session);
 			}
-			reply.status(200).send({ unrepeated });
+			return deletedRepeat;
 		});
+		reply.status(200).send({ unrepeated });
 	} finally {
 		await session.endSession();
 	}
@@ -544,7 +486,7 @@ export const replyToPost: RouteHandlerMethod = async (request, reply) => {
 			reply.status(404).send("Post not found");
 			return;
 		}
-		await session.withTransaction(async () => {
+		const replyPost = await session.withTransaction(async () => {
 			const originalPostId = originalPost._id;
 			const model = {
 				content,
@@ -569,14 +511,14 @@ export const replyToPost: RouteHandlerMethod = async (request, reply) => {
 				mentions: [originalPost.author as any]
 			};
 			await Promise.all([updateLanguages(model), content.trim() && updateMentionsAndHashtags(content, model)]);
-			const replyPost = await new Post(model).save({ session });
+			const createdReply = await new Post(model).save({ session });
 			await User.findOneAndUpdate(
 				{
 					_id: userId
 				},
 				{
 					$addToSet: {
-						posts: replyPost._id
+						posts: createdReply._id
 					}
 				}
 			).session(session);
@@ -585,8 +527,9 @@ export const replyToPost: RouteHandlerMethod = async (request, reply) => {
 					score: replyScore
 				}
 			}).session(session);
-			reply.status(201).send({ reply: replyPost });
+			return createdReply;
 		});
+		reply.status(201).send({ reply: replyPost });
 	} finally {
 		await session.endSession();
 	}
@@ -622,8 +565,8 @@ export const castVote: RouteHandlerMethod = async (request, reply) => {
 			reply.status(422).send("Poll has expired");
 			return;
 		}
-		await session.withTransaction(async () => {
-			const vote = await new Vote({
+		const vote = await session.withTransaction(async () => {
+			const castedVote = await new Vote({
 				poll: poll._id,
 				user: userId,
 				option
@@ -636,8 +579,9 @@ export const castVote: RouteHandlerMethod = async (request, reply) => {
 					}
 				}).session(session);
 			}
-			reply.status(201).send({ vote });
+			return castedVote;
 		});
+		reply.status(201).send({ vote });
 	} finally {
 		await session.endSession();
 	}
@@ -645,15 +589,83 @@ export const castVote: RouteHandlerMethod = async (request, reply) => {
 export const deletePost: RouteHandlerMethod = async (request, reply) => {
 	const { postId } = request.params as PostInteractParams;
 	const userId = (request.userInfo as UserInfo).userId;
-	const post = await Post.findById(postId);
-	if (!post) {
-		reply.status(404).send("Post not found");
-		return;
+	const session = await mongoose.startSession();
+	try {
+		const post = await Post.findById(postId);
+		if (!post) {
+			reply.status(404).send("Post not found");
+			return;
+		}
+		if (post.author.toString() !== userId) {
+			reply.status(403).send("You are not allowed to perform this action");
+			return;
+		}
+		await session.withTransaction(async () => {
+			const postId = post._id;
+			const postFilter = { post: postId as ObjectId };
+			const repeatedPostId = post.repeatPost;
+			const repliedToPostId = post.replyTo;
+			const attachments = post.attachments;
+			const deleteResult = await Post.deleteOne(post as PostModel).session(session);
+			if (deleteResult.deletedCount === 1) {
+				if (repeatedPostId) {
+					await Post.findByIdAndUpdate(repeatedPostId, {
+						$inc: {
+							score: -repeatScore
+						}
+					}).session(session);
+				}
+				if (repliedToPostId) {
+					await Post.findByIdAndUpdate(repliedToPostId, {
+						$inc: {
+							score: -replyScore
+						}
+					}).session(session);
+				}
+				if (attachments) {
+					const quotedPostId = attachments.post;
+					const poll = attachments.poll as HydratedDocument<PollModel>;
+					if (quotedPostId) {
+						await Post.findByIdAndUpdate(quotedPostId, {
+							$inc: {
+								score: -quoteScore
+							}
+						}).session(session);
+					}
+					if (poll) {
+						await Vote.deleteMany({ poll: poll._id }).session(session);
+					}
+				}
+				await Promise.all([
+					User.findOneAndUpdate(
+						{
+							_id: post.author
+						},
+						{
+							$pull: {
+								posts: postId
+							}
+						}
+					).session(session),
+					User.findOneAndUpdate(
+						{
+							pinnedPost: postId
+						},
+						{
+							pinnedPost: undefined
+						}
+					).session(session),
+					Post.deleteMany({
+						repeatPost: postId
+					}).session(session),
+					Favourite.deleteMany(postFilter).session(session),
+					Bookmark.deleteMany(postFilter).session(session),
+					MutedPost.deleteMany(postFilter).session(session)
+				]);
+			}
+		});
+		reply.status(200).send({ deleted: post });
+	} finally {
+		await session.endSession();
 	}
-	if (post.author.toString() !== userId) {
-		reply.status(403).send("You are not allowed to perform this action");
-		return;
-	}
-	await deletePostWithCascade(post);
-	reply.status(200).send({ deleted: post });
 };

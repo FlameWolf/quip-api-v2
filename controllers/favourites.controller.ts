@@ -18,9 +18,9 @@ export const addFavourite: RouteHandlerMethod = async (request, reply) => {
 			reply.status(404).send("Post not found");
 			return;
 		}
-		await session.withTransaction(async () => {
+		const favourited = await session.withTransaction(async () => {
 			const originalPostId = post._id;
-			const favourited = await new Favourite({
+			const favouritedPost = await new Favourite({
 				post: originalPostId,
 				favouritedBy: userId
 			}).save({ session });
@@ -29,8 +29,9 @@ export const addFavourite: RouteHandlerMethod = async (request, reply) => {
 					score: favouriteScore
 				}
 			}).session(session);
-			reply.status(200).send({ favourited });
+			return favouritedPost;
 		});
+		reply.status(200).send({ favourited });
 	} finally {
 		await session.endSession();
 	}
@@ -40,20 +41,21 @@ export const removeFavourite: RouteHandlerMethod = async (request, reply) => {
 	const userId = (request.userInfo as UserInfo).userId;
 	const session = await mongoose.startSession();
 	try {
-		await session.withTransaction(async () => {
-			const unfavourited = await Favourite.findOneAndDelete({
+		const unfavourited = await session.withTransaction(async () => {
+			const unfavouritedPost = await Favourite.findOneAndDelete({
 				post: postId,
 				favouritedBy: userId
 			}).session(session);
-			if (unfavourited) {
+			if (unfavouritedPost) {
 				await Post.findByIdAndUpdate(postId, {
 					$inc: {
 						score: -favouriteScore
 					}
 				}).session(session);
 			}
-			reply.status(200).send({ unfavourited });
+			return unfavouritedPost;
 		});
+		reply.status(200).send({ unfavourited });
 	} finally {
 		await session.endSession();
 	}

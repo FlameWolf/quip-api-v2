@@ -54,11 +54,11 @@ export const rejectEmail: RouteHandlerMethod = async (request, reply) => {
 			const previousEmail = emailVerification.previousEmail;
 			const user = await User.findByIdAndUpdate(emailVerification.user, { email: emailVerification.previousEmail }).session(session);
 			await EmailVerification.deleteOne(emailVerification?.toJSON() as Filter<any>).session(session);
-			reply.status(200).send();
 			if (previousEmail) {
-				emailController.sendEmail(noReplyEmail, previousEmail, "Email address change rejected", emailTemplates.notifications.emailRejected(user?.handle as string, emailVerification.email as string));
+				await emailController.sendEmail(noReplyEmail, previousEmail, "Email address change rejected", emailTemplates.notifications.emailRejected(user?.handle as string, emailVerification.email as string));
 			}
 		});
+		reply.status(200).send();
 	} finally {
 		await session.endSession();
 	}
@@ -73,7 +73,7 @@ export const verifyEmail: RouteHandlerMethod = async (request, reply) => {
 	const email = emailVerification.email as string;
 	const user = await User.findByIdAndUpdate(emailVerification.user, { email });
 	reply.status(200).send();
-	emailController.sendEmail(noReplyEmail, email, "Email address change verified", emailTemplates.notifications.emailVerified(user?.handle as string, email));
+	await emailController.sendEmail(noReplyEmail, email, "Email address change verified", emailTemplates.notifications.emailVerified(user?.handle as string, email));
 };
 export const forgotPassword: RouteHandlerMethod = async (request, reply) => {
 	const { handle, email } = request.body as ForgotPasswordBody;
@@ -91,7 +91,7 @@ export const forgotPassword: RouteHandlerMethod = async (request, reply) => {
 		token: new ObjectId()
 	}).save();
 	reply.status(200).send({ passwordReset });
-	emailController.sendEmail(noReplyEmail, email, "Reset password", emailTemplates.actions.resetPassword(handle, `${process.env.ALLOW_ORIGIN}/reset-password/${passwordReset.token}`));
+	await emailController.sendEmail(noReplyEmail, email, "Reset password", emailTemplates.actions.resetPassword(handle, `${process.env.ALLOW_ORIGIN}/reset-password/${passwordReset.token}`));
 };
 export const resetPassword: RouteHandlerMethod = async (request, reply) => {
 	const { token } = request.params as ResetPasswordParams;
@@ -111,9 +111,9 @@ export const resetPassword: RouteHandlerMethod = async (request, reply) => {
 			const passwordHash = await bcrypt.hash(password, rounds);
 			const user = await User.findByIdAndUpdate(passwordReset.user, { password: passwordHash }).select("+email").session(session);
 			await PasswordReset.deleteOne(passwordReset?.toJSON() as Filter<any>).session(session);
-			reply.status(200).send();
-			emailController.sendEmail(noReplyEmail, user?.email as string, "Password reset", emailTemplates.notifications.passwordReset(user?.handle as string));
+			await emailController.sendEmail(noReplyEmail, user?.email as string, "Password reset", emailTemplates.notifications.passwordReset(user?.handle as string));
 		});
+		reply.status(200).send();
 	} finally {
 		await session.endSession();
 	}
