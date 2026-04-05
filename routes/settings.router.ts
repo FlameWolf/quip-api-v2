@@ -1,7 +1,7 @@
 "use strict";
 
 import requireAuthentication from "../hooks/requireAuthentication.ts";
-import { wordMuteSchema, settingsSchema, requestApprovalSchema, followRequestsSchema, blockedUsersSchema, mutedItemsSchema, updateEmailSchema, updateSettingSchema, getSettingSchema } from "../requestDefinitions/settings.requests.ts";
+import { wordMuteSchema, settingsSchema, requestApprovalSchema, followRequestsSchema, blockedUsersSchema, mutedItemsSchema, updateEmailSchema, updateSettingSchema, settingInteractSchema } from "../requestDefinitions/settings.requests.ts";
 import { postInteractSchema } from "../requestDefinitions/posts.requests.ts";
 import * as settingsController from "../controllers/settings.controller.ts";
 import * as mutesController from "../controllers/mutes.controller.ts";
@@ -35,7 +35,7 @@ const settingsRouter: FastifyPluginAsync = async (instance, options) => {
 	instance.get("/activate", usersController.activateUser);
 	instance.delete("/delete", usersController.deleteUser);
 	instance.put("/:path", { schema: updateSettingSchema }, settingsController.updateSettingByPath);
-	instance.get("/:path", { schema: getSettingSchema }, settingsController.getSettingByPath);
+	instance.get("/:path", { schema: settingInteractSchema }, settingsController.getSettingByPath);
 };
 
 export default settingsRouter;

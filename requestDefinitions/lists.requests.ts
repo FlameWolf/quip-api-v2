@@ -88,10 +88,10 @@ export const listPostsSchema = {
 	}
 } as const;
 
-export type ListsQueryString = FromSchema<typeof listsSchema.querystring>;
+export type ListsQuery = FromSchema<typeof listsSchema.querystring>;
 export type ListCreateBody = FromSchema<typeof listCreateSchema.body>;
 export type ListUpdateBody = FromSchema<typeof listUpdateSchema.body>;
 export type ListMemberBody = FromSchema<typeof listMemberSchema.body>;
 export type ListInteractParams = FromSchema<typeof listInteractSchema.params>;
-export type ListMembersQueryString = FromSchema<typeof listMembersSchema.querystring>;
-export type ListPostsQueryString = FromSchema<typeof listPostsSchema.querystring>;
+export type ListMembersQuery = FromSchema<typeof listMembersSchema.querystring>;
+export type ListPostsQuery = FromSchema<typeof listPostsSchema.querystring>;

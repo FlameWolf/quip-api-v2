@@ -123,7 +123,7 @@ export const changePasswordSchema = {
 		required: ["oldPassword", "newPassword"]
 	}
 } as const;
-export const getSettingSchema = {
+export const settingInteractSchema = {
 	params: {
 		type: "object",
 		properties: {
@@ -133,7 +133,7 @@ export const getSettingSchema = {
 	}
 } as const;
 export const updateSettingSchema = {
-	...getSettingSchema,
+	...settingInteractSchema,
 	querystring: {
 		type: "object",
 		properties: {
@@ -147,9 +147,9 @@ export type SettingsBody = FromSchema<typeof settingsSchema.body>;
 export type WordMuteBody = FromSchema<typeof wordMuteSchema.body>;
 export type RequestApprovalParams = FromSchema<typeof requestApprovalSchema.params>;
 export type FollowRequestBody = FromSchema<typeof followRequestsSchema.body>;
-export type BlockedUsersQueryString = FromSchema<typeof blockedUsersSchema.querystring>;
-export type MutedItemsQueryString = FromSchema<typeof mutedItemsSchema.querystring>;
+export type BlockedUsersQuery = FromSchema<typeof blockedUsersSchema.querystring>;
+export type MutedItemsQuery = FromSchema<typeof mutedItemsSchema.querystring>;
 export type UpdateEmailBody = FromSchema<typeof updateEmailSchema.body>;
 export type ChangePasswordBody = FromSchema<typeof changePasswordSchema.body>;
-export type GetSettingParams = FromSchema<typeof getSettingSchema.params>;
-export type UpdateSettingQueryString = FromSchema<typeof updateSettingSchema.querystring>;
+export type SettingInteractParams = FromSchema<typeof settingInteractSchema.params>;
+export type UpdateSettingQuery = FromSchema<typeof updateSettingSchema.querystring>;

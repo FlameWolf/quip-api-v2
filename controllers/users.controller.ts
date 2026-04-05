@@ -41,10 +41,10 @@ import Vote from "../models/vote.model.ts";
 import * as emailController from "./email.controller.ts";
 import * as postsController from "./posts.controller.ts";
 import type { RouteHandlerMethod } from "fastify";
-import type { ListInteractParams, ListMembersQueryString, ListsQueryString } from "../requestDefinitions/lists.requests.ts";
+import type { ListInteractParams, ListMembersQuery, ListsQuery } from "../requestDefinitions/lists.requests.ts";
 import type { PostInteractParams } from "../requestDefinitions/posts.requests.ts";
-import type { BlockedUsersQueryString, ChangePasswordBody, MutedItemsQueryString, UpdateEmailBody } from "../requestDefinitions/settings.requests.ts";
-import type { UserBookmarksQueryString, UserFavouritesQueryString, UserFollowRequestsQueryString, UserFollowsQueryString, UserInteractParams, UserMentionsQueryString, UserPostsQueryString, UserTopmostParams, UserTopmostQueryString, UserVotesQueryString } from "../requestDefinitions/users.requests.ts";
+import type { BlockedUsersQuery, ChangePasswordBody, MutedItemsQuery, UpdateEmailBody } from "../requestDefinitions/settings.requests.ts";
+import type { UserBookmarksQuery, UserFavouritesQuery, UserFollowRequestsQuery, UserFollowsQuery, UserInteractParams, UserMentionsQuery, UserPostsQuery, UserTopmostParams, UserTopmostQuery, UserVotesQuery } from "../requestDefinitions/users.requests.ts";
 
 type UserModel = InferSchemaType<typeof User.schema>;
 
@@ -88,7 +88,7 @@ export const getUser: RouteHandlerMethod = async (request, reply) => {
 };
 export const getUserPosts: RouteHandlerMethod = async (request, reply) => {
 	const { handle } = request.params as UserInteractParams;
-	const { includeRepeats, includeReplies, lastPostId } = request.query as UserPostsQueryString;
+	const { includeRepeats, includeReplies, lastPostId } = request.query as UserPostsQuery;
 	const visitorId = (request.userInfo as UserInfo)?.userId;
 	const user = await findActiveUserByHandle(handle);
 	if (!user) {
@@ -100,7 +100,7 @@ export const getUserPosts: RouteHandlerMethod = async (request, reply) => {
 };
 export const getUserTopmost: RouteHandlerMethod = async (request, reply) => {
 	const { handle, period } = request.params as UserTopmostParams;
-	const { lastScore, lastPostId } = request.query as UserTopmostQueryString;
+	const { lastScore, lastPostId } = request.query as UserTopmostQuery;
 	const filter = { handle };
 	if (!(await User.countDocuments(filter))) {
 		reply.status(404).send("User not found");
@@ -132,7 +132,7 @@ export const getUserTopmost: RouteHandlerMethod = async (request, reply) => {
 };
 export const getUserFavourites: RouteHandlerMethod = async (request, reply) => {
 	const { handle } = request.params as UserInteractParams;
-	const { lastFavouriteId } = request.query as UserFavouritesQueryString;
+	const { lastFavouriteId } = request.query as UserFavouritesQuery;
 	const userInfo = request.userInfo as UserInfo;
 	if (userInfo.handle !== handle) {
 		reply.status(401).send();
@@ -143,7 +143,7 @@ export const getUserFavourites: RouteHandlerMethod = async (request, reply) => {
 };
 export const getUserVotes: RouteHandlerMethod = async (request, reply) => {
 	const { handle } = request.params as UserInteractParams;
-	const { lastVoteId } = request.query as UserVotesQueryString;
+	const { lastVoteId } = request.query as UserVotesQuery;
 	const userInfo = request.userInfo as UserInfo;
 	if (userInfo.handle !== handle) {
 		reply.status(401).send();
@@ -154,7 +154,7 @@ export const getUserVotes: RouteHandlerMethod = async (request, reply) => {
 };
 export const getUserBookmarks: RouteHandlerMethod = async (request, reply) => {
 	const { handle } = request.params as UserInteractParams;
-	const { lastBookmarkId } = request.query as UserBookmarksQueryString;
+	const { lastBookmarkId } = request.query as UserBookmarksQuery;
 	const userInfo = request.userInfo as UserInfo;
 	if (userInfo.handle !== handle) {
 		reply.status(401).send();
@@ -165,7 +165,7 @@ export const getUserBookmarks: RouteHandlerMethod = async (request, reply) => {
 };
 export const getUserFollowing: RouteHandlerMethod = async (request, reply) => {
 	const { handle } = request.params as UserInteractParams;
-	const { lastFollowId } = request.query as UserFollowsQueryString;
+	const { lastFollowId } = request.query as UserFollowsQuery;
 	const userInfo = request.userInfo as UserInfo;
 	if (userInfo.handle !== handle) {
 		reply.status(401).send();
@@ -176,7 +176,7 @@ export const getUserFollowing: RouteHandlerMethod = async (request, reply) => {
 };
 export const getUserFollowers: RouteHandlerMethod = async (request, reply) => {
 	const { handle } = request.params as UserInteractParams;
-	const { lastFollowId } = request.query as UserFollowsQueryString;
+	const { lastFollowId } = request.query as UserFollowsQuery;
 	const userInfo = request.userInfo as UserInfo;
 	if (userInfo.handle !== handle) {
 		reply.status(401).send();
@@ -187,7 +187,7 @@ export const getUserFollowers: RouteHandlerMethod = async (request, reply) => {
 };
 export const getUserFollowRequestsSent: RouteHandlerMethod = async (request, reply) => {
 	const { handle } = request.params as UserInteractParams;
-	const { lastFollowRequestId } = request.query as UserFollowRequestsQueryString;
+	const { lastFollowRequestId } = request.query as UserFollowRequestsQuery;
 	const userInfo = request.userInfo as UserInfo;
 	if (userInfo.handle !== handle) {
 		reply.status(401).send();
@@ -198,7 +198,7 @@ export const getUserFollowRequestsSent: RouteHandlerMethod = async (request, rep
 };
 export const getUserFollowRequestsReceived: RouteHandlerMethod = async (request, reply) => {
 	const { handle } = request.params as UserInteractParams;
-	const { lastFollowRequestId } = request.query as UserFollowRequestsQueryString;
+	const { lastFollowRequestId } = request.query as UserFollowRequestsQuery;
 	const userInfo = request.userInfo as UserInfo;
 	if (userInfo.handle !== handle) {
 		reply.status(401).send();
@@ -209,7 +209,7 @@ export const getUserFollowRequestsReceived: RouteHandlerMethod = async (request,
 };
 export const getUserMentions: RouteHandlerMethod = async (request, reply) => {
 	const { handle } = request.params as UserInteractParams;
-	const { lastMentionId } = request.query as UserMentionsQueryString;
+	const { lastMentionId } = request.query as UserMentionsQuery;
 	const user = await findActiveUserByHandle(handle);
 	if (!user) {
 		reply.status(404).send("User not found");
@@ -219,7 +219,7 @@ export const getUserMentions: RouteHandlerMethod = async (request, reply) => {
 	reply.status(200).send({ mentions });
 };
 export const getLists: RouteHandlerMethod = async (request, reply) => {
-	const { memberHandle, lastListId } = request.query as ListsQueryString;
+	const { memberHandle, lastListId } = request.query as ListsQuery;
 	const userId = (request.userInfo as UserInfo).userId;
 	const member = await findUserByHandle(memberHandle as string);
 	if (memberHandle && !member) {
@@ -231,7 +231,7 @@ export const getLists: RouteHandlerMethod = async (request, reply) => {
 };
 export const getListMembers: RouteHandlerMethod = async (request, reply) => {
 	const { name } = request.params as ListInteractParams;
-	const { lastMemberId } = request.query as ListMembersQueryString;
+	const { lastMemberId } = request.query as ListMembersQuery;
 	const userId = (request.userInfo as UserInfo).userId;
 	const list = await List.findOne({ name, owner: userId });
 	if (!list) {
@@ -242,25 +242,25 @@ export const getListMembers: RouteHandlerMethod = async (request, reply) => {
 	reply.status(200).send({ members });
 };
 export const getBlocks: RouteHandlerMethod = async (request, reply) => {
-	const { lastBlockId } = request.query as BlockedUsersQueryString;
+	const { lastBlockId } = request.query as BlockedUsersQuery;
 	const userId = (request.userInfo as UserInfo).userId;
 	const blockedUsers = await findBlocksByUserId(userId, lastBlockId);
 	reply.status(200).send({ blockedUsers });
 };
 export const getMutedUsers: RouteHandlerMethod = async (request, reply) => {
-	const { lastMuteId } = request.query as MutedItemsQueryString;
+	const { lastMuteId } = request.query as MutedItemsQuery;
 	const userId = (request.userInfo as UserInfo).userId;
 	const mutedUsers = await findMutedUsersByUserId(userId, lastMuteId);
 	reply.status(200).send({ mutedUsers });
 };
 export const getMutedPosts: RouteHandlerMethod = async (request, reply) => {
-	const { lastMuteId } = request.query as MutedItemsQueryString;
+	const { lastMuteId } = request.query as MutedItemsQuery;
 	const userId = (request.userInfo as UserInfo).userId;
 	const mutedPosts = await findMutedPostsByUserId(userId, lastMuteId);
 	reply.status(200).send({ mutedPosts });
 };
 export const getMutedWords: RouteHandlerMethod = async (request, reply) => {
-	const { lastMuteId } = request.query as MutedItemsQueryString;
+	const { lastMuteId } = request.query as MutedItemsQuery;
 	const userId = (request.userInfo as UserInfo).userId;
 	const mutedWords = await findMutedWordsByUserId(userId, lastMuteId);
 	for (const mute of mutedWords) {
@@ -300,9 +300,9 @@ export const updateEmail: RouteHandlerMethod = async (request, reply) => {
 	}).save();
 	reply.status(200).send({ emailVerification });
 	if (currentEmail) {
-		emailController.sendEmail(noReplyEmail, currentEmail, "Email address changed", emailTemplates.actions.rejectEmail(handle, currentEmail, `${process.env.ALLOW_ORIGIN}/reject-email/${emailVerification.token}`));
+		await emailController.sendEmail(noReplyEmail, currentEmail, "Email address changed", emailTemplates.actions.rejectEmail(handle, currentEmail, `${process.env.ALLOW_ORIGIN}/reject-email/${emailVerification.token}`));
 	}
-	emailController.sendEmail(noReplyEmail, newEmail, "Verify email address", emailTemplates.actions.verifyEmail(handle, newEmail, `${process.env.ALLOW_ORIGIN}/verify-email/${emailVerification.token}`));
+	await emailController.sendEmail(noReplyEmail, newEmail, "Verify email address", emailTemplates.actions.verifyEmail(handle, newEmail, `${process.env.ALLOW_ORIGIN}/verify-email/${emailVerification.token}`));
 };
 export const changePassword: RouteHandlerMethod = async (request, reply) => {
 	const userId = (request.userInfo as UserInfo).userId;
@@ -322,22 +322,23 @@ export const changePassword: RouteHandlerMethod = async (request, reply) => {
 	await User.findByIdAndUpdate(user._id, { password: passwordHash });
 	reply.status(200).send();
 	if (email) {
-		emailController.sendEmail(noReplyEmail, email, "Password changed", emailTemplates.notifications.passwordChanged(user.handle));
+		await emailController.sendEmail(noReplyEmail, email, "Password changed", emailTemplates.notifications.passwordChanged(user.handle));
 	}
 };
 export const deactivateUser: RouteHandlerMethod = async (request, reply) => {
 	const userId = (request.userInfo as UserInfo).userId;
 	const session = await mongoose.startSession();
 	try {
-		await session.withTransaction(async () => {
+		const { deactivated, email } = await session.withTransaction(async () => {
 			const deactivated = (await User.findByIdAndUpdate(userId, { deactivated: true }, { new: true }).select("+email").session(session)) as HydratedDocument<UserModel>;
 			const email = deactivated.email;
 			await RefreshToken.deleteMany({ user: userId }).session(session);
-			reply.status(200).send({ deactivated });
-			if (email) {
-				emailController.sendEmail(noReplyEmail, email, "Account deactivated", emailTemplates.notifications.deactivated(deactivated.handle));
-			}
+			return { deactivated, email };
 		});
+		if (email) {
+			await emailController.sendEmail(noReplyEmail, email, "Account deactivated", emailTemplates.notifications.deactivated(deactivated.handle));
+		}
+		reply.status(200).send({ deactivated });
 	} finally {
 		await session.endSession();
 	}
@@ -356,14 +357,14 @@ export const activateUser: RouteHandlerMethod = async (request, reply) => {
 	const email = activated.email;
 	reply.status(200).send({ activated });
 	if (email) {
-		emailController.sendEmail(noReplyEmail, email, "Account activated", emailTemplates.notifications.activated(activated.handle));
+		await emailController.sendEmail(noReplyEmail, email, "Account activated", emailTemplates.notifications.activated(activated.handle));
 	}
 };
 export const deleteUser: RouteHandlerMethod = async (request, reply) => {
 	const userId = (request.userInfo as UserInfo).userId;
 	const session = await mongoose.startSession();
 	try {
-		await session.withTransaction(async () => {
+		const { deleted, email } = await session.withTransaction(async () => {
 			const userFilter = { user: userId };
 			const ownerFilter = { owner: userId };
 			const mutedByFilter = { mutedBy: userId };
@@ -396,11 +397,12 @@ export const deleteUser: RouteHandlerMethod = async (request, reply) => {
 				PasswordReset.deleteMany(userFilter).session(session),
 				Settings.deleteMany(userFilter).session(session)
 			]);
-			reply.status(200).send({ deleted });
-			if (email) {
-				emailController.sendEmail(noReplyEmail, email, `Goodbye, ${deleted.handle}`, emailTemplates.notifications.deleted(deleted.handle));
-			}
+			return { deleted, email };
 		});
+		if (email) {
+			await emailController.sendEmail(noReplyEmail, email, `Goodbye, ${deleted.handle}`, emailTemplates.notifications.deleted(deleted.handle));
+		}
+		reply.status(200).send({ deleted });
 	} finally {
 		await session.endSession();
 	}

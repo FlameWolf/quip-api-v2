@@ -4,7 +4,7 @@ import { ObjectId } from "mongodb";
 import { setProperty, getProperty } from "../library.ts";
 import Settings from "../models/settings.model.ts";
 import type { RouteHandlerMethod } from "fastify";
-import type { GetSettingParams, UpdateSettingQueryString, SettingsBody } from "../requestDefinitions/settings.requests.ts";
+import type { SettingInteractParams, UpdateSettingQuery, SettingsBody } from "../requestDefinitions/settings.requests.ts";
 
 const getSettingsByUserId = async (userId: string | ObjectId) => {
 	const param = { user: userId };
@@ -30,7 +30,7 @@ export const getSettings: RouteHandlerMethod = async (request, reply) => {
 	reply.status(200).send({ settings: await getSettingsByUserId(userId) });
 };
 export const getSettingByPath: RouteHandlerMethod = async (request, reply) => {
-	const { path } = request.params as GetSettingParams;
+	const { path } = request.params as SettingInteractParams;
 	const userId = (request.userInfo as UserInfo).userId;
 	const settings = await getSettingsByUserId(userId);
 	const value = getProperty(settings, path);
@@ -43,8 +43,8 @@ export const updateSettings: RouteHandlerMethod = async (request, reply) => {
 	reply.status(200).send({ updated });
 };
 export const updateSettingByPath: RouteHandlerMethod = async (request, reply) => {
-	const { path } = request.params as GetSettingParams;
-	const { value } = request.query as UpdateSettingQueryString;
+	const { path } = request.params as SettingInteractParams;
+	const { value } = request.query as UpdateSettingQuery;
 	const userId = (request.userInfo as UserInfo).userId;
 	const settings = {};
 	setProperty(settings, path, value);

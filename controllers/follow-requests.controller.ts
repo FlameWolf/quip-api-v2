@@ -8,7 +8,6 @@ import type { RouteHandlerMethod } from "fastify";
 import type { UserInteractParams } from "../requestDefinitions/users.requests.ts";
 import type { FollowRequestBody, RequestApprovalParams } from "../requestDefinitions/settings.requests.ts";
 
-const batchSize = 65536;
 type FollowRequestModel = InferSchemaType<typeof FollowRequest.schema>;
 
 export const acceptFollowRequest: RouteHandlerMethod = async (request, reply) => {
@@ -28,14 +27,15 @@ export const acceptFollowRequest: RouteHandlerMethod = async (request, reply) =>
 		if (!followRequest) {
 			reply.status(404).send(new Error("Follow request not found"));
 		}
-		await session.withTransaction(async () => {
+		const accepted = await session.withTransaction(async () => {
 			await FollowRequest.deleteOne(followRequest as FollowRequestModel).session(session);
-			const accepted = await new Follow({
+			const acceptedRequest = await new Follow({
 				user: acceptorUserId,
 				followedBy: followRequest?.requestedBy
 			}).save({ session });
-			reply.status(200).send({ accepted });
+			return acceptedRequest;
 		});
+		reply.status(200).send({ accepted });
 	} finally {
 		await session.endSession();
 	}
@@ -45,7 +45,7 @@ export const acceptSelectedFollowRequests: RouteHandlerMethod = async (request, 
 	const acceptorUserId = (request.userInfo as UserInfo).userId;
 	const session = await mongoose.startSession();
 	try {
-		await session.withTransaction(async () => {
+		const acceptedRequestsCount = await session.withTransaction(async () => {
 			const filter = {
 				user: acceptorUserId,
 				_id: {
@@ -63,8 +63,9 @@ export const acceptSelectedFollowRequests: RouteHandlerMethod = async (request, 
 				).map(followRequest => new Follow(followRequest)),
 				{ session }
 			);
-			reply.status(200).send({ acceptedRequestsCount: result.insertedCount });
+			return result.insertedCount;
 		});
+		reply.status(200).send({ acceptedRequestsCount });
 	} finally {
 		await session.endSession();
 	}
@@ -73,9 +74,10 @@ export const acceptAllFollowRequests: RouteHandlerMethod = async (request, reply
 	const acceptorUserId = (request.userInfo as UserInfo).userId;
 	const session = await mongoose.startSession();
 	try {
-		let batchCount = 0;
-		let totalCount = 0;
-		await session.withTransaction(async () => {
+		const batchSize = 65536;
+		const acceptedRequestsCount = await session.withTransaction(async () => {
+			let batchCount = 0;
+			let totalCount = 0;
 			const filter = { user: acceptorUserId };
 			do {
 				const followRequests = await FollowRequest.find(filter, { user: acceptorUserId, followedBy: "$requestedBy" }).limit(batchSize).session(session);
@@ -94,8 +96,9 @@ export const acceptAllFollowRequests: RouteHandlerMethod = async (request, reply
 				batchCount = result.insertedCount;
 				totalCount += batchCount;
 			} while (batchCount === batchSize);
+			return totalCount;
 		});
-		reply.status(200).send({ acceptedRequestsCount: totalCount });
+		reply.status(200).send({ acceptedRequestsCount });
 	} finally {
 		await session.endSession();
 	}

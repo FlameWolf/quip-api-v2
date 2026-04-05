@@ -103,13 +103,13 @@ export const resetPasswordSchema = {
 	}
 } as const;
 
-export type TimelineQueryString = FromSchema<typeof timelineSchema.querystring>;
+export type TimelineQuery = FromSchema<typeof timelineSchema.querystring>;
 export type ActivityParams = FromSchema<typeof activitySchema.params>;
-export type ActivityQueryString = FromSchema<typeof activitySchema.querystring>;
+export type ActivityQuery = FromSchema<typeof activitySchema.querystring>;
 export type TopmostParams = FromSchema<typeof topmostSchema.params>;
-export type TopmostQueryString = FromSchema<typeof topmostSchema.querystring>;
+export type TopmostQuery = FromSchema<typeof topmostSchema.querystring>;
 export type HashtagParams = FromSchema<typeof hashtagSchema.params>;
-export type HashtagQueryString = FromSchema<typeof hashtagSchema.querystring>;
+export type HashtagQuery = FromSchema<typeof hashtagSchema.querystring>;
 export type EmailApprovalParams = FromSchema<typeof emailApprovalSchema.params>;
 export type ForgotPasswordBody = FromSchema<typeof forgotPasswordSchema.body>;
 export type ResetPasswordParams = FromSchema<typeof resetPasswordSchema.params>;

@@ -10,7 +10,7 @@ import * as postsController from "./posts.controller.ts";
 import type { RouteHandlerMethod } from "fastify";
 import type { PostInteractParams } from "../requestDefinitions/posts.requests.ts";
 import type { WordMuteBody } from "../requestDefinitions/settings.requests.ts";
-import type { UserInteractParams, ActionReasonQueryString } from "../requestDefinitions/users.requests.ts";
+import type { UserInteractParams, ActionReasonQuery } from "../requestDefinitions/users.requests.ts";
 
 const getMutedWordRegExp = (word: string, match: string) => {
 	switch (match) {
@@ -26,7 +26,7 @@ const getMutedWordRegExp = (word: string, match: string) => {
 };
 export const muteUser: RouteHandlerMethod = async (request, reply) => {
 	const { handle: muteeHandle } = request.params as UserInteractParams;
-	const { reason: muteReason } = request.query as ActionReasonQueryString;
+	const { reason: muteReason } = request.query as ActionReasonQuery;
 	const { handle: muterHandle, userId: muterUserId } = request.userInfo as UserInfo;
 	if (muteeHandle === muterHandle) {
 		reply.status(422).send("User cannot mute themselves");
@@ -39,9 +39,9 @@ export const muteUser: RouteHandlerMethod = async (request, reply) => {
 	}
 	const session = await mongoose.startSession();
 	try {
-		await session.withTransaction(async () => {
+		const muted = await session.withTransaction(async () => {
 			const muteeUserId = mutee._id;
-			const muted = await new MutedUser({
+			const mutedUser = await new MutedUser({
 				user: muteeUserId,
 				mutedBy: muterUserId,
 				reason: muteReason
@@ -51,8 +51,9 @@ export const muteUser: RouteHandlerMethod = async (request, reply) => {
 					mutedUsers: muteeUserId
 				}
 			}).session(session);
-			reply.status(200).send({ muted });
+			return mutedUser;
 		});
+		reply.status(200).send({ muted });
 	} finally {
 		await session.endSession();
 	}
@@ -71,18 +72,19 @@ export const unmuteUser: RouteHandlerMethod = async (request, reply) => {
 	}
 	const session = await mongoose.startSession();
 	try {
-		await session.withTransaction(async () => {
+		const unmuted = await session.withTransaction(async () => {
 			const unmuteeUserId = unmutee._id;
-			const unmuted = await MutedUser.findOneAndDelete({ user: unmuteeUserId, mutedBy: unmuterUserId }).session(session);
-			if (unmuted) {
+			const unmutedUser = await MutedUser.findOneAndDelete({ user: unmuteeUserId, mutedBy: unmuterUserId }).session(session);
+			if (unmutedUser) {
 				await User.findByIdAndUpdate(unmuterUserId, {
 					$pull: {
 						mutedUsers: unmuteeUserId
 					}
 				}).session(session);
 			}
-			reply.status(200).send({ unmuted });
+			return unmutedUser;
 		});
+		reply.status(200).send({ unmuted });
 	} finally {
 		await session.endSession();
 	}
@@ -97,15 +99,16 @@ export const mutePost: RouteHandlerMethod = async (request, reply) => {
 	}
 	const session = await mongoose.startSession();
 	try {
-		await session.withTransaction(async () => {
-			const muted = await new MutedPost({ post: postId, mutedBy: userId }).save({ session });
+		const muted = await session.withTransaction(async () => {
+			const mutedPost = await new MutedPost({ post: postId, mutedBy: userId }).save({ session });
 			await User.findByIdAndUpdate(userId, {
 				$addToSet: {
 					mutedPosts: postId
 				}
 			}).session(session);
-			reply.status(200).send({ muted });
+			return mutedPost;
 		});
+		reply.status(200).send({ muted });
 	} finally {
 		await session.endSession();
 	}
@@ -115,17 +118,18 @@ export const unmutePost: RouteHandlerMethod = async (request, reply) => {
 	const userId = (request.userInfo as UserInfo).userId;
 	const session = await mongoose.startSession();
 	try {
-		await session.withTransaction(async () => {
-			const unmuted = await MutedPost.findOneAndDelete({ post: postId, mutedBy: userId }).session(session);
-			if (unmuted) {
+		const unmuted = await session.withTransaction(async () => {
+			const unmutedPost = await MutedPost.findOneAndDelete({ post: postId, mutedBy: userId }).session(session);
+			if (unmutedPost) {
 				await User.findByIdAndUpdate(userId, {
 					$pull: {
 						mutedPosts: postId
 					}
 				}).session(session);
 			}
-			reply.status(200).send({ unmuted });
+			return unmutedPost;
 		});
+		reply.status(200).send({ unmuted });
 	} finally {
 		await session.endSession();
 	}
@@ -135,15 +139,16 @@ export const muteWord: RouteHandlerMethod = async (request, reply) => {
 	const userId = (request.userInfo as UserInfo).userId;
 	const session = await mongoose.startSession();
 	try {
-		await session.withTransaction(async () => {
-			const muted = await new MutedWord({ word, match, mutedBy: userId }).save({ session });
+		const muted = await session.withTransaction(async () => {
+			const mutedWord = await new MutedWord({ word, match, mutedBy: userId }).save({ session });
 			await User.findByIdAndUpdate(userId, {
 				$addToSet: {
 					mutedWords: getMutedWordRegExp(word, match)
 				}
 			}).session(session);
-			reply.status(200).send({ muted });
+			return mutedWord;
 		});
+		reply.status(200).send({ muted });
 	} finally {
 		await session.endSession();
 	}
@@ -153,17 +158,18 @@ export const unmuteWord: RouteHandlerMethod = async (request, reply) => {
 	const userId = (request.userInfo as UserInfo).userId;
 	const session = await mongoose.startSession();
 	try {
-		await session.withTransaction(async () => {
-			const unmuted = await MutedWord.findOneAndDelete({ word, match, mutedBy: userId }).session(session);
-			if (unmuted) {
+		const unmuted = await session.withTransaction(async () => {
+			const unmutedWord = await MutedWord.findOneAndDelete({ word, match, mutedBy: userId }).session(session);
+			if (unmutedWord) {
 				await User.findByIdAndUpdate(userId, {
 					$pull: {
 						mutedWords: getMutedWordRegExp(word, match)
 					}
 				}).session(session);
 			}
-			reply.status(200).send({ unmuted });
+			return unmutedWord;
 		});
+		reply.status(200).send({ unmuted });
 	} finally {
 		await session.endSession();
 	}

@@ -109,13 +109,13 @@ export const userMentionsSchema = {
 } as const;
 
 export type UserInteractParams = FromSchema<typeof userInteractSchema.params>;
-export type ActionReasonQueryString = FromSchema<typeof actionReasonSchema.querystring>;
-export type UserPostsQueryString = FromSchema<typeof userPostsSchema.querystring>;
+export type ActionReasonQuery = FromSchema<typeof actionReasonSchema.querystring>;
+export type UserPostsQuery = FromSchema<typeof userPostsSchema.querystring>;
 export type UserTopmostParams = FromSchema<typeof userTopmostSchema.params>;
-export type UserTopmostQueryString = FromSchema<typeof userTopmostSchema.querystring>;
-export type UserFavouritesQueryString = FromSchema<typeof userFavouritesSchema.querystring>;
-export type UserVotesQueryString = FromSchema<typeof userVotesSchema.querystring>;
-export type UserBookmarksQueryString = FromSchema<typeof userBookmarksSchema.querystring>;
-export type UserFollowsQueryString = FromSchema<typeof userFollowsSchema.querystring>;
-export type UserFollowRequestsQueryString = FromSchema<typeof userFollowRequestsSchema.querystring>;
-export type UserMentionsQueryString = FromSchema<typeof userMentionsSchema.querystring>;
+export type UserTopmostQuery = FromSchema<typeof userTopmostSchema.querystring>;
+export type UserFavouritesQuery = FromSchema<typeof userFavouritesSchema.querystring>;
+export type UserVotesQuery = FromSchema<typeof userVotesSchema.querystring>;
+export type UserBookmarksQuery = FromSchema<typeof userBookmarksSchema.querystring>;
+export type UserFollowsQuery = FromSchema<typeof userFollowsSchema.querystring>;
+export type UserFollowRequestsQuery = FromSchema<typeof userFollowRequestsSchema.querystring>;
+export type UserMentionsQuery = FromSchema<typeof userMentionsSchema.querystring>;

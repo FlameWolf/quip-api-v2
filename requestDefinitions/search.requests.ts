@@ -87,6 +87,6 @@ export const searchUsersSchema = {
 	}
 } as const;
 
-export type SearchQueryString = FromSchema<typeof searchSchema.querystring>;
-export type SearchNearbyQueryString = FromSchema<typeof searchNearbySchema.querystring>;
-export type SearchUsersQueryString = FromSchema<typeof searchUsersSchema.querystring>;
+export type SearchQuery = FromSchema<typeof searchSchema.querystring>;
+export type SearchNearbyQuery = FromSchema<typeof searchNearbySchema.querystring>;
+export type SearchUsersQuery = FromSchema<typeof searchUsersSchema.querystring>;

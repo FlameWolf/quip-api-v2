@@ -40,8 +40,8 @@ export const followUser: RouteHandlerMethod = async (request, reply) => {
 	}
 	const session = await mongoose.startSession();
 	try {
-		await session.withTransaction(async () => {
-			const followed = await new Follow({
+		const followed = await session.withTransaction(async () => {
+			const followedUser = await new Follow({
 				user: followeeUserId,
 				followedBy: followerUserId
 			}).save({ session });
@@ -50,8 +50,9 @@ export const followUser: RouteHandlerMethod = async (request, reply) => {
 					follows: followeeUserId
 				}
 			}).session(session);
-			reply.status(200).send({ followed });
+			return followedUser;
 		});
+		reply.status(200).send({ followed });
 	} finally {
 		await session.endSession();
 	}
@@ -70,18 +71,19 @@ export const unfollowUser: RouteHandlerMethod = async (request, reply) => {
 	}
 	const session = await mongoose.startSession();
 	try {
-		await session.withTransaction(async () => {
+		const unfollowed = await session.withTransaction(async () => {
 			const unfolloweeUserId = unfollowee._id;
-			const unfollowed = await Follow.findOneAndDelete({ user: unfolloweeUserId, followedBy: unfollowerUserId }).session(session);
-			if (unfollowed) {
+			const unfollowedUser = await Follow.findOneAndDelete({ user: unfolloweeUserId, followedBy: unfollowerUserId }).session(session);
+			if (unfollowedUser) {
 				await User.findByIdAndUpdate(unfollowerUserId, {
 					$pull: {
 						follows: unfolloweeUserId
 					}
 				}).session(session);
 			}
-			reply.status(200).send({ unfollowed });
+			return unfollowedUser;
 		});
+		reply.status(200).send({ unfollowed });
 	} finally {
 		await session.endSession();
 	}
