@@ -72,7 +72,7 @@ const updateLanguages = async (post: Partial<PostModel> | DeepPartial<PostModel>
 			languages.add(language as LanguageEntry);
 		}
 	}
-	post.languages = [...languages];
+	post.languages = Array.from(languages);
 };
 const updateMentionsAndHashtags = async (content: string, post: Partial<PostModel> | DeepPartial<PostModel>) => {
 	const postMentions = new Set(post.mentions?.map((mention: MentionEntry) => mention?.toString()));
@@ -97,8 +97,8 @@ const updateMentionsAndHashtags = async (content: string, post: Partial<PostMode
 	if (contentHashtags) {
 		contentHashtags.map(hashtag => hashtag.substring(1)).forEach(hashtag => postHashtags.add(hashtag as HashtagEntry));
 	}
-	post.mentions = postMentions.size > 0 ? [...postMentions].map(mention => new ObjectId(mention) as MentionEntry) : undefined;
-	post.hashtags = postHashtags.size > 0 ? [...postHashtags] : undefined;
+	post.mentions = postMentions.size > 0 ? Array.from(postMentions).map(mention => new ObjectId(mention) as MentionEntry) : undefined;
+	post.hashtags = postHashtags.size > 0 ? Array.from(postHashtags) : undefined;
 };
 const uploadFile = async (file: FormzillaFile) => {
 	const filePath = file.path as string;
