@@ -9,6 +9,10 @@ import * as mutesController from "../controllers/mutes.controller.ts";
 import type { FastifyPluginAsync } from "fastify";
 
 const postsRouter: FastifyPluginAsync = async (instance, options) => {
+	instance.get("/:postId", { schema: postInteractSchema }, postsController.getPost);
+	instance.get("/:postId/quotes", { schema: postQuotesSchema }, postsController.getPostQuotes);
+	instance.get("/:postId/replies", { schema: postRepliesSchema }, postsController.getPostReplies);
+	instance.get("/:postId/parent", { schema: postInteractSchema }, postsController.getPostParent);
 	instance.post("/create", { onRequest: requireAuthentication, schema: postCreateSchema }, postsController.createPost);
 	instance.patch("/update/:postId", { onRequest: requireAuthentication, schema: postUpdateSchema }, postsController.updatePost);
 	instance.get("/favourite/:postId", { onRequest: requireAuthentication, schema: postInteractSchema }, favouritesController.addFavourite);
@@ -23,10 +27,6 @@ const postsRouter: FastifyPluginAsync = async (instance, options) => {
 	instance.get("/unmute/:postId", { onRequest: requireAuthentication, schema: postInteractSchema }, mutesController.unmutePost);
 	instance.get("/vote/:postId", { onRequest: requireAuthentication, schema: postVoteSchema }, postsController.castVote);
 	instance.delete("/delete/:postId", { onRequest: requireAuthentication, schema: postInteractSchema }, postsController.deletePost);
-	instance.get("/:postId", { schema: postInteractSchema }, postsController.getPost);
-	instance.get("/:postId/quotes", { schema: postQuotesSchema }, postsController.getPostQuotes);
-	instance.get("/:postId/replies", { schema: postRepliesSchema }, postsController.getPostReplies);
-	instance.get("/:postId/parent", { schema: postInteractSchema }, postsController.getPostParent);
 };
 
 export default postsRouter;

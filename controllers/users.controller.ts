@@ -89,13 +89,12 @@ export const getUser: RouteHandlerMethod = async (request, reply) => {
 export const getUserPosts: RouteHandlerMethod = async (request, reply) => {
 	const { handle } = request.params as UserInteractParams;
 	const { includeRepeats, includeReplies, lastPostId } = request.query as UserPostsQuery;
-	const visitorId = (request.userInfo as UserInfo)?.userId;
 	const user = await findActiveUserByHandle(handle);
 	if (!user) {
 		reply.status(404).send("User not found");
 		return;
 	}
-	const posts = await findPostsByUserId(user._id, includeRepeats, includeReplies, visitorId, lastPostId);
+	const posts = await findPostsByUserId(user._id, includeRepeats, includeReplies, (request.userInfo as UserInfo)?.userId, lastPostId);
 	reply.status(200).send({ posts });
 };
 export const getUserTopmost: RouteHandlerMethod = async (request, reply) => {
