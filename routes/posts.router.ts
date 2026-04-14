@@ -12,6 +12,7 @@ const postsRouter: FastifyPluginAsync = async (instance, options) => {
 	instance.get("/:postId", { schema: postInteractSchema }, postsController.getPost);
 	instance.get("/:postId/quotes", { schema: postQuotesSchema }, postsController.getPostQuotes);
 	instance.get("/:postId/replies", { schema: postRepliesSchema }, postsController.getPostReplies);
+	instance.get("/:postId/thread", { schema: postInteractSchema }, postsController.getPostThread);
 	instance.get("/:postId/parent", { schema: postInteractSchema }, postsController.getPostParent);
 	instance.post("/create", { onRequest: requireAuthentication, schema: postCreateSchema }, postsController.createPost);
 	instance.patch("/update/:postId", { onRequest: requireAuthentication, schema: postUpdateSchema }, postsController.updatePost);
