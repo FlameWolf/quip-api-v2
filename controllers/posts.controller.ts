@@ -6,9 +6,10 @@ import cld from "cld";
 import { v2 as cloudinary } from "cloudinary";
 import { emptyString, getUnicodeClusterCount, maxContentLength, maxRowsPerFetch, nullId, quoteScore, repeatScore, replyScore, voteScore } from "../library.ts";
 import postAggregationPipeline from "../db/pipelines/post.ts";
-import postParentAggregationPipeline from "../db/pipelines/post-parent.ts";
 import postQuotesAggregationPipeline from "../db/pipelines/post-quotes.ts";
 import postRepliesAggregationPipeline from "../db/pipelines/post-replies.ts";
+import postThreadAggregationPipeline from "../db/pipelines/post-thread.ts";
+import postParentAggregationPipeline from "../db/pipelines/post-parent.ts";
 import Bookmark from "../models/bookmark.model.ts";
 import Favourite from "../models/favourite.model.ts";
 import MutedPost from "../models/muted.post.model.ts";
@@ -301,38 +302,12 @@ export const getPostReplies: RouteHandlerMethod = async (request, reply) => {
 };
 export const getPostThread: RouteHandlerMethod = async (request, reply) => {
 	const { postId } = request.params as PostInteractParams;
-	const userId = (request.userInfo as UserInfo)?.userId;
 	const post = await findPostById(postId);
 	if (!post) {
 		reply.status(404).send("Post not found");
 		return;
 	}
-	let nextPost = post;
-	const thread = [];
-	while (thread.length < maxRowsPerFetch) {
-		nextPost = (await Post.findOne({
-			replyTo: nextPost._id,
-			author: nextPost.author
-		})) as HydratedDocument<PostModel>;
-		if (!nextPost) {
-			break;
-		}
-		thread.push(nextPost);
-	}
-	const replies = (
-		await Promise.all(
-			thread.map(x =>
-				Post.aggregate([
-					{
-						$match: {
-							_id: x._id
-						}
-					},
-					...postAggregationPipeline(userId)
-				])
-			)
-		)
-	).flat();
+	const replies = await Post.aggregate(postThreadAggregationPipeline(post._id, post.author, (request.userInfo as UserInfo)?.userId));
 	reply.status(200).send({ replies });
 };
 export const getPostParent: RouteHandlerMethod = async (request, reply) => {
