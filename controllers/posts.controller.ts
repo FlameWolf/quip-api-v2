@@ -32,7 +32,7 @@ export const findPostById = async (postId: string | ObjectId): Promise<HydratedD
 	const repeatPost = post?.repeatPost as ObjectId;
 	return repeatPost ? await findPostById(repeatPost) : (post as HydratedDocument<PostModel>);
 };
-const validateContent = (content: string, poll?: Dictionary, media?: FormzillaFile, postId?: string | ObjectId) => {
+const validateContent = (content: string, poll?: PollModel, media?: FormzillaFile, postId?: string | ObjectId) => {
 	if (!content.trim()) {
 		if (poll || !(media || postId)) {
 			throw new Error("No content");
@@ -137,9 +137,7 @@ export const createPost: RouteHandlerMethod = async (request, reply) => {
 				})
 			}
 		}),
-		...(location && {
-			location: location as any
-		})
+		...(location && { location })
 	};
 	await Promise.all([updateLanguages(model), content.trim() && updateMentionsAndHashtags(content, model)]);
 	const session = await mongoose.startSession();
@@ -360,9 +358,7 @@ export const quotePost: RouteHandlerMethod = async (request, reply) => {
 					post: originalPostId as any
 				},
 				languages: originalPost.languages,
-				...(location && {
-					location: location as any
-				}),
+				...(location && { location }),
 				mentions: [originalPost.author as any]
 			};
 			await Promise.all([updateLanguages(model), content.trim() && updateMentionsAndHashtags(content, model)]);
@@ -516,9 +512,7 @@ export const replyToPost: RouteHandlerMethod = async (request, reply) => {
 						})
 					}
 				}),
-				...(location && {
-					location: location as any
-				}),
+				...(location && { location }),
 				mentions: [originalPost.author as any]
 			};
 			await Promise.all([updateLanguages(model), content.trim() && updateMentionsAndHashtags(content, model)]);
