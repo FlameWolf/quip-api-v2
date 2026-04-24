@@ -12,7 +12,7 @@ import type { FastifyPluginAsync } from "fastify";
 const usersRouter: FastifyPluginAsync = async (instance, options) => {
 	instance.get("/:handle", { schema: userInteractSchema }, usersController.getUser);
 	instance.get("/:handle/posts", { schema: userPostsSchema }, usersController.getUserPosts);
-	instance.get("/:handle/topmost/:period?", { schema: userTopmostSchema }, usersController.getUserTopmost);
+	instance.get("/:handle/topmost/:period", { schema: userTopmostSchema }, usersController.getUserTopmost);
 	instance.get("/:handle/mentions", { schema: userMentionsSchema }, usersController.getUserMentions);
 	instance.get("/follow/:handle", { onRequest: requireAuthentication, schema: userInteractSchema }, followsController.followUser);
 	instance.get("/cancel-req/:handle", { onRequest: requireAuthentication, schema: userInteractSchema }, followRequestsController.cancelFollowRequest);

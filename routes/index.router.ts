@@ -25,8 +25,8 @@ const indexRouter: FastifyPluginAsync = async (instance, options) => {
 		reply.type("text/plain").status(200).send("OK");
 	});
 	instance.get("/timeline", { onRequest: requireAuthentication, schema: timelineSchema }, indexController.timeline);
-	instance.get("/activity/:period?", { onRequest: requireAuthentication, schema: activitySchema }, indexController.activity);
-	instance.get("/topmost/:period?", { schema: topmostSchema }, indexController.topmost);
+	instance.get("/activity/:period", { onRequest: requireAuthentication, schema: activitySchema }, indexController.activity);
+	instance.get("/topmost/:period", { schema: topmostSchema }, indexController.topmost);
 	instance.get("/hashtag/:name", { schema: hashtagSchema }, indexController.hashtag);
 	instance.get("/reject-email/:token", { schema: emailApprovalSchema }, indexController.rejectEmail);
 	instance.get("/verify-email/:token", { schema: emailApprovalSchema }, indexController.verifyEmail);
