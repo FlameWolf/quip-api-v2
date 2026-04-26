@@ -373,11 +373,13 @@ export const quotePost: RouteHandlerMethod = async (request, reply) => {
 					}
 				}
 			).session(session);
-			await Post.findByIdAndUpdate(originalPostId, {
-				$inc: {
-					score: quoteScore
-				}
-			}).session(session);
+			if (originalPost.author.toString() !== userId) {
+				await Post.findByIdAndUpdate(originalPostId, {
+					$inc: {
+						score: quoteScore
+					}
+				}).session(session);
+			}
 			const attachments = createdQuote.attachments;
 			if (attachments) {
 				attachments.post = originalPost;
@@ -427,7 +429,7 @@ export const repeatPost: RouteHandlerMethod = async (request, reply) => {
 					}
 				}
 			).session(session);
-			if (!postToDelete) {
+			if (!postToDelete && originalPost.author.toString() !== userId) {
 				await Post.findByIdAndUpdate(originalPostId, {
 					$inc: {
 						score: repeatScore
@@ -462,11 +464,19 @@ export const unrepeatPost: RouteHandlerMethod = async (request, reply) => {
 						}
 					}
 				).session(session);
-				await Post.findByIdAndUpdate(postId, {
-					$inc: {
-						score: -repeatScore
+				await Post.findOneAndUpdate(
+					{
+						_id: postId,
+						author: {
+							$ne: userId
+						}
+					},
+					{
+						$inc: {
+							score: -repeatScore
+						}
 					}
-				}).session(session);
+				).session(session);
 			}
 			return deletedRepeat;
 		});
@@ -527,11 +537,13 @@ export const replyToPost: RouteHandlerMethod = async (request, reply) => {
 					}
 				}
 			).session(session);
-			await Post.findByIdAndUpdate(originalPostId, {
-				$inc: {
-					score: replyScore
-				}
-			}).session(session);
+			if (originalPost.author.toString() !== userId) {
+				await Post.findByIdAndUpdate(originalPostId, {
+					$inc: {
+						score: replyScore
+					}
+				}).session(session);
+			}
 			return createdReply;
 		});
 		reply.status(201).send({ reply: replyPost });
@@ -614,28 +626,52 @@ export const deletePost: RouteHandlerMethod = async (request, reply) => {
 			const deleteResult = await Post.deleteOne(post as PostModel).session(session);
 			if (deleteResult.deletedCount === 1) {
 				if (repeatedPostId) {
-					await Post.findByIdAndUpdate(repeatedPostId, {
-						$inc: {
-							score: -repeatScore
+					await Post.findOneAndUpdate(
+						{
+							_id: repeatedPostId,
+							author: {
+								$ne: userId
+							}
+						},
+						{
+							$inc: {
+								score: -repeatScore
+							}
 						}
-					}).session(session);
+					).session(session);
 				}
 				if (repliedToPostId) {
-					await Post.findByIdAndUpdate(repliedToPostId, {
-						$inc: {
-							score: -replyScore
+					await Post.findOneAndUpdate(
+						{
+							_id: repliedToPostId,
+							author: {
+								$ne: userId
+							}
+						},
+						{
+							$inc: {
+								score: -replyScore
+							}
 						}
-					}).session(session);
+					).session(session);
 				}
 				if (attachments) {
 					const quotedPostId = attachments.post;
 					const poll = attachments.poll as HydratedDocument<PollModel>;
 					if (quotedPostId) {
-						await Post.findByIdAndUpdate(quotedPostId, {
-							$inc: {
-								score: -quoteScore
+						await Post.findOneAndUpdate(
+							{
+								_id: quotedPostId,
+								author: {
+									$ne: userId
+								}
+							},
+							{
+								$inc: {
+									score: -quoteScore
+								}
 							}
-						}).session(session);
+						).session(session);
 					}
 					if (poll) {
 						await Vote.deleteMany({ poll: poll._id }).session(session);

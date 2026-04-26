@@ -24,11 +24,13 @@ export const addFavourite: RouteHandlerMethod = async (request, reply) => {
 				post: originalPostId,
 				favouritedBy: userId
 			}).save({ session });
-			await Post.findByIdAndUpdate(originalPostId, {
-				$inc: {
-					score: favouriteScore
-				}
-			}).session(session);
+			if (post.author.toString() !== userId) {
+				await Post.findByIdAndUpdate(originalPostId, {
+					$inc: {
+						score: favouriteScore
+					}
+				}).session(session);
+			}
 			return favouritedPost;
 		});
 		reply.status(200).send({ favourited });
@@ -47,11 +49,19 @@ export const removeFavourite: RouteHandlerMethod = async (request, reply) => {
 				favouritedBy: userId
 			}).session(session);
 			if (unfavouritedPost) {
-				await Post.findByIdAndUpdate(postId, {
-					$inc: {
-						score: -favouriteScore
+				await Post.findOneAndUpdate(
+					{
+						_id: postId,
+						author: {
+							$ne: userId
+						}
+					},
+					{
+						$inc: {
+							score: -favouriteScore
+						}
 					}
-				}).session(session);
+				).session(session);
 			}
 			return unfavouritedPost;
 		});
