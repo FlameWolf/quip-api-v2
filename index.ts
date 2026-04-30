@@ -47,7 +47,7 @@ server.register((await import("formzilla")).default, {
 			throw new Error("Invalid file type");
 		}
 		return {
-			directory: (await import("path")).default.join(__dirname, "public"),
+			directory: (await import("path")).default.join(import.meta.dirname, "public"),
 			fileName: standardiseFileName(file.originalName)
 		};
 	})
