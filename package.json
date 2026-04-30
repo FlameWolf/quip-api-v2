@@ -5,6 +5,7 @@
 	"scripts": {
 		"dev": "tsx watch index.ts",
 		"build": "tsc",
+		"postbuild": "node -e \"['dist/public/images/previews', 'dist/public/videos/previews'].forEach(x => require('fs').mkdirSync(x, { recursive:true }))\"",
 		"prettify": "prettier --write .",
 		"start": "node --use-strict ./dist/index.js"
 	},
