@@ -77,7 +77,10 @@ if (!isProdEnv) {
 		}
 	});
 	server.register((await import("@fastify/swagger-ui")).fastifySwaggerUi, {
-		routePrefix: "/swagger"
+		routePrefix: "/swagger",
+		uiConfig: {
+			persistAuthorization: true
+		}
 	});
 }
 server.decorateRequest("userInfo", null as unknown as UserInfo);
