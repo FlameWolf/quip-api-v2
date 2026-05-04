@@ -1,7 +1,7 @@
 "use strict";
 
 import requireAuthentication from "../hooks/requireAuthentication.ts";
-import { wordMuteSchema, settingsSchema, requestApprovalSchema, followRequestsSchema, blockedUsersSchema, mutedItemsSchema, updateEmailSchema, updateSettingSchema, settingInteractSchema } from "../requestDefinitions/settings.requests.ts";
+import { wordMuteSchema, settingsSchema, requestApprovalSchema, followRequestsSchema, blockedUsersSchema, mutedItemsSchema, updateEmailSchema, changePasswordSchema, updateSettingSchema, settingInteractSchema } from "../requestDefinitions/settings.requests.ts";
 import { postInteractSchema } from "../requestDefinitions/posts.requests.ts";
 import * as settingsController from "../controllers/settings.controller.ts";
 import * as mutesController from "../controllers/mutes.controller.ts";
@@ -30,7 +30,7 @@ const settingsRouter: FastifyPluginAsync = async (instance, options) => {
 	instance.get("/pin/{postId}", { schema: postInteractSchema }, usersController.pinPost);
 	instance.get("/unpin", usersController.unpinPost);
 	instance.post("/update-email", { schema: updateEmailSchema }, usersController.updateEmail);
-	instance.post("/change-password", usersController.changePassword);
+	instance.post("/change-password", { schema: changePasswordSchema }, usersController.changePassword);
 	instance.get("/deactivate", usersController.deactivateUser);
 	instance.get("/activate", usersController.activateUser);
 	instance.delete("/delete", usersController.deleteUser);
