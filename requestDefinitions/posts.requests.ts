@@ -1,20 +1,41 @@
 "use strict";
 
 import type { FromSchema } from "json-schema-to-ts";
+import { maxContentLength, maxPollOptionLength, maxMediaDescriptionLength } from "../library.ts";
+
+const sixteen = 16;
+const contentLimit = maxContentLength * sixteen;
+const pollOptionLimit = maxPollOptionLength * sixteen;
+const mediaDescriptionLimit = maxMediaDescriptionLength * sixteen;
 
 export const postCreateSchema = {
 	consumes: ["multipart/form-data"],
 	body: {
 		type: "object",
 		properties: {
-			content: { type: "string" },
+			content: {
+				type: "string",
+				maxLength: contentLimit
+			},
 			poll: {
 				type: "object",
 				properties: {
-					first: { type: "string" },
-					second: { type: "string" },
-					third: { type: "string" },
-					fourth: { type: "string" },
+					first: {
+						type: "string",
+						maxLength: pollOptionLimit
+					},
+					second: {
+						type: "string",
+						maxLength: pollOptionLimit
+					},
+					third: {
+						type: "string",
+						maxLength: pollOptionLimit
+					},
+					fourth: {
+						type: "string",
+						maxLength: pollOptionLimit
+					},
 					duration: {
 						type: "integer",
 						format: "int64",
@@ -29,7 +50,10 @@ export const postCreateSchema = {
 				type: "string",
 				format: "binary"
 			},
-			"media-description": { type: "string" },
+			"media-description": {
+				type: "string",
+				maxLength: mediaDescriptionLimit
+			},
 			location: {
 				type: "object",
 				properties: {
