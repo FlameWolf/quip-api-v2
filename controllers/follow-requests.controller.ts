@@ -15,7 +15,7 @@ export const acceptFollowRequest: RouteHandlerMethod = async (request, reply) =>
 	const acceptorUserId = (request.userInfo as UserInfo).userId;
 	const session = await mongoose.startSession();
 	try {
-		const followRequest = await FollowRequest.findOne(
+		const followRequest = (await FollowRequest.findOne(
 			{
 				user: acceptorUserId,
 				_id: followRequestId
@@ -23,9 +23,10 @@ export const acceptFollowRequest: RouteHandlerMethod = async (request, reply) =>
 			{
 				requestedBy: 1
 			}
-		);
+		)) as HydratedDocument<FollowRequestModel>;
 		if (!followRequest) {
 			reply.status(404).send(new Error("Follow request not found"));
+			return;
 		}
 		const accepted = await session.withTransaction(async () => {
 			await FollowRequest.deleteOne(followRequest as FollowRequestModel).session(session);
@@ -80,14 +81,14 @@ export const acceptAllFollowRequests: RouteHandlerMethod = async (request, reply
 			let totalCount = 0;
 			const filter = { user: acceptorUserId };
 			do {
-				const followRequests = await FollowRequest.find(filter, { user: acceptorUserId, followedBy: "$requestedBy" }).limit(batchSize).session(session);
+				const followRequests = (await FollowRequest.find(filter, { user: acceptorUserId, followedBy: "$requestedBy" }).limit(batchSize).session(session)) as Array<Partial<HydratedDocument<FollowRequestModel>>>;
 				await FollowRequest.deleteMany({
 					_id: {
 						$in: followRequests.map(followRequest => followRequest._id)
 					}
 				}).session(session);
 				const result = await Follow.bulkSave(
-					followRequests.map((followRequest: Partial<HydratedDocument<FollowRequestModel>>) => {
+					followRequests.map(followRequest => {
 						delete followRequest._id;
 						return new Follow(followRequest);
 					}),

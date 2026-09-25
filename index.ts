@@ -36,7 +36,7 @@ server.addHook("onRequest", async (request, reply) => {
 		reply.status(200).send();
 	}
 });
-server.register((await import("formzilla")).default, {
+server.register(async () => await import("formzilla"), {
 	limits: {
 		fileSize: megaByte * 5
 	},
